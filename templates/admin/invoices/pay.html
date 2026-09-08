@@ -1,0 +1,26 @@
+<form method="POST" action="{{ url_for('pay_invoice', invoice_id=invoice.id) }}">
+    <p>Confirm marking this invoice as paid?</p>
+
+    <div class="modal-actions">
+        <button type="submit" class="btn primary">
+            Confirm Payment
+        </button>
+
+        <button type="submit" class="btn ghost close-modal">
+            Cancel
+        </button>
+    </div>
+</form>
+
+<script>
+document.getElementById("payInvoiceForm").addEventListener("submit", async e => {
+    e.preventDefault();
+
+    const res = await fetch("", { method: "POST" });
+    const data = await res.json();
+
+    if (data.success) {
+        location.reload();
+    }
+});
+</script>

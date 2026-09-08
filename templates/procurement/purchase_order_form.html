@@ -1,0 +1,707 @@
+{% extends "base.html" %}
+
+{% block title %}
+    New Purchase | Autovex
+{% endblock %}
+
+{% block page_title %}
+    New Purchase
+{% endblock %}
+
+{% block content %}
+
+<div class="module-page procurement-page">
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <div class="module-header">
+
+        <div>
+
+            <h1>
+                New Purchase
+            </h1>
+
+            <p>
+                Create a Local Purchase Order for a supplier.
+            </p>
+
+        </div>
+
+        <div class="module-header-actions">
+
+            <a
+                href="{{ url_for(
+                    'procurement',
+                    tab='procurement-lpos'
+                ) }}"
+                class="secondary-btn"
+            >
+                <i class="bx bx-arrow-back"></i>
+                Back to LPOs
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         FORM
+         ===================================================== -->
+
+    <div class="financial-list-panel">
+
+        <div class="financial-list-header">
+
+            <div>
+
+                <h3>
+                    LPO Details
+                </h3>
+
+                <p>
+                    Enter the purchase order information.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <form
+            method="POST"
+            action="{{ url_for('new_purchase_order') }}"
+        >
+
+            <!-- =================================================
+                 BASIC DETAILS
+                 ================================================= -->
+
+            <div class="form-grid">
+
+
+                <!-- Supplier -->
+
+                <div class="form-group">
+
+                    <label for="supplier_id">
+                        Supplier
+                        <span class="required">*</span>
+                    </label>
+
+                    <select
+                        id="supplier_id"
+                        name="supplier_id"
+                        required
+                    >
+
+                        <option value="">
+                            Select Supplier
+                        </option>
+
+                        {% for supplier in suppliers %}
+
+                        <option
+                            value="{{ supplier.id }}"
+                            {% if request.form.get('supplier_id') == supplier.id|string %}
+                                selected
+                            {% endif %}
+                        >
+
+                            {{ supplier.supplier_name }}
+
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                
+                <!-- Order Date -->
+
+                <div class="form-group">
+
+                    <label for="order_date">
+                        Order Date
+                    </label>
+
+                    <input
+                        type="date"
+                        id="order_date"
+                        name="order_date"
+                        value="{{ request.form.get(
+                            'order_date',
+                            ''
+                        ) }}"
+                    >
+
+                </div>
+
+
+                <!-- Expected Date -->
+
+                <div class="form-group">
+
+                    <label for="expected_date">
+                        Expected Delivery Date
+                    </label>
+
+                    <input
+                        type="date"
+                        id="expected_date"
+                        name="expected_date"
+                        value="{{ request.form.get(
+                            'expected_date',
+                            ''
+                        ) }}"
+                    >
+
+                </div>
+
+
+            </div>
+
+
+            <!-- =================================================
+                 DESCRIPTION
+                 ================================================= -->
+
+            <div class="form-group">
+
+                <label for="description">
+                    Description
+                </label>
+
+                <input
+                    type="text"
+                    id="description"
+                    name="description"
+                    class="half-wid"
+                    value="{{ request.form.get(
+                        'description',
+                        ''
+                    ) }}"
+                    placeholder="Brief description of this purchase"
+                >
+
+            </div>
+
+
+            <!-- =================================================
+                 ITEMS
+                 ================================================= -->
+
+            <div class="financial-list-header">
+
+                <div>
+
+                    <h3>
+                        Purchase Items
+                    </h3>
+
+                    <p>
+                        Add the goods or services being ordered.
+                    </p>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="secondary-btn"
+                    id="addItemBtn"
+                >
+                    <i class="bx bx-plus"></i>
+                    Add Item
+                </button>
+
+            </div>
+
+
+            <div class="financial-table-wrapper">
+
+                <table
+                    class="financial-table"
+                    id="itemsTable"
+                >
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Item Description
+                            </th>
+
+                            <th>
+                                Quantity
+                            </th>
+
+                            <th>
+                                Unit Price
+                            </th>
+
+                            <th>
+                                Total
+                            </th>
+
+                            <th>
+                                Action
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="itemsBody">
+
+                        <tr class="item-row">
+
+                            <td>
+
+                                <input
+                                    type="text"
+                                    class="item-description"
+                                    name="item_description[]"
+                                    placeholder="Item description"
+                                    required
+                                >
+
+                            </td>
+
+
+                            <td>
+
+                                <input
+                                    type="number"
+                                    name="quantity[]"
+                                    class="item-quantity"
+                                    min="0.01"
+                                    step="0.01"
+                                    value="1"
+                                    required
+                                >
+
+                            </td>
+
+
+                            <td>
+
+                                <input
+                                    type="number"
+                                    name="unit_price[]"
+                                    class="item-price"
+                                    min="0"
+                                    step="0.01"
+                                    value="0"
+                                    required
+                                >
+
+                            </td>
+
+
+                            <td>
+
+                                <strong class="item-total">
+                                    KES 0.00
+                                </strong>
+
+                            </td>
+
+
+                            <td>
+
+                                <button
+                                    type="button"
+                                    class="btn remove-item"
+                                    title="Remove Item"
+                                >
+
+                                    <i class="bx bx-trash"></i>
+
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+
+                    <tfoot>
+
+                        <tr>
+
+                            <td
+                                colspan="3"
+                                style="text-align:right;"
+                            >
+
+                                <strong>
+                                    LPO Total
+                                </strong>
+
+                            </td>
+
+                            <td>
+
+                                <strong
+                                    id="grandTotal"
+                                >
+                                    KES 0.00
+                                </strong>
+
+                            </td>
+
+                            <td></td>
+
+                        </tr>
+
+                    </tfoot>
+
+                </table>
+
+            </div>
+
+
+            <!-- =================================================
+                 NOTES
+                 ================================================= -->
+
+            <div class="form-group">
+
+                <label for="notes">
+                    Notes
+                </label>
+
+                <textarea
+                    id="notes"
+                    name="notes"
+                    rows="4"
+                    placeholder="Optional notes..."
+                >{{ request.form.get(
+                    'notes',
+                    ''
+                ) }}</textarea>
+
+            </div>
+
+
+            <!-- =================================================
+                 ACTIONS
+                 ================================================= -->
+
+            <div class="form-actions">
+
+                <a
+                    href="{{ url_for(
+                        'procurement',
+                        tab='procurement-lpos'
+                    ) }}"
+                    class="expense-action-btn reject"
+                >
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="expense-action-btn approve"
+                >
+                    <i class="bx bx-save"></i>
+                    Create LPO
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     LPO ITEM JAVASCRIPT
+     ========================================================= -->
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const itemsBody =
+            document.getElementById(
+                "itemsBody"
+            );
+
+        const addItemBtn =
+            document.getElementById(
+                "addItemBtn"
+            );
+
+        const grandTotal =
+            document.getElementById(
+                "grandTotal"
+            );
+
+
+        function updateRowTotal(row) {
+
+            const quantity =
+                parseFloat(
+                    row.querySelector(
+                        ".item-quantity"
+                    ).value
+                ) || 0;
+
+
+            const price =
+                parseFloat(
+                    row.querySelector(
+                        ".item-price"
+                    ).value
+                ) || 0;
+
+
+            const total =
+                quantity * price;
+
+
+            row.querySelector(
+                ".item-total"
+            ).textContent =
+                "KES " +
+                total.toLocaleString(
+                    "en-KE",
+                    {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    }
+                );
+
+        }
+
+
+        function updateGrandTotal() {
+
+            let total = 0;
+
+
+            document.querySelectorAll(
+                ".item-row"
+            ).forEach(function (row) {
+
+                const quantity =
+                    parseFloat(
+                        row.querySelector(
+                            ".item-quantity"
+                        ).value
+                    ) || 0;
+
+
+                const price =
+                    parseFloat(
+                        row.querySelector(
+                            ".item-price"
+                        ).value
+                    ) || 0;
+
+
+                total += quantity * price;
+
+            });
+
+
+            grandTotal.textContent =
+                "KES " +
+                total.toLocaleString(
+                    "en-KE",
+                    {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    }
+                );
+
+        }
+
+
+        function attachRowEvents(row) {
+
+            const quantity =
+                row.querySelector(
+                    ".item-quantity"
+                );
+
+            const price =
+                row.querySelector(
+                    ".item-price"
+                );
+
+            quantity.addEventListener(
+                "input",
+                function () {
+
+                    updateRowTotal(row);
+
+                    updateGrandTotal();
+
+                }
+            );
+
+
+            price.addEventListener(
+                "input",
+                function () {
+
+                    updateRowTotal(row);
+
+                    updateGrandTotal();
+
+                }
+            );
+
+
+            row.querySelector(
+                ".remove-item"
+            ).addEventListener(
+                "click",
+                function () {
+
+                    const rows =
+                        document.querySelectorAll(
+                            ".item-row"
+                        );
+
+
+                    if (rows.length <= 1) {
+
+                        return;
+
+                    }
+
+
+                    row.remove();
+
+                    updateGrandTotal();
+
+                }
+            );
+
+
+            updateRowTotal(row);
+
+        }
+
+
+        attachRowEvents(
+            document.querySelector(
+                ".item-row"
+            )
+        );
+
+
+        addItemBtn.addEventListener(
+            "click",
+            function () {
+
+                const row =
+                    document.createElement(
+                        "tr"
+                    );
+
+                row.className =
+                    "item-row";
+
+
+                row.innerHTML = `
+
+                    <td>
+
+                        <input
+                            type="text"
+                            name="item_description[]"
+                            placeholder="Item description"
+                            required
+                        >
+
+                    </td>
+
+                    <td>
+
+                        <input
+                            type="number"
+                            name="quantity[]"
+                            class="item-quantity"
+                            min="0.01"
+                            step="0.01"
+                            value="1"
+                            required
+                        >
+
+                    </td>
+
+                    <td>
+
+                        <input
+                            type="number"
+                            name="unit_price[]"
+                            class="item-price"
+                            min="0"
+                            step="0.01"
+                            value="0"
+                            required
+                        >
+
+                    </td>
+
+                    <td>
+
+                        <strong class="item-total">
+                            KES 0.00
+                        </strong>
+
+                    </td>
+
+                    <td>
+
+                        <button
+                            type="button"
+                            class="btn remove-item"
+                            title="Remove Item"
+                        >
+
+                            <i class="bx bx-trash"></i>
+
+                        </button>
+
+                    </td>
+                `;
+
+
+                itemsBody.appendChild(
+                    row
+                );
+
+
+                attachRowEvents(
+                    row
+                );
+
+                updateGrandTotal();
+
+            }
+        );
+
+    }
+);
+
+</script>
+
+{% endblock %}

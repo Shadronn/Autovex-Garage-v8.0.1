@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+        <h4>
+            {{ "Edit Supplier" if supplier else "Add Supplier" }}
+        </h4>
+
+        <p>
+            {{ "Update supplier information." if supplier else "Create a new supplier record." }}
+        </p>
+    </div>
+
+</div>
+
+
+<form
+    method="POST"
+    class="form-card"
+    action="{% if supplier %}{{ url_for('edit_supplier', supplier_id=supplier.id) }}{% else %}{{ url_for('new_supplier') }}{% endif %}"
+>
+
+    <div class="section-header">
+        <h4>Supplier Information</h4>
+    </div>
+
+
+    <div class="form-grid">
+
+        <div class="form-group">
+
+            <label for="supplier_name">
+                Supplier Name *
+            </label>
+
+            <input
+                type="text"
+                id="supplier_name"
+                name="supplier_name"
+                value="{{ supplier.supplier_name if supplier else '' }}"
+                required
+                placeholder="Enter supplier name"
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="contact_person">
+                Contact Person
+            </label>
+
+            <input
+                type="text"
+                id="contact_person"
+                name="contact_person"
+                value="{{ supplier.contact_person if supplier else '' }}"
+                placeholder="Contact person"
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="phone">
+                Phone
+            </label>
+
+            <input
+                type="text"
+                id="phone"
+                name="phone"
+                value="{{ supplier.phone if supplier else '' }}"
+                placeholder="Phone number"
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="email">
+                Email
+            </label>
+
+            <input
+                type="email"
+                id="email"
+                name="email"
+                value="{{ supplier.email if supplier else '' }}"
+                placeholder="Email address"
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="tax_pin">
+                Tax PIN
+            </label>
+
+                <input
+                    type="text"
+                    id="tax_pin"
+                    name="tax_pin"
+                    value="{{ supplier.tax_pin if supplier else '' }}"
+                    placeholder="KRA PIN"
+                >
+
+        </div>
+
+
+        <div class="form-group full-width">
+
+            <label for="address">
+                Address
+            </label>
+
+            <input
+                type="text"
+                id="address"
+                name="address"
+                value="{{ supplier.address if supplier else '' }}"
+                placeholder="Supplier address"
+            >
+
+        </div>
+
+    </div>
+
+
+    <div class="button-group">
+
+        <button
+            type="submit"
+            class="login-btn"
+        >
+            <i class='bx bx-save'></i>
+            Save Supplier
+        </button>
+
+
+        <a
+            href="{{ url_for('procurement') }}"
+            class="cancel-btn"
+        >
+            Cancel
+        </a>
+
+    </div>
+
+</form>
+
+{% endblock %}

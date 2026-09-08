@@ -1,0 +1,283 @@
+{% extends "base.html" %}
+
+{% block sidebar %}
+
+{% endblock %}
+{% block content %}
+
+
+<form method="POST" class="form-card" id="createJobForm">
+    <h1>Job creation</h1>
+    <h3>Create new job.</h3>
+    <vh></vh>
+    <div class="form-grid">
+    <!-- CUSTOMER -->
+        <div class="form-group">
+            <label>Customer</label>
+            <select name="customer_id" id="customerSelect" required>
+                <option value="">Select Customer</option>
+                {% for customer in customers %}
+                    <option value="{{ customer.id }}">
+                        {{ customer.customer_name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <!-- TELEPHONE NUMBER -->
+        <div class="form-group">
+            <label>Telephone</label>
+            <input type="text" id="telInput" name="telno" readonly>
+        </div>
+
+        <!-- VEHICLE -->
+        <div class="form-group">
+            <label>Vehicle</label>
+            <select name="vehicle_id" id="vehicleSelect" required disabled>
+                <option value="">Select Vehicle</option>
+            </select>
+        </div>
+        <!-- VEHICLE MODEL -->
+        <div class="form-group">
+            <label>Vehicle Model</label>
+            <input type="text" id="vehicleModelInput" readonly>
+        </div>
+
+        <!-- SERVICE TYPE -->
+<div class="form-group">
+    <label>Service Type</label>
+
+    <select name="service_type" id="serviceTypeSelect" required>
+
+        <option value="">Select Service</option>
+
+        <option value="Oil Service">
+            Oil Service
+        </option>
+
+        <option value="Storage Charges">
+            Storage
+        </option>
+
+        <option value="Tyre & Wheel Services">
+            Tyre & Wheel Services
+        </option>
+
+        <option value="Diagnostic Services">
+            Diagnostic Services
+        </option>
+
+        <option value="Vehicle Recovery & Towing">
+            Vehicle Recovery & Towing
+        </option>
+
+        <option value="Assessment / Valuation Services">
+            Assessment / Valuation Services
+        </option>
+
+        <option value="General Repairs">
+            General Repairs
+        </option>
+
+        <option value="Other">
+            Other
+        </option>
+
+    </select>
+</div>
+
+
+        <!-- DESCRIPTION -->
+        <div class="form-group full-width">
+
+            <label>Job Description</label>
+
+            <textarea
+                name="description"
+                required
+                placeholder="Describe the work required..."
+            ></textarea>
+
+        </div>
+        <div class="form-group">
+            <label>Assign Mechanic</label>
+            <select name="mechanic_id" id="mechanicSelect" required>
+                <option value="">Assign a Mechanic</option>
+                {% for mechanic in mechanics %}
+                    <option value="{{ mechanic.id }}">
+                        {{ mechanic.username }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+         <div class="form-group">
+            <label>Deadline</label>
+             <input
+            type="datetime-local"
+            name="deadline"
+            required>
+        </div>
+</div>
+    </div>
+ <!-- ASSIGN MECHANIC 
+    {% if role == "admin" %}
+    <div class="form-group">
+        <label>Assign Mechanic</label>
+        <select name="assigned_to">
+            <option value="">-- Unassigned --</option>
+            {% for mech in mechanics %}
+                <option value="{{ mech.id }}">{{ mech.username }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    {% endif %}
+-->
+    <div class="button-group">
+
+    <button type="submit" class="primary-btn">
+        <i class='bx bx-save'></i>
+        Save
+    </button>
+
+    <button
+        type="button"
+        class="secondary-btn"
+        onclick="window.location.href='{{ url_for('jobs')}}'">
+        Cancel
+    </button>
+
+</div>
+
+</form>
+{% if show_job_card_modal and created_job %}
+
+<div id="jobCardModal" class="modal">
+
+    <div class="modal-content job-card-modal">
+
+        <div class="job-card-modal-icon">
+            <i class='bx bx-file-plus'></i>
+        </div>
+
+        <h3>Create a job card now?</h3>
+
+        <p>
+            The job has been saved successfully.
+            Would you like to create a job card for this job now?
+        </p>
+
+        <div class="job-card-modal-actions">
+
+            <a
+                href="{{ url_for('create_job_card', job_id=created_job.id) }}"
+                class="btn btn-primary"
+            >
+                <i class='bx bx-clipboard'></i>
+                Create Job Card
+            </a>
+
+            <a
+                href="{{ url_for('jobs') }}"
+                class="btn btn-secondary"
+            >
+                Skip for Now
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endif %}
+<script>
+let vehicleMap = {};
+
+document.getElementById("customerSelect").addEventListener("change", function () {
+    const customerId = this.value;
+    const vehicleSelect = document.getElementById("vehicleSelect");
+    const telInput = document.getElementById("telInput");
+    const modelInput = document.getElementById("vehicleModelInput");
+
+    vehicleSelect.innerHTML = "<option value=''>Select Vehicle</option>";
+    vehicleSelect.disabled = true;
+    telInput.value = "";
+    modelInput.value = "";
+
+    if (!customerId) return;
+
+    vehicleSelect.innerHTML = "<option>Loading...</option>";
+
+    fetch(`/api/customer/${customerId}`)
+        .then(res => res.json())
+        .then(data => {
+
+            vehicleSelect.innerHTML = "<option value=''>Select Vehicle</option>";
+            vehicleMap = {};
+
+            if (data.vehicle && data.vehicle.length > 0) {
+
+                data.vehicle.forEach(v => {
+
+                    vehicleMap[v.id] = v;
+
+                    const option = document.createElement("option");
+                    option.value = v.id;
+                    option.textContent = v.registration_no;
+
+                    vehicleSelect.appendChild(option);
+                });
+
+                vehicleSelect.disabled = false;
+
+            } else {
+                vehicleSelect.disabled = true;
+            }
+
+            telInput.value = data.telno || "";
+        })
+        .catch(err => {
+
+            console.error(err);
+
+            vehicleSelect.innerHTML =
+                "<option value=''>Failed to load vehicles</option>";
+
+            vehicleSelect.disabled = true;
+        });
+});
+
+
+document.getElementById("vehicleSelect").addEventListener("change", function () {
+
+    const vehicleId = this.value;
+    const modelInput =
+        document.getElementById("vehicleModelInput");
+
+    if (vehicleMap[vehicleId]) {
+        modelInput.value =
+            vehicleMap[vehicleId].model || "";
+    } else {
+        modelInput.value = "";
+    }
+
+});
+
+/* =========================================================
+   CREATE JOB CARD MODAL
+========================================================= */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const jobCardModal =
+        document.getElementById("jobCardModal");
+
+    if (jobCardModal) {
+        jobCardModal.style.display = "flex";
+    }
+
+});
+
+</script>
+
+{% endblock %}

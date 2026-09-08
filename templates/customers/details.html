@@ -1,0 +1,311 @@
+{% extends "base.html" %}
+
+{% block sidebar %}
+
+{% endblock %}
+
+{% block content %}
+
+<div class="page">
+  <div class="job-card">
+
+    .<header class="card-header">
+      <div>
+        <h2>Customer Overview</h2>
+      </div>
+      <div class="action-links">
+        <a href="{{ url_for('edit_customer', customer_id=customer.id) }}"><i class='bx  bx-edit'></i> Edit </a>
+        <form method="POST" action="{{ url_for('delete_customer', customer_id=customer.id) }}">
+            <button class="btn-alert" type = "submit">
+                <i class="bx bx-trash" /></i> Delete 
+            </button>
+        </form>
+        <a href="/customers">← Return to Customers </a>
+        <a href="/vehicles/add">Add Vehicle </a>
+      </div>
+    </header>
+
+    <!-- CUSTOMER DETAILS -->
+    <section class="detail-section">
+      <h5 class="section-title">Customer Details</h5>
+
+      <div class="kv-grid double">
+        <div class="kv">
+          <span class="label">Customer</span>
+          <span class="value">{{ customer.customer_name }}</span>
+        </div>
+
+        <div class="kv">
+          <span class="label">Telephone</span>
+          <span class="value">{{ customer.telno or "—" }}</span>
+        </div>
+
+        <div class="kv">
+          <span class="label">Email</span>
+          <span class="value">{{ customer.email or "—" }}</span>
+        </div>
+
+        <div class="kv">
+          <span class="label">Jobs</span>
+          <span class="value">{{ total_jobs }}</span>
+        </div>
+        <div class="kv">
+          <span class="label">Address</span>
+          <span class="value">{{ customer.address or "—" }}</span>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- JOB DETAILS -->
+    <section class="detail-section">
+      <h5 class="section-title">Vehicles</h5>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Registration</th>
+                    <th>Model</th>
+                    <th>YOM</th>
+                    <th>Color</th>
+                    <th>View</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for vehicle in vehicles %}
+                <tr>
+                    <td>{{ vehicle.registration_no }}</td>
+                    <td>{{ vehicle.model }}</td>
+                    <td>{{ vehicle.yom}}</td>
+                    <td>{{ vehicle.color}}</td>
+                    <td><a href="{{ url_for('vehicle_details', vehicle_id=vehicle.id) }}">View</a></td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" style="text-align:center;">No vehicles registered</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+</div>
+
+<style>
+.page {
+  min-height: calc(100vh - 80px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+.action-links{
+  justify-self: right;
+  display: flex;
+}
+.action-links a{
+  color: #00acee;
+  text-decoration: none;
+  padding-left: 5px;
+}
+.action-links a:hover{
+  color: red;
+}
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left:0;
+  top:0;
+  width:100%;
+  background-color: rgba(0,0,0,0.5);
+  padding: 10px;
+}
+.modal-content {
+  background:#fff;
+  margin:15% auto;
+  padding:20px;
+  border-radius:8px;
+  width:300px;
+  text-align:center;
+}
+.modal-content p{
+  color: #00acee;
+  font-size: 14px;
+  padding: 5px;
+}
+
+.btn { 
+  margin:5px; 
+  padding:8px 15px; 
+  border:none; 
+  border-radius:5px; 
+  cursor:pointer; 
+  justify-content:space-between;
+  }
+
+ /* Center page content */
+
+
+/* Card */
+.job-card {
+  width: 100%;
+  max-width: 720px;
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 36px;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.08);
+}
+
+/* Header */
+.card-header {
+  margin-bottom: 28px;
+}
+
+.job-card h2 {
+  font-size: 22px;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Sections */
+.detail-section {
+  margin-bottom: 28px;
+}
+
+.section-title {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6b7280;
+  margin-bottom: 18px;
+}
+
+/* Key–Value Grid */
+.kv-grid {
+  display: grid;
+  gap: 14px;
+}
+
+/* Customer Details (single column) */
+.kv-grid.single {
+  grid-template-columns: 1fr;
+}
+
+/* Job Details (two columns) */
+.kv-grid.double {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+@media (max-width: 640px) {
+  .kv-grid.double {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Key–Value Row */
+.kv {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  align-items: center;
+}
+
+.label {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.value {
+  font-size: 14px;
+  font-weight: 500;
+  color: #111827;
+}
+
+/* Divider */
+.divider {
+  border: none;
+  height: 1px;
+  background: #e5e7eb;
+  margin: 32px 0;
+}
+
+/* Status pill */
+.status {
+  display: inline-block;
+  padding: 4px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  transition: all 0.25s ease;
+}
+
+.status.open {
+  background: #ecfeff;
+  color: #0369a1;
+}
+
+.status.complete {
+  background: #ecfdf5;
+  color: #065f46;
+}
+
+/* Actions */
+.actions {
+  margin-top: 36px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+/* Equal button width */
+.action-btn {
+  min-width: 160px;
+  text-align: center;
+}
+
+/* Primary button already styled globally */
+.btn.primary {
+  background: #2563eb;
+  color: #fff;
+}
+
+.btn.primary:hover {
+  background: #1e40af;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+  /* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+
+</style>
+
+{%endblock%}

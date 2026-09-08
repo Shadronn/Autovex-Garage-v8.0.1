@@ -1,0 +1,448 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Record Supplier Payment | Autovex
+{% endblock %}
+
+{% block page_title %}
+    Record Supplier Payment
+{% endblock %}
+
+
+{% block content %}
+
+<div class="module-page procurement-page">
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <div class="module-header">
+
+        <div>
+
+            <h1>
+                Record Supplier Payment
+            </h1>
+
+            <p>
+                Record a payment made against a supplier invoice.
+            </p>
+
+        </div>
+
+        <div class="module-header-actions">
+
+            <a
+                href="{{ url_for(
+                    'supplier_bill_detail',
+                    bill_id=bill.id
+                ) }}"
+                class="secondary-btn"
+            >
+                <i class="bx bx-arrow-back"></i>
+                Back to Invoice
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         INVOICE SUMMARY
+         ===================================================== -->
+
+    <div class="financial-summary">
+
+        <div class="financial-card">
+
+            <div class="financial-card-top">
+
+                <div class="financial-icon">
+                    <i class="bx bx-receipt"></i>
+                </div>
+
+                <span class="financial-label">
+                    Supplier Invoice
+                </span>
+
+            </div>
+
+            <div class="financial-value">
+                {{ bill.bill_number }}
+            </div>
+
+            <div class="financial-description">
+                {{ bill.supplier.supplier_name }}
+            </div>
+
+        </div>
+
+
+        <div class="financial-card">
+
+            <div class="financial-card-top">
+
+                <div class="financial-icon">
+                    <i class="bx bx-money"></i>
+                </div>
+
+                <span class="financial-label">
+                    Invoice Amount
+                </span>
+
+            </div>
+
+            <div class="financial-value">
+                KES {{ "{:,.2f}".format(bill.amount) }}
+            </div>
+
+        </div>
+
+
+        <div class="financial-card">
+
+            <div class="financial-card-top">
+
+                <div class="financial-icon">
+                    <i class="bx bx-wallet"></i>
+                </div>
+
+                <span class="financial-label">
+                    Already Paid
+                </span>
+
+            </div>
+
+            <div class="financial-value">
+                KES {{ "{:,.2f}".format(bill.amount_paid or 0) }}
+            </div>
+
+        </div>
+
+
+        <div class="financial-card">
+
+            <div class="financial-card-top">
+
+                <div class="financial-icon">
+                    <i class="bx bx-money-withdraw"></i>
+                </div>
+
+                <span class="financial-label">
+                    Outstanding Balance
+                </span>
+
+            </div>
+
+            <div class="financial-value">
+                KES {{ "{:,.2f}".format(balance) }}
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         PAYMENT FORM
+         ===================================================== -->
+
+    <div class="financial-list-panel">
+
+        <div class="financial-list-header">
+
+            <div>
+
+                <h3>
+                    Payment Details
+                </h3>
+
+                <p>
+                    Enter the details of the payment made to
+                    the supplier.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <form
+            method="POST"
+            action="{{ url_for(
+                'supplier_bill_payment',
+                bill_id=bill.id
+            ) }}"
+            class="form-container"
+        >
+
+
+            <!-- =================================================
+                 PAYMENT REFERENCE
+                 ================================================= -->
+
+            <div class="form-group">
+
+                <label for="payment_reference">
+                    Payment Reference
+                </label>
+
+                <input
+                    type="text"
+                    id="payment_reference"
+                    value="{{ payment_reference }}"
+                    readonly
+                >
+
+                <small>
+                    This is the Autovex payment document reference.
+                    It is generated automatically.
+                </small>
+
+            </div>
+
+
+            <!-- =================================================
+                 PAYMENT AMOUNT
+                 ================================================= -->
+
+            <div class="form-group">
+
+                <label for="amount">
+                    Payment Amount
+                    <span class="required">*</span>
+                </label>
+
+                <div class="input-with-prefix">
+
+                    <span class="input-prefix">
+                        KES
+                    </span>
+
+                    <input
+                        type="number"
+                        id="amount"
+                        name="amount"
+                        value="{{ request.form.get('amount', '') }}"
+                        min="0.01"
+                        max="{{ balance }}"
+                        step="0.01"
+                        placeholder="0.00"
+                        required
+                    >
+
+                </div>
+
+                <small>
+                    Maximum payment:
+                    KES {{ "{:,.2f}".format(balance) }}
+                </small>
+
+            </div>
+
+
+            <!-- =================================================
+                 PAYMENT METHOD
+                 ================================================= -->
+
+            <div class="form-group">
+
+                <label for="payment_method">
+                    Payment Method
+                    <span class="required">*</span>
+                </label>
+
+                <select
+                    id="payment_method"
+                    name="payment_method"
+                    required
+                >
+
+                    <option value="">
+                        Select payment method
+                    </option>
+
+                    <option
+                        value="Cash"
+                        {% if request.form.get('payment_method') == 'Cash' %}
+                            selected
+                        {% endif %}
+                    >
+                        Cash
+                    </option>
+
+                    <option
+                        value="Bank Transfer"
+                        {% if request.form.get('payment_method') == 'Bank Transfer' %}
+                            selected
+                        {% endif %}
+                    >
+                        Bank Transfer
+                    </option>
+
+                    <option
+                        value="M-Pesa"
+                        {% if request.form.get('payment_method') == 'M-Pesa' %}
+                            selected
+                        {% endif %}
+                    >
+                        M-Pesa
+                    </option>
+
+                    <option
+                        value="Cheque"
+                        {% if request.form.get('payment_method') == 'Cheque' %}
+                            selected
+                        {% endif %}
+                    >
+                        Cheque
+                    </option>
+
+                    <option
+                        value="Other"
+                        {% if request.form.get('payment_method') == 'Other' %}
+                            selected
+                        {% endif %}
+                    >
+                        Other
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- =================================================
+                 SUPPLIER RECEIPT
+                 ================================================= -->
+
+            <div class="form-group">
+
+                <label for="receipt_number">
+                    Supplier Receipt Number
+                </label>
+
+                <input
+                    type="text"
+                    id="receipt_number"
+                    name="receipt_number"
+                    value="{{ request.form.get('receipt_number', '') }}"
+                    placeholder="Enter supplier receipt number if issued"
+                >
+
+                <small>
+                    Optional. Enter the receipt number provided
+                    by the supplier.
+                </small>
+
+            </div>
+
+
+            <!-- =================================================
+                 PAYMENT DATE
+                 ================================================= -->
+
+            <div class="form-group">
+
+                <label for="paid_at">
+                    Payment Date
+                </label>
+
+                <input
+                    type="date"
+                    id="paid_at"
+                    name="paid_at"
+                    value="{{ request.form.get(
+                        'paid_at',
+                        ''
+                    ) }}"
+                >
+
+            </div>
+
+
+            <!-- =================================================
+                 NOTES
+                 ================================================= -->
+
+            <div class="form-group">
+
+                <label for="notes">
+                    Notes
+                </label>
+
+                <textarea
+                    id="notes"
+                    name="notes"
+                    rows="4"
+                    placeholder="Additional payment information..."
+                >{{ request.form.get('notes', '') }}</textarea>
+
+            </div>
+
+
+            <!-- =================================================
+                 INFORMATION
+                 ================================================= -->
+
+            <div class="form-info-box">
+
+                <i class="bx bx-info-circle"></i>
+
+                <div>
+
+                    <strong>
+                        Payment tracking
+                    </strong>
+
+                    <p>
+                        The payment will be added to this supplier
+                        invoice and the outstanding balance will be
+                        recalculated automatically.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 ACTIONS
+                 ================================================= -->
+
+            <div class="form-actions">
+
+                <a
+                    href="{{ url_for(
+                        'supplier_bill_detail',
+                        bill_id=bill.id
+                    ) }}"
+                    class="secondary-btn"
+                >
+                    Cancel
+                </a>
+
+
+                <button
+                    type="submit"
+                    class="primary-btn"
+                >
+
+                    <i class="bx bx-check-circle"></i>
+
+                    Record Payment
+
+                </button>
+
+            </div>
+
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

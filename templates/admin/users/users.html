@@ -1,0 +1,308 @@
+{% extends "base.html" %}
+
+{% block sidebar %}
+<nav>
+
+    <p class="nav-title">MAIN</p>
+
+    {% if role in ["admin", "superadmin"] %}
+    <a href="/dashboard">
+        <i class='bx bx-home'></i>
+        <span>Admin Dashboard</span>
+    </a>
+    {% endif %}
+
+
+    <p class="nav-title">OPERATIONS</p>
+
+    {% if role in ["admin", "superadmin", "mechanic"] %}
+
+    <a href="/jobs">
+        <i class='bx bx-briefcase'></i>
+        <span>Jobs</span>
+    </a>
+
+    <a href="/customers">
+        <i class='bx bx-group'></i>
+        <span>Customers</span>
+    </a>
+
+    {% endif %}
+
+
+    {% if role in ["admin", "superadmin"] %}
+
+    <a href="{{ url_for('users') }}" class="active">
+        <i class='bx bx-user'></i>
+        <span>Users</span>
+    </a>
+
+    {% endif %}
+
+
+    {% if role in ["admin", "superadmin", "mechanic", "accounts"] %}
+
+    <a href="{{ url_for('vehicles') }}">
+        <i class='bx bx-car'></i>
+        <span>Vehicles</span>
+    </a>
+
+    <a href="{{ url_for('invoices') }}">
+        <i class='bx bx-receipt'></i>
+        <span>Invoices</span>
+    </a>
+
+
+    <p class="nav-title">INVENTORY</p>
+
+    <a>
+        <i class='bx bx-box'></i>
+        <span>Products</span>
+    </a>
+
+    <a>
+        <i class='bx bx-wrench'></i>
+        <span>Services</span>
+    </a>
+
+    {% endif %}
+
+</nav>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="table-page">
+
+    <!-- =====================================================
+         PAGE HEADER
+         ===================================================== -->
+
+    <div class="module-header">
+
+        <div>
+
+            <h1>System Users</h1>
+
+            <p>
+                Manage system users, roles and account access.
+            </p>
+
+        </div>
+
+        <div class="module-header-actions">
+
+            <a
+                href="{{ url_for('create_user') }}"
+                class="btn"
+            >
+                <i class='bx bx-plus'></i>
+                Add User
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         USERS TABLE
+         ===================================================== -->
+
+    <div class="table-panel">
+
+        <div class="table-toolbar">
+
+            <div class="table-toolbar-left">
+
+                <div>
+
+                    <h3 class="table-title">
+                        Users
+                    </h3>
+
+                    <p class="table-subtitle">
+                        System accounts and access roles
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="table-wrapper">
+
+            <table class="data-table">
+
+                <thead>
+
+                    <tr>
+                        <th>#</th>
+                        <th>Username</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                {% for u in users %}
+
+                    <tr>
+
+                        <!-- ID -->
+
+                        <td>
+
+                            <span class="table-muted-text">
+                                #{{ u.id }}
+                            </span>
+
+                        </td>
+
+
+                        <!-- Username -->
+
+                        <td>
+
+                            <span class="table-primary-text">
+                                {{ u.username }}
+                            </span>
+
+                        </td>
+
+
+                        <!-- Role -->
+
+                        <td>
+
+                            <span class="table-secondary-text">
+                                {{ u.role|title }}
+                            </span>
+
+                        </td>
+
+
+                        <!-- Status -->
+
+                        <td>
+
+                            {% if u.is_active %}
+
+                                <span class="table-status table-status-paid">
+
+                                    <span class="table-status-dot"></span>
+
+                                    Active
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="table-status table-status-danger">
+
+                                    <span class="table-status-dot"></span>
+
+                                    Disabled
+
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- Actions -->
+
+                        <td>
+
+                            {% if u.id != session["user_id"] %}
+
+                                <div class="table-actions">
+
+                                    <!-- Edit -->
+
+                                    <a
+                                        href="{{ url_for('edit_user', user_id=u.id) }}"
+                                        class="table-action-view"
+                                    >
+                                        <i class='bx bx-edit-alt'></i>
+                                        Edit
+                                    </a>
+
+
+                                    <!-- Delete -->
+
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for('delete_user', user_id=u.id) }}"
+                                        onsubmit="return confirm('This will permanently delete the user. Continue?');"
+                                    >
+
+                                        <button
+                                            type="submit"
+                                            class="table-action-danger"
+                                        >
+                                            <i class='bx bx-trash'></i>
+                                            Delete
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            {% else %}
+
+                                <span class="table-muted-text">
+                                    Current account
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                {% else %}
+
+                    <tr>
+
+                        <td colspan="5">
+
+                            <div class="table-empty">
+
+                                <div class="table-empty-icon">
+                                    <i class='bx bx-user'></i>
+                                </div>
+
+                                <strong>No users found</strong>
+
+                                <span>
+                                    There are currently no system users.
+                                </span>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

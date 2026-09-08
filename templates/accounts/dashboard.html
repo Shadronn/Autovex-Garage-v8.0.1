@@ -1,0 +1,148 @@
+    {% extends "base.html" %}
+
+    {%block sidebar%}
+    <nav>
+            <p class="nav-title">MAIN</p>
+             {% if role == "admin" %}
+            <a href="/dashboard" class="active">
+            <i class='bx bx-home'></i> <span> Admin Dashboard</span>
+            </a>
+             {% endif %}
+           
+            <p class="nav-title">OPERATIONS</p>
+            {% if role in ["admin", "mechanic", "accounts"] %}
+            <a href="/jobs">
+                <i class='bx bx-briefcase'> </i><span> Jobs</span>
+            </a>
+            <a href="/customers">
+                <i class='bx  bx-group'></i>  <span> Customers</span>
+            </a>
+            {%endif%}
+            {% if role  =="superadmin" %}
+            <a href="{{ url_for('users') }}">
+                <i class='bx bx-user'></i>
+                   <span>Users</span>
+            </a>
+            {%endif%}
+            {% if role in ["admin", "mechanic","accounts", "superuser"] %}
+            <a href="{{ url_for('vehicles') }}">
+                <i class='bx bx-car'></i>
+                  <span>Vehicles</span>
+            </a>
+            <a href="{{ url_for('invoices') }}"><i class='bx bx-receipt'></i>  <span>Invoices</span></a>
+
+            <p class="nav-title">INVENTORY</p>
+            <a><i class='bx bx-box'></i><span>Products</span></a>
+            <a><i class='bx bx-wrench'></i> <span>Services</span></a>
+            {%endif%}
+
+        </nav>
+    {%endblock%}
+    {% block content %}
+    <h1>Dashboard</h1>
+    <div class="workshop-card">
+                <div class="workshop-left">
+                    <div class="avatar">
+                        <img src="{{ url_for('static', filename='assets/images/logo.png') }}" alt="Logo">
+                    </div>
+                    <div>
+                        <p><i class='bx  bx-phone'></i>  +254 700 706 641</p>
+                        <p><i class='bx bx-envelope'></i> info@riverineauto.com</p>
+                        <p><i class='bx bx-map'></i> P.O Box 100-40200, Kisii</p>
+                    </div>
+                </div>
+
+                <div class="workshop-right">
+                    <p><i class='bx bx-time'></i> {{ now.strftime("%A, %d %B %Y %H:%M") }}</p>
+                    <p><i class='bx bx-money'></i> Currency: KES</p>
+                </div>
+            </div>
+    <!-- DASHBOARD CARDS -->
+    <div class="cards">
+
+        {% if role in ["admin", "mechanic", "superuser"] %}
+        <a href="{{ url_for('jobs') }}" class="card-link">
+            <div class="card">
+                <div class="card-icon">
+                    <i class='bx bx-briefcase'></i>
+                </div>
+                <div class="card-info">
+                    <h3>Total Jobs</h3>
+                    <p>All job cards</p>
+                </div>
+                <div class="card-value">{{ total_jobs }}</div>
+            </div>
+        </a>
+       
+        <a href="{{ url_for('jobs', status='Open') }}" class="card-link">
+            <div class="card">
+                <div class="card-icon">
+                    <i class='bx bx-user'></i>
+                </div>
+                <div class="card-info">
+                    <h3>Open Jobs</h3>
+                    <p>Pending work</p>
+                </div>
+                <div class="card-value">{{ open_jobs }}</div>
+            </div>
+        </a>
+        
+
+        <a href="{{ url_for('users') }}" class="card-link">
+            <div class="card">
+                <div class="card-icon">
+                    <i class='bx bx-money'></i>
+                </div>
+                <div class="card-info">
+                    <h3>Users</h3>
+                    <p>System users</p>
+                </div>
+                <div class="card-value">{{ total_users }}</div>
+            </div>
+        </a>
+
+         {%endif%}
+         <a href="{{ url_for('reports') }}" class="card-link">
+            <div class="card">
+                <div class="card-icon">
+                    <i class='bx bx-money'></i>
+                </div>
+                <div class="card-info">
+                    <h3>Reports</h3>
+                    <p>Operations</p>
+                </div>
+                <div class="card-value"></div>
+            </div>
+        </a>
+         <a href="{{ url_for('jobs', status='Closed') }}" class="card-link">
+            <div class="card">
+                <div class="card-icon">
+                    <i class='bx bx-money'></i>
+                </div>
+                <div class="card-info">
+                    <h3>Completed Jobs</h3>
+                    <p>Awaiting Invoicing</p>
+                </div>
+                <div class="card-value">
+                    {{ closed_jobs }}
+                </div>
+            </div>
+        </a>
+
+         <a href="{{ url_for('invoices', status='Unpaid') }}" class="card-link">
+            <div class="card">
+                <div class="card-icon">
+                    <i class='bx bx-money'></i>
+                </div>
+                <div class="card-info">
+                    <h3>Debt</h3>
+                    <p>Unpaid Invoices</p>
+                </div>
+                <div class="card-value">
+                    Ksh {{ "{:,.2f}".format(debt) }}
+                </div>
+            </div>
+        </a>
+
+    </div>
+    {% endblock %}

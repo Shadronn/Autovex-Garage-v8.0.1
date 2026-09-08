@@ -1,0 +1,1520 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="module-page procurement-page">
+
+
+<!-- =====================================================
+     PAGE HEADER
+     ===================================================== -->
+
+<div class="module-header">
+
+    <div>
+
+        <h1>
+            Procurement
+        </h1>
+
+        <p>
+            Manage suppliers, quotations, purchase orders and received goods.
+        </p>
+
+    </div>
+
+    <div class="module-header-actions">
+
+        <button
+            type="button"
+            class="secondary-btn"
+        >
+            <i class="bx bx-download"></i>
+            Export
+        </button>
+
+        <a
+            href="{{ url_for('new_purchase_order') }}"
+            class="primary-btn"
+        >
+            <i class="bx bx-plus"></i>
+            New Purchase
+        </a>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     PROCUREMENT TABS
+     ===================================================== -->
+
+<div class="module-tabs">
+
+    <button
+        type="button"
+        class="module-tab active"
+        data-procurement-tab="procurement-overview"
+    >
+        <i class="bx bx-grid-alt"></i>
+        Overview
+    </button>
+
+
+    <button
+        type="button"
+        class="module-tab"
+        data-procurement-tab="procurement-suppliers"
+    >
+        <i class="bx bx-group"></i>
+        Suppliers
+    </button>
+
+
+    <button
+        type="button"
+        class="module-tab"
+        data-procurement-tab="procurement-quotations"
+    >
+        <i class="bx bx-file"></i>
+        Quotations
+    </button>
+
+
+    <button
+        type="button"
+        class="module-tab"
+        data-procurement-tab="procurement-lpos"
+    >
+        <i class="bx bx-cart"></i>
+        LPOs
+    </button>
+
+
+    <button
+        type="button"
+        class="module-tab"
+        data-procurement-tab="procurement-received"
+    >
+        <i class="bx bx-package"></i>
+        Goods Received
+    </button>
+
+
+    <button
+        type="button"
+        class="module-tab"
+        data-procurement-tab="procurement-invoices"
+    >
+        <i class="bx bx-receipt"></i>
+        Purchase Invoices
+    </button>
+
+</div>
+
+
+
+<!-- =====================================================
+     OVERVIEW
+     ===================================================== -->
+
+<section
+    class="procurement-module-tab active"
+    id="procurement-overview"
+>
+
+    <div class="financial-summary">
+
+
+        <!-- Active Suppliers -->
+
+        <div class="financial-card">
+
+            <div class="financial-card-top">
+
+                <div class="financial-icon">
+                    <i class="bx bx-group"></i>
+                </div>
+
+                <span class="financial-label">
+                    Active Suppliers
+                </span>
+
+            </div>
+
+            <div class="financial-value">
+                {{ active_suppliers_count }}
+            </div>
+
+            <div class="financial-description">
+                Registered active suppliers
+            </div>
+
+        </div>
+
+
+        <!-- Pending Quotations -->
+
+        <div class="financial-card">
+
+            <div class="financial-card-top">
+
+                <div class="financial-icon">
+                    <i class="bx bx-file"></i>
+                </div>
+
+                <span class="financial-label">
+                    Pending Quotations
+                </span>
+
+            </div>
+
+            <div class="financial-value">
+                {{ pending_quotations_count }}
+            </div>
+
+            <div class="financial-description">
+                Quotations awaiting review
+            </div>
+
+        </div>
+
+
+        <!-- Open LPOs -->
+
+        <div class="financial-card">
+
+            <div class="financial-card-top">
+
+                <div class="financial-icon">
+                    <i class="bx bx-cart"></i>
+                </div>
+
+                <span class="financial-label">
+                    Open LPOs
+                </span>
+
+            </div>
+
+            <div class="financial-value">
+                {{ open_lpos_count }}
+            </div>
+
+            <div class="financial-description">
+                Purchase orders in progress
+            </div>
+
+        </div>
+
+
+        <!-- Outstanding Purchases -->
+
+        <div class="financial-card">
+
+            <div class="financial-card-top">
+
+                <div class="financial-icon">
+                    <i class="bx bx-money"></i>
+                </div>
+
+                <span class="financial-label">
+                    Outstanding Purchases
+                </span>
+
+            </div>
+
+            <div class="financial-value">
+                KES {{ "{:,.2f}".format(outstanding_purchases) }}
+            </div>
+
+            <div class="financial-description">
+                Unpaid supplier invoices
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =================================================
+         OVERVIEW PANELS
+         ================================================= -->
+
+    <div class="financial-overview">
+
+
+        <!-- Recent Purchases -->
+
+        <div class="financial-panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <h3>
+                        Recent Purchases
+                    </h3>
+
+                    <p>
+                        Latest procurement activity
+                    </p>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="view-all-btn"
+                >
+                    View All
+                    <i class="bx bx-right-arrow-alt"></i>
+                </button>
+
+            </div>
+
+
+            <div class="financial-table-wrapper">
+
+                <table class="financial-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Reference
+                            </th>
+
+                            <th>
+                                Supplier
+                            </th>
+
+                            <th>
+                                Date
+                            </th>
+
+                            <th>
+                                Amount
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for order in recent_purchase_orders %}
+
+                        <tr>
+
+                            <td>
+                                <strong>
+                                    {{ order.lpo_number }}
+                                </strong>
+                            </td>
+
+                            <td>
+                                {{ order.supplier.supplier_name }}
+                            </td>
+
+                            <td>
+                                {{ order.order_date.strftime(
+                                    '%d %b %Y'
+                                ) if order.order_date else '—' }}
+                            </td>
+
+                            <td>
+                                KES {{ "{:,.2f}".format(
+                                    order.total_amount or 0
+                                ) }}
+                            </td>
+
+                        </tr>
+
+                        {% else %}
+
+                        <tr>
+
+                            <td
+                                colspan="4"
+                                class="empty-table-state"
+                            >
+
+                                <i class="bx bx-cart"></i>
+
+                                <div>
+
+                                    <strong>
+                                        No purchases recorded
+                                    </strong>
+
+                                    <p>
+                                        Purchase orders will appear here.
+                                    </p>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- Procurement Activity -->
+
+        <div class="financial-panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <h3>
+                        Procurement Activity
+                    </h3>
+
+                    <p>
+                        Current purchasing status
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="financial-metrics">
+
+
+                <div class="metric">
+
+                    <span>
+                        Quotations
+                    </span>
+
+                    <strong>
+                        {{ pending_quotations_count }} Pending
+                    </strong>
+
+                </div>
+
+
+                <div class="metric">
+
+                    <span>
+                        LPOs
+                    </span>
+
+                    <strong>
+                        {{ open_lpos_count }} Open
+                    </strong>
+
+                </div>
+
+
+                <div class="metric">
+
+                    <span>
+                        Goods Received
+                    </span>
+
+                    <strong>
+                        {{ goods_received_this_month }} This Month
+                    </strong>
+
+                </div>
+
+
+                <div class="metric">
+
+                    <span>
+                        Purchase Invoices
+                    </span>
+
+                    <strong>
+                         {{ pending_purchase_invoices }} Pending
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     SUPPLIERS
+     ===================================================== -->
+
+<section
+    class="procurement-module-tab"
+    id="procurement-suppliers"
+>
+
+    <div class="financial-list-panel">
+
+        <div class="financial-list-header">
+
+            <div>
+
+                <h3>
+                    Suppliers
+                </h3>
+
+                <p>
+                    Manage suppliers and their purchasing information.
+                </p>
+
+            </div>
+
+            <a
+                href="{{ url_for('new_supplier') }}"
+                class="primary-btn"
+            >
+                <i class="bx bx-plus"></i>
+                New Supplier
+            </a>
+
+        </div>
+
+
+        <div class="financial-table-wrapper">
+
+            <table class="financial-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Supplier
+                        </th>
+
+                        <th>
+                            Contact
+                        </th>
+
+                        <th>
+                            Phone
+                        </th>
+
+                        <th>
+                            Email
+                        </th>
+                        <th>
+                            PIN
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+                        <th>
+                            Actions
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for supplier in suppliers %}
+
+                    <tr>
+
+                        <td>
+                            <strong>
+                                {{ supplier.supplier_name }}
+                            </strong>
+                        </td>
+
+                        <td>
+                            {{ supplier.contact_person or '—' }}
+                        </td>
+
+                        <td>
+                            {{ supplier.phone or '—' }}
+                        </td>
+
+                        <td>
+                            {{ supplier.email or '—' }}
+                        </td>
+
+                        <td>
+                            {{ supplier.tax_pin or '—' }}
+                        </td>
+
+                        <td>
+
+                            {% if supplier.status == "Active" %}
+
+                                <span class="status-badge status-active">
+                                    Active
+                                </span>
+
+                            {% else %}
+
+                                <span class="status-badge status-inactive">
+                                    {{ supplier.status }}
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            <div class="table-actions">
+
+                                <a
+                                    href="{{ url_for('edit_supplier', supplier_id=supplier.id) }}"
+                                    class="btn"
+                                    title="Edit Supplier"
+                                >
+                                    <i class="bx bx-edit"></i>
+                                </a>
+                                <form
+                                    method="POST"
+                                    action="{{ url_for(
+                                        'toggle_supplier_status',
+                                        supplier_id=supplier.id
+                                    ) }}"
+                                    style="display:inline;"
+                                >
+
+                                    <button
+                                        type="submit"
+                                        class="btn"
+                                        title="{{ 'Deactivate' if supplier.status == 'Active' else 'Activate' }}"
+                                    >
+
+                                        {% if supplier.status == "Active" %}
+
+                                            <i class="bx bx-block"></i>
+
+                                        {% else %}
+
+                                            <i class="bx bx-check-circle"></i>
+
+                                        {% endif %}
+
+                                    </button>
+
+                                </form>
+                            </div>
+
+
+                        </td>
+
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+
+                        <td
+                            colspan="7"
+                            class="empty-table-state"
+                        >
+                            <i class="bx bx-package"></i>
+
+                            <div>
+                                <strong>No suppliers found</strong>
+                                <p>
+                                    Add your first supplier to get started.
+                                </p>
+                            </div>
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     QUOTATIONS
+     ===================================================== -->
+
+<section
+    class="procurement-module-tab"
+    id="procurement-quotations"
+>
+
+    <div class="financial-list-panel">
+
+        <div class="financial-list-header">
+
+            <div>
+
+                <h3>
+                    Quotations
+                </h3>
+
+                <p>
+                    Review and compare supplier quotations.
+                </p>
+
+            </div>
+
+            <button
+                type="button"
+                class="primary-btn"
+            >
+                <i class="bx bx-plus"></i>
+                New Quotation
+            </button>
+
+        </div>
+
+
+        <div class="financial-table-wrapper">
+
+            <table class="financial-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Quote No.
+                        </th>
+
+                        <th>
+                            Supplier
+                        </th>
+
+                        <th>
+                            Date
+                        </th>
+
+                        <th>
+                            Valid Until
+                        </th>
+
+                        <th>
+                            Amount
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    <tr>
+
+                        <td>
+                            QT-00124
+                        </td>
+
+                        <td>
+                            Auto Parts Kenya
+                        </td>
+
+                        <td>
+                            15 Aug 2026
+                        </td>
+
+                        <td>
+                            25 Aug 2026
+                        </td>
+
+                        <td>
+                            KES 65,000
+                        </td>
+
+                        <td>
+                            <span class="payment-status partial">
+                                Pending
+                            </span>
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            QT-00123
+                        </td>
+
+                        <td>
+                            Motorlink Kenya
+                        </td>
+
+                        <td>
+                            14 Aug 2026
+                        </td>
+
+                        <td>
+                            24 Aug 2026
+                        </td>
+
+                        <td>
+                            KES 58,500
+                        </td>
+
+                        <td>
+                            <span class="payment-status partial">
+                                Under Review
+                            </span>
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     LPOs
+     ===================================================== -->
+
+<section
+    class="procurement-module-tab"
+    id="procurement-lpos"
+>
+
+    <div class="financial-list-panel">
+
+        <div class="financial-list-header">
+
+            <div>
+
+                <h3>
+                    Local Purchase Orders
+                </h3>
+
+                <p>
+                    Create and monitor purchase orders issued to suppliers.
+                </p>
+
+            </div>
+
+            <a
+                href="{{ url_for('new_purchase_order') }}"
+                class="primary-btn"
+            >
+                <i class="bx bx-plus"></i>
+                New LPO
+            </a>
+
+        </div>
+
+
+        <div class="financial-table-wrapper">
+
+            <table class="financial-table">
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            LPO No.
+                        </th>
+
+                        <th>
+                            Supplier
+                        </th>
+
+                        <th>
+                            Date
+                        </th>
+
+                        <th>
+                            Expected
+                        </th>
+
+                        <th>
+                            Amount
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                        <th>
+                            Action
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for order in purchase_orders %}
+
+                    <tr>
+
+                        <!-- LPO NUMBER -->
+
+                        <td>
+                            <strong>
+                                {{ order.lpo_number }}
+                            </strong>
+                        </td>
+
+
+                        <!-- SUPPLIER -->
+
+                        <td>
+                            {{ order.supplier.supplier_name }}
+                        </td>
+
+
+                        <!-- ORDER DATE -->
+
+                        <td>
+                            {{ order.order_date.strftime('%d %b %Y')
+                            if order.order_date else '—' }}
+                        </td>
+
+
+                        <!-- EXPECTED DATE -->
+
+                        <td>
+                            {{ order.expected_date.strftime('%d %b %Y')
+                            if order.expected_date else '—' }}
+                        </td>
+
+
+                        <!-- AMOUNT -->
+
+                        <td>
+                            KES {{ "{:,.2f}".format(
+                                order.total_amount or 0
+                            ) }}
+                        </td>
+
+
+                        <!-- STATUS -->
+
+                        <td>
+
+                            {% if order.status == "Paid" %}
+
+                                <span class="payment-status paid">
+                                    Paid
+                                </span>
+
+                            {% elif order.status in ["Approved", "Confirmed"] %}
+
+                                <span class="payment-status paid">
+                                    {{ order.status }}
+                                </span>
+
+                            {% elif order.status == "Draft" %}
+
+                                <span class="payment-status partial">
+                                    Draft
+                                </span>
+
+                            {% else %}
+
+                                <span class="payment-status partial">
+                                    {{ order.status }}
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- ACTION -->
+
+                        <td>
+
+                            <a
+                                href="{{ url_for(
+                                    'purchase_order_detail',
+                                    order_id=order.id
+                                ) }}"
+                                class="btn"
+                                title="View LPO"
+                            >
+
+                                <i class="bx bx-show"></i>
+                                View
+
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+
+                        <td
+                            colspan="7"
+                            style="text-align: center;"
+                        >
+
+                            <div class="empty-table-state">
+
+                                <i class="bx bx-cart"></i>
+
+                                <strong>
+                                    No purchase orders recorded
+                                </strong>
+
+                                <p>
+                                    Create your first LPO to get started.
+                                </p>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     GOODS RECEIVED
+     ===================================================== -->
+
+<section
+    class="procurement-module-tab"
+    id="procurement-received"
+>
+
+    <div class="financial-list-panel">
+
+        <div class="financial-list-header">
+
+            <div>
+
+                <h3>
+                    Goods Received
+                </h3>
+
+                <p>
+                    Record and monitor parts and goods received from suppliers.
+                </p>
+
+            </div>
+
+            <a
+                href="{{ url_for('new_goods_receipt') }}"
+                class="primary-btn"
+            >
+                <i class="bx bx-plus"></i>
+                Receive Goods
+            </a>
+
+        </div>
+
+
+        <div class="financial-table-wrapper">
+
+            <table class="financial-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>GRN No.</th>
+
+                        <th>LPO No.</th>
+
+                        <th>Supplier</th>
+
+                        <th>Date</th>
+
+                        <th>Items</th>
+
+                        <th>Status</th>
+
+                        <th>Action</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for receipt in goods_receipts %}
+
+                    <tr>
+
+                        <!-- GRN -->
+
+                        <td>
+
+                            <strong>
+                                {{ receipt.grn_number }}
+                            </strong>
+
+                        </td>
+
+
+                        <!-- LPO -->
+
+                        <td>
+
+                            {{ receipt.purchase_order.lpo_number }}
+
+                        </td>
+
+
+                        <!-- SUPPLIER -->
+
+                        <td>
+
+                            {{ receipt.purchase_order.supplier.supplier_name }}
+
+                        </td>
+
+
+                        <!-- DATE -->
+
+                        <td>
+
+                            {{ receipt.received_date.strftime(
+                                '%d %b %Y'
+                            ) if receipt.received_date else '—' }}
+
+                        </td>
+
+
+                        <!-- ITEMS -->
+
+                        <td>
+
+                            {{ receipt.items|length }}
+
+                        </td>
+
+
+                        <!-- STATUS -->
+
+                        <td>
+
+                            {% if receipt.status == "Received" %}
+
+                                <span class="payment-status paid">
+                                    Received
+                                </span>
+
+                            {% else %}
+
+                                <span class="payment-status partial">
+                                    {{ receipt.status }}
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- ACTION -->
+
+                        <td>
+
+                            <a
+                                href="{{ url_for(
+                                    'goods_receipt_detail',
+                                    receipt_id=receipt.id
+                                ) }}"
+                                class="btn"
+                                title="View Goods Receipt"
+                            >
+
+                                <i class="bx bx-show"></i>
+                                View
+
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+
+                        <td
+                            colspan="7"
+                            style="text-align:center;"
+                        >
+
+                            <div class="empty-table-state">
+
+                                <i class="bx bx-package"></i>
+
+                                <strong>
+                                    No goods received
+                                </strong>
+
+                                <p>
+                                    Goods received from suppliers will appear here.
+                                </p>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     PURCHASE INVOICES
+     ===================================================== -->
+
+<section
+    class="procurement-module-tab"
+    id="procurement-invoices"
+>
+
+    <div class="financial-list-panel">
+
+        <div class="financial-list-header">
+
+            <div>
+
+                <h3>
+                    Purchase Invoices
+                </h3>
+
+                <p>
+                    Manage invoices received from suppliers.
+                </p>
+
+            </div>
+
+            <a
+                href="{{ url_for('new_supplier_bill') }}"
+                class="btn btn-primary"
+            >
+                <i class="bx bx-plus"></i>
+                Record Supplier Invoice
+            </a>
+        </div>
+
+
+        <div class="financial-table-wrapper">
+
+            <table class="financial-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Invoice No.
+                        </th>
+
+                        <th>
+                            Supplier
+                        </th>
+
+                        <th>
+                            Invoice Date
+                        </th>
+
+                        <th>
+                            Due Date
+                        </th>
+
+                        <th>
+                            Amount
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+                        <th>
+                            Action
+                        </th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for bill in supplier_bills %}
+
+                    <tr>
+
+                        <!-- Invoice Number -->
+
+                        <td>
+                            <strong>
+                                {{ bill.bill_number }}
+                            </strong>
+                        </td>
+
+
+                        <!-- Supplier -->
+
+                        <td>
+                            {{ bill.supplier.supplier_name }}
+                        </td>
+
+
+                        <!-- Invoice Date -->
+
+                        <td>
+                            {{ bill.bill_date.strftime('%d %b %Y') if bill.bill_date else '—' }}
+                        </td>
+
+
+                        <!-- Due Date -->
+
+                        <td>
+                            {{ bill.due_date.strftime('%d %b %Y') if bill.due_date else '—' }}
+                        </td>
+
+
+                        <!-- Amount -->
+
+                        <td>
+                            KES {{ "{:,.2f}".format(bill.amount) }}
+                        </td>
+
+
+                        <!-- Status -->
+
+                        <td>
+
+                            {% if bill.status == "Paid" %}
+
+                                <span class="payment-status paid">
+                                    Paid
+                                </span>
+
+                            {% elif bill.status == "Partial" %}
+
+                                <span class="payment-status partial">
+                                    Partial
+                                </span>
+
+                            {% else %}
+
+                                <span class="payment-status partial">
+                                    Unpaid
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- Action -->
+
+                        <td>
+
+                            <a
+                                href="{{ url_for(
+                                    'supplier_bill_detail',
+                                    bill_id=bill.id
+                                ) }}"
+                                class="btn"
+                            >
+                                <i class="bx bx-show"></i>
+                                View
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+
+                        <td
+                            colspan="7"
+                            style="text-align: center;"
+                        >
+
+                            <div class="empty-table-state">
+
+                                <i class="bx bx-receipt"></i>
+
+                                <strong>
+                                    No supplier invoices recorded
+                                </strong>
+
+                                <p>
+                                    Supplier invoices you record will appear here.
+                                </p>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+</div>
+
+<!-- =========================================================
+     PROCUREMENT TAB JAVASCRIPT
+     ========================================================= -->
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const tabs =
+            document.querySelectorAll(
+                "[data-procurement-tab]"
+            );
+
+        const contents =
+            document.querySelectorAll(
+                ".procurement-module-tab"
+            );
+
+
+        tabs.forEach(function (tab) {
+
+            tab.addEventListener(
+                "click",
+                function () {
+
+                    const target =
+                        this.dataset.procurementTab;
+
+
+                    /*
+                     * Remove active state
+                     */
+
+                    tabs.forEach(function (item) {
+
+                        item.classList.remove(
+                            "active"
+                        );
+
+                    });
+
+
+                    contents.forEach(function (content) {
+
+                        content.classList.remove(
+                            "active"
+                        );
+
+                    });
+
+
+                    /*
+                     * Activate selected tab
+                     */
+
+                    this.classList.add(
+                        "active"
+                    );
+
+
+                    const selected =
+                        document.getElementById(
+                            target
+                        );
+
+
+                    if (selected) {
+
+                        selected.classList.add(
+                            "active"
+                        );
+
+                    }
+
+                }
+            );
+
+        });
+
+    }
+);
+
+</script>
+
+{% endblock %}

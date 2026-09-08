@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block sidebar %}
+{% endblock %}
+{% block content %}
+
+
+<form method="POST" class="form-card">
+    <h1>Customer onboarding</h1>
+    <h3>Customer details</h3>
+    <div class="form-grid">
+        <div class="form-group">
+            <input name="customer_name" placeholder="Customer Name" required>
+        </div>
+        <div class="form-group">
+            <input name="telno" placeholder="Phone Number" required>
+        </div>
+        <div class="form-group">
+            <input name="email" placeholder="Email">
+        </div>
+        <div class="form-group">
+            <select name="class" id="">
+                <option value="Individual">Individual</option>
+                <option value="Corporate">Corporate</option>
+                <option value="Insurance">Insurance</option>
+            </select>
+        </div>
+        <div class="form-group full-width">
+            <input name="address" placeholder="Address">
+        </div>
+    </div>
+    <div class="button-group">
+        <button type="submit" class="primary-btn">Submit</button>
+        <button type="button" class="secondary-btn" onclick="window.location.href='{{ url_for('customers')}}'">Cancel</button>
+    </div>
+    
+</form>
+
+
+{% endblock %}
+

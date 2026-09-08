@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+
+        <h4>Supplier Invoices</h4>
+
+        <p>
+            View supplier invoices, outstanding balances and payment status.
+        </p>
+
+    </div>
+
+    <div>
+
+        <a
+            href="{{ url_for('new_supplier_bill') }}"
+            class="btn btn-primary"
+        >
+            <i class="bx bx-plus"></i>
+            Record Supplier Invoice
+        </a>
+
+    </div>
+
+</div>
+
+
+<div class="form-card">
+
+    <div class="job-card-table-wrapper">
+
+        <table class="job-card-items-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>Supplier</th>
+
+                    <th>Invoice No.</th>
+
+                    <th>Invoice Date</th>
+
+                    <th>Due Date</th>
+
+                    <th>Amount</th>
+
+                    <th>Paid</th>
+
+                    <th>Balance</th>
+
+                    <th>Status</th>
+
+                    <th></th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for bill in bills %}
+
+                <tr>
+
+                    <td>
+                        <strong>
+                            {{ bill.supplier.supplier_name }}
+                        </strong>
+                    </td>
+
+                    <td>
+                        {{ bill.bill_number }}
+                    </td>
+
+                    <td>
+                        {{ bill.bill_date.strftime('%d %b %Y') if bill.bill_date else '—' }}
+                    </td>
+
+                    <td>
+                        {{ bill.due_date.strftime('%d %b %Y') if bill.due_date else '—' }}
+                    </td>
+
+                    <td>
+                        KES {{ "{:,.2f}".format(bill.amount) }}
+                    </td>
+
+                    <td>
+                        KES {{ "{:,.2f}".format(bill.amount_paid) }}
+                    </td>
+
+                    <td>
+                        <strong>
+                            KES {{ "{:,.2f}".format(bill.balance) }}
+                        </strong>
+                    </td>
+
+                    <td>
+
+                        {% if bill.status == "Paid" %}
+
+                            <span class="status-badge status-active">
+                                Paid
+                            </span>
+
+                        {% elif bill.status == "Partial" %}
+
+                            <span class="status-badge status-pending">
+                                Partial
+                            </span>
+
+                        {% else %}
+
+                            <span class="status-badge status-inactive">
+                                Unpaid
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+
+                        <a
+                            href="{{ url_for(
+                                'supplier_bill_detail',
+                                bill_id=bill.id
+                            ) }}"
+                            class="table-action-btn"
+                            title="View Invoice"
+                        >
+                            <i class="bx bx-show"></i>
+                        </a>
+
+                    </td>
+
+                </tr>
+
+                {% else %}
+
+                <tr>
+
+                    <td
+                        colspan="9"
+                        class="empty-table-state"
+                    >
+
+                        <i class="bx bx-receipt"></i>
+
+                        <div>
+
+                            <strong>
+                                No supplier invoices found
+                            </strong>
+
+                            <p>
+                                Supplier invoices you record will appear here.
+                            </p>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

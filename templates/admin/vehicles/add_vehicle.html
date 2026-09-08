@@ -1,0 +1,792 @@
+{% extends "base.html" %}
+
+{% block sidebar %}
+
+{% endblock %}
+{% block content %}
+<div class="form-card">
+
+    <h2>Vehicle Check-In</h2>
+
+    <!-- Progress -->
+    <div class="stepper">
+
+        <div class="stepper-item active">
+            <div class="step-circle">1</div>
+            <small>Vehicle</small>
+        </div>
+
+        <div class="stepper-item">
+            <div class="step-circle">2</div>
+            <small>Outside</small>
+        </div>
+
+        <div class="stepper-item">
+            <div class="step-circle">3</div>
+            <small>Engine</small>
+        </div>
+
+        <div class="stepper-item">
+            <div class="step-circle">4</div>
+            <small>Interior</small>
+        </div>
+        <div class="stepper-item">
+            <div class="step-circle">5</div>
+            <small>Accessories</small>
+        </div>
+
+    </div>
+     <!-- Macros for Glass -->
+    {% macro glass_condition(name, label) %}
+<div class="form-group">
+    <label>{{ label }}</label>
+    <select name="{{ name }}">
+        <option value="Good">Good</option>
+        
+        <option value="Cracked">Cracked</option>
+        <option value="Shattered">Shattered</option>
+        <option value="Tint Damaged">Tint Damaged</option>
+    </select>
+</div>
+{% endmacro %}
+ <!-- Macros for Tyres -->
+{% macro tyre_condition(name, label) %}
+<div class="form-group">
+    <label>{{ label }}</label>
+    <select name="{{ name }}">
+        <option value="Good">Good</option>
+       <option value="Punctured">Punctured</option>
+       <option value="Damaged">Needs Replace(Worn-out)</option>
+    </select>
+</div>
+{% endmacro %}
+ <!-- Macros for lights -->
+{% macro lighting_condition(name, label) %}
+<div class="form-group">
+    <label>{{ label }}</label>
+    <select name="{{ name }}">
+        <option value="Working">Working</option>
+        <option value="Damaged">Damaged</option>
+        <option value="Not Working">Needs Replacements</option>
+        <option value="Missing">Missing</option>
+    </select>
+</div>
+{% endmacro %}
+<!-- macros for outside -->
+{% macro outside_condition(name, label) %}
+<div class="form-group">
+        <label>{{ label }}</label>
+    <select name="{{ name }}">
+        <option value="Good">Good</option>
+        <option value="Scratched">Scratched</option>
+        <option value="Dented">Dented</option>
+        <option value="Cracked">Cracked</option>
+        <option value="Damaged">Damaged</option>
+        <option value="Missing">Missing</option>
+        
+    </select>
+</div>
+{% endmacro %}
+ <!-- macros for engine bay -->
+   {% macro engine_condition(name, label) %}
+<div class="form-group">
+    <label>{{ label }}</label>
+    <select name="{{ name }}">
+        <option value="OK">Good</option>
+        <option value="Low">Low</option>
+        <option value="Worn">Worn/Missing</option>
+        <option value="Leaking">Leaking</option>
+        <option value="Damaged">Damaged/Replace</option>
+        
+        <option value="Needs Attention">Needs Attention</option>
+    </select>
+</div>
+{% endmacro %}
+ <!-- For interior  -->
+{% macro interior_condition(name, label) %}
+<div class="form-group">
+    <label>{{ label }}</label>
+    <select name="{{ name }}">
+        <option value="Good">Good</option>
+        
+        <option value="Worn">Worn</option>
+        <option value="Damaged">Damaged</option>
+        <option value="Missing">Missing</option>
+        
+    </select>
+</div>
+{% endmacro %}
+    <form method="POST" enctype="multipart/form-data">
+
+        <!-- STEP 1 -->
+        <div class="step active">
+
+            <h3>Vehicle Details</h3>
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label>Customer</label>
+
+                    <select name="customer_id" required>
+
+                        <option value="">Select customer</option>
+
+                        {% for customer in customers %}
+                        <option value="{{ customer.id }}">
+                            {{ customer.customer_name }}
+                        </option>
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+                <div class="form-group">
+                    <label>Registration Number</label>
+                    <input name="registration_no" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Model</label>
+                    <input name="model" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Colour</label>
+                    <input name="color">
+                </div>
+
+                <div class="form-group">
+                    <label>Year of Manufacture</label>
+                    <input name="yom">
+                </div>
+                <div class="form-group">
+                    <label>Owner</label>
+                    <input name="owner">
+                </div>
+            <div class="form-group photo-group">
+
+                <label>Vehicle Photos</label>
+
+                <div class="photo-options">
+
+                    <!-- Upload Photos -->
+                    <label class="photo-option-btn">
+                    <i class='bx bx-upload'></i>
+                    <span>Upload Photos</span>
+
+                    <input
+                        type="file"
+                        name="photos"
+                        class="photo-input"
+                        accept="image/*"
+                        multiple
+                    >
+                </label>
+
+
+                <button
+                    type="button"
+                    class="photo-option-btn"
+                    id="takePhotoBtn"
+                >
+                    <i class='bx bx-camera'></i>
+                    <span>Take Photo</span>
+                </button>
+
+                </div>
+
+                <!-- Camera -->
+                <div id="cameraContainer" class="camera-container">
+
+                    <video
+                        id="cameraPreview"
+                        autoplay
+                        playsinline
+                    ></video>
+
+                    <div class="camera-controls">
+
+                        <button
+                            type="button"
+                            id="capturePhotoBtn"
+                        >
+                            <i class='bx bx-camera'></i>
+                            Capture
+                        </button>
+
+                        <button
+                            type="button"
+                            id="closeCameraBtn"
+                        >
+                            Cancel
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <!-- Captured photo previews -->
+                <div
+                    id="capturedPhotos"
+                    class="captured-photos">
+                </div>
+
+                <!-- IMPORTANT: hidden input for camera photos -->
+                <input
+                    type="file"
+                    name="camera_photos"
+                    id="cameraPhotoInput"
+                    multiple
+                    hidden
+                >
+
+                <canvas id="photoCanvas" hidden></canvas>
+
+            </div>
+
+            </div>
+
+            <div class="wizard-buttons">
+                <button
+                    type="button"
+                    class="login-btn"
+                    onclick="nextStep()">
+
+                    Next →
+
+                </button>
+            </div>
+
+        </div>
+
+        <!-- STEP 2 -->
+
+        <div class="step">
+
+            <h3>Outside Vehicle</h3>
+
+                <div class="form-grid">
+
+                {{ outside_condition("front_bumper","Front Bumper") }}
+{{ outside_condition("rear_bumper","Rear Bumper") }}
+{{ outside_condition("bonnet","Bonnet") }}
+{{ outside_condition("roof","Roof") }}
+{{ outside_condition("boot","Boot Lid") }}
+
+{{ outside_condition("left_front_fender","Left Front Fender") }}
+{{ outside_condition("right_front_fender","Right Front Fender") }}
+
+{{ outside_condition("left_front_door","Left Front Door") }}
+{{ outside_condition("right_front_door","Right Front Door") }}
+
+{{ outside_condition("left_rear_door","Left Rear Door") }}
+{{ outside_condition("right_rear_door","Right Rear Door") }}
+
+{{ outside_condition("left_rear_fender","Left Rear Fender") }}
+{{ outside_condition("right_rear_fender","Right Rear Fender") }}
+
+{{ glass_condition("windscreen","Windscreen") }}
+{{ glass_condition("rear_screen","Rear Screen") }}
+
+{{ lighting_condition("mirrors","Mirrors") }}
+
+{{ lighting_condition("headlights","Headlights") }}
+{{ lighting_condition("tail_lights","Tail Lights") }}
+
+{{ tyre_condition("tyres","Tyres") }}
+
+                </div>
+
+                <div class="form-group">
+
+                <label>Outside Comments</label>
+
+                <textarea name="outside_comments"></textarea>
+
+                </div>
+
+            <div class="wizard-buttons">
+
+                <button
+                    type="button"
+                    class="cancel-btn"
+                    onclick="previousStep()">
+
+                    ← Previous
+
+                </button>
+
+                <button
+                    type="button"
+                    class="login-btn"
+                    onclick="nextStep()">
+
+                    Next →
+
+                </button>
+
+            </div>
+
+        </div>
+        <!-- STEP 3 -->
+
+        <div class="step">
+
+            <h3>Engine Bay</h3>
+
+                <div class="form-grid">
+
+               {{ engine_condition("engine_oil","Engine Oil") }}
+{{ engine_condition("coolant","Coolant") }}
+{{ engine_condition("brake_fluid","Brake Fluid") }}
+{{ engine_condition("steering_fluid","Power Steering Fluid") }}
+
+{{ engine_condition("battery","Battery") }}
+{{ engine_condition("belts","Drive Belts") }}
+
+{{ engine_condition("oil_leaks","Oil Leaks") }}
+{{ engine_condition("coolant_leaks","Coolant Leaks") }}
+
+                </div>
+
+                <div class="form-group">
+
+                <label>Engine Comments</label>
+
+                <textarea name="engine_comments"></textarea>
+
+                </div>
+            <div class="wizard-buttons">
+
+                <button
+                    type="button"
+                    class="cancel-btn"
+                    onclick="previousStep()">
+
+                    ← Previous
+
+                </button>
+
+                <button
+                    type="button"
+                    class="login-btn"
+                    onclick="nextStep()">
+
+                    Next →
+
+                </button>
+
+            </div>
+
+        </div>
+        <!-- STEP 4 -->
+
+        <div class="step">
+
+            <h3>Interior</h3>
+
+                <div class="form-grid">
+
+              {{ interior_condition("seats","Seats") }}
+{{ interior_condition("dashboard","Dashboard") }}
+{{ interior_condition("steering_wheel","Steering Wheel") }}
+
+{{ interior_condition("infotainment","Infotainment System") }}
+{{ interior_condition("radio","Radio") }}
+{{ interior_condition("aircon","Air Conditioning") }}
+{{ interior_condition("horn","Horn") }}
+{{ interior_condition("interior_lights","Interior Lights") }}
+
+ 
+
+                <div class="form-group">
+
+                <label>Fuel Level</label>
+
+                <select name="fuel_level">
+
+                <option>Empty</option>
+                <option>¼ Tank</option>
+                <option>½ Tank</option>
+                <option>¾ Tank</option>
+                <option>Full</option>
+
+                </select>
+
+                </div>
+              
+
+                </div>
+
+            <div class="wizard-buttons">
+
+                <button
+                    type="button"
+                    class="cancel-btn"
+                    onclick="previousStep()">
+
+                    ← Previous
+
+                </button>
+
+                 <button
+                    type="button"
+                    class="login-btn"
+                    onclick="nextStep()">
+
+                    Next →
+
+                </button>
+
+            </div>
+
+        </div>
+     <!-- STEP 5 -->
+      <div class="step">
+
+    <h3>Accessories Present</h3>
+
+    <div class="inspection-grid">
+
+        <label><input type="checkbox" name="spare_wheel"> Spare Wheel</label>
+
+        <label><input type="checkbox" name="jack"> Jack</label>
+
+        <label><input type="checkbox" name="wheel_spanner"> Wheel Spanner</label>
+
+        <label><input type="checkbox" name="toolkit"> Toolkit</label>
+
+        <label><input type="checkbox" name="fire_extinguisher"> Fire Extinguisher</label>
+
+        <label><input type="checkbox" name="warning_triangle"> Warning Triangle</label>
+
+        <label><input type="checkbox" name="first_aid_kit"> First Aid Kit</label>
+
+    </div>
+
+    <div class="form-group">
+        <label>Accessory Notes</label>
+        <textarea
+            name="accessory_notes"
+            placeholder="Optional remarks..."></textarea>
+    </div>
+
+    <div class="wizard-buttons">
+
+        <button
+            type="button"
+            class="cancel-btn"
+            onclick="previousStep()">
+            ← Previous
+        </button>
+
+        <button
+            type="submit"
+            class="login-btn">
+            Save Vehicle
+        </button>
+
+    </div>
+
+</div>
+
+
+      
+    </form>
+
+</div>
+
+<script>
+
+    let currentStep = 0;
+
+    const steps = document.querySelectorAll(".step");
+    const stepIndicators = document.querySelectorAll(".stepper-item");
+
+    function showStep(index){
+
+        steps.forEach(step => step.classList.remove("active"));
+        stepIndicators.forEach(step => step.classList.remove("active"));
+
+        steps[index].classList.add("active");
+        stepIndicators[index].classList.add("active");
+    }
+
+    function nextStep(){
+
+        if(currentStep < steps.length-1){
+
+            currentStep++;
+
+            showStep(currentStep);
+
+        }
+
+    }
+
+    function previousStep(){
+
+        if(currentStep > 0){
+
+            currentStep--;
+
+            showStep(currentStep);
+
+        }
+
+    }
+
+    showStep(0);
+
+
+    /* =====================================================
+    VEHICLE CAMERA
+    ===================================================== */
+
+    const takePhotoBtn = document.getElementById("takePhotoBtn");
+    const cameraContainer = document.getElementById("cameraContainer");
+    const cameraPreview = document.getElementById("cameraPreview");
+    const capturePhotoBtn = document.getElementById("capturePhotoBtn");
+    const closeCameraBtn = document.getElementById("closeCameraBtn");
+    const photoCanvas = document.getElementById("photoCanvas");
+    const capturedPhotos = document.getElementById("capturedPhotos");
+
+    const cameraPhotoInput = document.getElementById("cameraPhotoInput");
+
+    let cameraStream = null;
+    let capturedFiles = [];
+
+
+    /* =====================================================
+    OPEN CAMERA
+    ===================================================== */
+
+    takePhotoBtn.addEventListener("click", async function () {
+
+        try {
+
+            if (!navigator.mediaDevices ||
+                !navigator.mediaDevices.getUserMedia) {
+
+                alert("Camera access is not supported by this browser.");
+
+                return;
+            }
+
+            cameraStream = await navigator.mediaDevices.getUserMedia({
+
+                video: {
+                    facingMode: {
+                        ideal: "environment"
+                    }
+                },
+
+                audio: false
+
+            });
+
+            cameraPreview.srcObject = cameraStream;
+
+            cameraContainer.classList.add("active");
+
+            await cameraPreview.play();
+
+        } catch (error) {
+
+            console.error("Camera error:", error);
+
+            alert(
+                "Unable to access the camera. Please allow camera permission and try again."
+            );
+
+        }
+
+    });
+
+
+    /* =====================================================
+    CAPTURE PHOTO
+    ===================================================== */
+
+    capturePhotoBtn.addEventListener("click", function () {
+
+        if (!cameraStream) {
+
+            alert("Camera is not active.");
+
+            return;
+        }
+
+        const width = cameraPreview.videoWidth;
+        const height = cameraPreview.videoHeight;
+
+        if (!width || !height) {
+
+            alert("Camera is not ready yet. Please wait a moment.");
+
+            return;
+        }
+
+        photoCanvas.width = width;
+        photoCanvas.height = height;
+
+        const context = photoCanvas.getContext("2d");
+
+        context.drawImage(
+            cameraPreview,
+            0,
+            0,
+            width,
+            height
+        );
+
+        photoCanvas.toBlob(function (blob) {
+
+            if (!blob) {
+
+                alert("Unable to capture photo.");
+
+                return;
+            }
+
+            const file = new File(
+                [blob],
+                `vehicle_photo_${Date.now()}.jpg`,
+                {
+                    type: "image/jpeg",
+                    lastModified: Date.now()
+                }
+            );
+
+            capturedFiles.push(file);
+
+            /* Add file to camera input */
+            updateCameraInput();
+
+            /* Show preview */
+            displayCapturedPhoto(file);
+
+        }, "image/jpeg", 0.9);
+
+    });
+
+
+    /* =====================================================
+    ADD CAMERA FILES TO HIDDEN INPUT
+    ===================================================== */
+
+    function updateCameraInput() {
+
+        const dataTransfer = new DataTransfer();
+
+        capturedFiles.forEach(function (file) {
+
+            dataTransfer.items.add(file);
+
+        });
+
+        cameraPhotoInput.files = dataTransfer.files;
+
+    }
+
+
+    /* =====================================================
+    DISPLAY CAPTURED PHOTO
+    ===================================================== */
+
+    function displayCapturedPhoto(file) {
+
+        const wrapper = document.createElement("div");
+
+        wrapper.className = "captured-photo";
+
+        const img = document.createElement("img");
+
+        img.src = URL.createObjectURL(file);
+
+        img.onload = function () {
+
+            URL.revokeObjectURL(img.src);
+
+        };
+
+        const removeBtn = document.createElement("button");
+
+        removeBtn.type = "button";
+
+        removeBtn.className = "remove-photo";
+
+        removeBtn.innerHTML = "×";
+
+        removeBtn.addEventListener("click", function () {
+
+            const index = capturedFiles.indexOf(file);
+
+            if (index !== -1) {
+
+                capturedFiles.splice(index, 1);
+
+            }
+
+            updateCameraInput();
+
+            wrapper.remove();
+
+        });
+
+        wrapper.appendChild(img);
+
+        wrapper.appendChild(removeBtn);
+
+        capturedPhotos.appendChild(wrapper);
+
+    }
+
+
+    /* =====================================================
+    CLOSE CAMERA
+    ===================================================== */
+
+    closeCameraBtn.addEventListener("click", function () {
+
+        stopCamera();
+
+    });
+
+
+    function stopCamera() {
+
+        if (cameraStream) {
+
+            cameraStream.getTracks().forEach(function (track) {
+
+                track.stop();
+
+            });
+
+            cameraStream = null;
+
+        }
+
+        cameraPreview.srcObject = null;
+
+        cameraContainer.classList.remove("active");
+
+    }
+
+
+    /* =====================================================
+    STOP CAMERA WHEN LEAVING PAGE
+    ===================================================== */
+
+    window.addEventListener("beforeunload", function () {
+
+        stopCamera();
+
+    });
+
+
+</script>
+{% endblock %}

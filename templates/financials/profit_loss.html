@@ -1,0 +1,1358 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Profit & Loss Statement | Autovex Garage MS
+{% endblock %}
+
+{% block page_title %}
+    Profit & Loss Statement
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+    /* =====================================================
+       PAGE
+       ===================================================== */
+
+    .pl-page {
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+
+
+    /* =====================================================
+       TOOLBAR
+       ===================================================== */
+
+    .pl-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    .pl-toolbar-left,
+    .pl-toolbar-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .pl-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+
+        border: 1px solid #d9dee8;
+        background: #ffffff;
+        color: #172033;
+
+        padding: 9px 14px;
+
+        border-radius: 7px;
+
+        cursor: pointer;
+
+        text-decoration: none;
+
+        font-size: 14px;
+        font-weight: 500;
+
+        transition: 0.2s ease;
+    }
+
+    .pl-btn:hover {
+        background: #f5f7fb;
+        color: #172033;
+    }
+
+    .pl-btn-primary {
+        background: #0c67f0;
+        border-color: #0c67f0;
+        color: #ffffff;
+    }
+
+    .pl-btn-primary:hover {
+        background: #082552;
+        border-color: #082552;
+        color: #ffffff;
+    }
+
+
+    /* =====================================================
+       STATEMENT
+       ===================================================== */
+
+    .pl-statement {
+        background: #ffffff;
+
+        border: 1px solid #e1e5ec;
+        border-radius: 10px;
+
+        padding: 45px 50px;
+
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.04);
+    }
+
+
+    /* =====================================================
+       HEADER
+       ===================================================== */
+
+    .pl-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .pl-company-name {
+        font-size: 25px;
+        font-weight: 800;
+
+        letter-spacing: 0.5px;
+
+        margin-bottom: 5px;
+    }
+
+    .pl-title {
+        font-size: 18px;
+        font-weight: 700;
+
+        text-transform: uppercase;
+
+        letter-spacing: 0.8px;
+    }
+
+    .pl-period {
+        margin-top: 10px;
+
+        color: #667085;
+
+        font-size: 14px;
+    }
+
+
+    /* =====================================================
+       META
+       ===================================================== */
+
+    .pl-meta {
+        display: flex;
+
+        justify-content: space-between;
+        align-items: center;
+
+        border-top: 1px solid #e5e7eb;
+        border-bottom: 1px solid #e5e7eb;
+
+        padding: 10px 0;
+
+        margin-bottom: 25px;
+
+        font-size: 13px;
+
+        color: #475467;
+    }
+
+
+    /* =====================================================
+       SECTIONS
+       ===================================================== */
+
+    .pl-section {
+        margin-top: 25px;
+    }
+
+    .pl-section-title {
+        font-weight: 800;
+
+        text-transform: uppercase;
+
+        font-size: 14px;
+
+        padding: 8px 0;
+
+        border-bottom: 2px solid #172033;
+
+        margin-bottom: 4px;
+    }
+
+
+    /* =====================================================
+       ROWS
+       ===================================================== */
+
+    .pl-row {
+        display: grid;
+
+        grid-template-columns: 1fr 180px;
+
+        min-height: 34px;
+
+        align-items: center;
+
+        font-size: 14px;
+    }
+
+    .pl-row .amount {
+        text-align: right;
+
+        font-variant-numeric: tabular-nums;
+
+        white-space: nowrap;
+    }
+
+    .pl-indent {
+        padding-left: 18px;
+    }
+
+
+    /* =====================================================
+       TOTALS
+       ===================================================== */
+
+    .pl-total {
+        font-weight: 700;
+
+        border-top: 1px solid #aeb5c1;
+        border-bottom: 1px solid #aeb5c1;
+
+        margin-top: 4px;
+    }
+
+    .pl-profit {
+        font-size: 15px;
+
+        font-weight: 800;
+
+        border-top: 2px solid #172033;
+        border-bottom: 2px solid #172033;
+
+        margin-top: 8px;
+
+        padding: 8px 0;
+    }
+
+    .pl-margin {
+        color: #667085;
+
+        font-size: 13px;
+
+        font-style: italic;
+    }
+
+    .pl-empty {
+        color: #98a2b3;
+
+        font-style: italic;
+    }
+
+
+    /* =====================================================
+       SIGNATURES
+       ===================================================== */
+
+    .pl-signatures {
+        display: grid;
+
+        grid-template-columns: 1fr 1fr;
+
+        gap: 70px;
+
+        margin-top: 70px;
+    }
+
+    .pl-signature-line {
+        border-top: 1px solid #667085;
+
+        padding-top: 8px;
+
+        font-size: 13px;
+    }
+
+
+    /* =====================================================
+       PAGE BREAK
+       ===================================================== */
+
+    .pl-page-break {
+        display: none;
+    }
+
+
+    /* =====================================================
+       PRINT
+       ===================================================== */
+
+    @media print {
+
+        @page {
+            size: A4 portrait;
+            margin: 15mm;
+        }
+
+        html,
+        body {
+            width: 100% !important;
+            height: auto !important;
+
+            margin: 0 !important;
+            padding: 0 !important;
+
+            overflow: visible !important;
+
+            background: #ffffff !important;
+        }
+
+        body {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+
+        /* ---------------------------------------------
+           Remove application interface
+           --------------------------------------------- */
+
+        .sidebar,
+        .navbar,
+        .topbar,
+        .header,
+        .page-header,
+        .module-header,
+        .pl-toolbar {
+            display: none !important;
+        }
+
+
+        /* ---------------------------------------------
+           Remove dashboard layout restrictions
+           --------------------------------------------- */
+
+        .main-content,
+        .content,
+        .page-content,
+        .main,
+        .container,
+        .container-fluid,
+        .dashboard-content,
+        .module-content,
+        .module-page,
+        .pl-page {
+            display: block !important;
+
+            width: 100% !important;
+            max-width: none !important;
+
+            height: auto !important;
+            min-height: 0 !important;
+
+            margin: 0 !important;
+            padding: 0 !important;
+
+            overflow: visible !important;
+
+            position: static !important;
+        }
+
+
+        /* ---------------------------------------------
+           Statement
+           --------------------------------------------- */
+
+        .pl-statement {
+            display: block !important;
+
+            width: 100% !important;
+            max-width: none !important;
+
+            height: auto !important;
+            min-height: 0 !important;
+
+            margin: 0 !important;
+            padding: 0 !important;
+
+            border: none !important;
+            border-radius: 0 !important;
+
+            box-shadow: none !important;
+
+            overflow: visible !important;
+
+            position: static !important;
+        }
+
+
+        /* ---------------------------------------------
+           Financial sections
+           --------------------------------------------- */
+
+        .pl-section {
+            display: block !important;
+
+            height: auto !important;
+            max-height: none !important;
+
+            overflow: visible !important;
+        }
+
+
+        .pl-row {
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+
+
+        .pl-section-title {
+            break-after: avoid;
+            page-break-after: avoid;
+        }
+
+
+        .pl-total,
+        .pl-profit,
+        .pl-margin {
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+
+
+        /* ---------------------------------------------
+           Signatures
+           --------------------------------------------- */
+
+        .pl-signatures {
+            break-inside: avoid;
+            page-break-inside: avoid;
+
+            height: auto !important;
+
+            overflow: visible !important;
+        }
+
+
+        /* ---------------------------------------------
+           Explicit second page
+           --------------------------------------------- */
+
+        .pl-page-break {
+            display: block !important;
+
+            height: 0 !important;
+
+            margin: 0 !important;
+            padding: 0 !important;
+
+            page-break-before: always !important;
+            break-before: page !important;
+        }
+
+
+        /* ---------------------------------------------
+           Prevent unwanted scaling
+           --------------------------------------------- */
+
+        .pl-page,
+        .pl-statement {
+            transform: none !important;
+            zoom: 1 !important;
+        }
+
+    }
+
+
+    /* =====================================================
+       MOBILE
+       ===================================================== */
+
+    @media (max-width: 700px) {
+
+        .pl-toolbar {
+            align-items: stretch;
+        }
+
+        .pl-toolbar-left,
+        .pl-toolbar-right {
+            width: 100%;
+        }
+
+        .pl-btn {
+            flex: 1;
+        }
+
+        .pl-statement {
+            padding: 25px 18px;
+
+            border-radius: 7px;
+        }
+
+        .pl-meta {
+            flex-direction: column;
+
+            align-items: flex-start;
+
+            gap: 5px;
+        }
+
+        .pl-row {
+            grid-template-columns: 1fr 120px;
+
+            font-size: 13px;
+        }
+
+        .pl-company-name {
+            font-size: 21px;
+        }
+
+        .pl-title {
+            font-size: 16px;
+        }
+
+        .pl-signatures {
+            grid-template-columns: 1fr;
+
+            gap: 45px;
+        }
+
+    }
+
+</style>
+
+
+<div class="pl-page">
+
+
+    <!-- =====================================================
+         TOOLBAR
+         ===================================================== -->
+
+    <div class="pl-toolbar">
+
+        <!-- LEFT -->
+
+        <div class="pl-toolbar-left">
+
+            <a
+                href="{{ url_for('financials') }}"
+                class="pl-btn"
+            >
+                <i class="bx bx-arrow-back"></i>
+                Back
+            </a>
+
+        </div>
+
+
+        <!-- RIGHT -->
+
+        <div class="pl-toolbar-right">
+
+            <!-- DOWNLOAD PDF -->
+
+            <a
+                href="{{ url_for(
+                    'profit_loss_pdf',
+                    start_date=start_date,
+                    end_date=end_date,
+                    basis=basis
+                ) }}"
+                class="pl-btn pl-btn-primary"
+                target="_blank"
+            >
+                <i class="bx bx-file-pdf"></i>
+                Download PDF
+            </a>
+
+
+            <!-- REFRESH -->
+
+            <a
+                href="{{ url_for(
+                    'profit_loss_report',
+                    start_date=start_date,
+                    end_date=end_date,
+                    basis=basis
+                ) }}"
+                class="pl-btn"
+            >
+                <i class="bx bx-refresh"></i>
+                Refresh
+            </a>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         FORMAL P&L STATEMENT
+         ===================================================== -->
+
+    <div class="pl-statement">
+
+
+        <!-- =================================================
+             HEADER
+             ================================================= -->
+
+        <div class="pl-header">
+
+            <div class="pl-company-name">
+                AUTOVEX GARAGE MS
+            </div>
+
+            <div class="pl-title">
+                PROFIT &amp; LOSS STATEMENT
+            </div>
+
+            <div class="pl-period">
+
+                Reporting Period:
+
+                <strong>
+                    {{ start_date.strftime("%d %B %Y") }}
+                </strong>
+
+                to
+
+                <strong>
+                    {{ end_date.strftime("%d %B %Y") }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             META
+             ================================================= -->
+
+        <div class="pl-meta">
+
+            <div>
+
+                <strong>
+                    Accounting Basis:
+                </strong>
+
+                {{ basis }}
+
+            </div>
+
+
+            <div>
+
+                <strong>
+                    Currency:
+                </strong>
+
+                KES
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             REVENUE
+             ================================================= -->
+
+        <div class="pl-section">
+
+            <div class="pl-section-title">
+                Revenue
+            </div>
+
+
+            <!-- Labour / Service Revenue -->
+
+            <div class="pl-row">
+
+                <div class="pl-indent">
+                    Labour / Service Revenue
+                </div>
+
+                <div class="amount">
+
+                    KES
+                    {{ "{:,.2f}".format(
+                        revenue_categories.get(
+                            "Labour / Service Revenue",
+                            0
+                        )
+                    ) }}
+
+                </div>
+
+            </div>
+
+
+            <!-- Parts -->
+
+            <div class="pl-row">
+
+                <div class="pl-indent">
+                    Parts &amp; Accessories Sales
+                </div>
+
+                <div class="amount">
+
+                    KES
+                    {{ "{:,.2f}".format(
+                        revenue_categories.get(
+                            "Parts & Accessories Sales",
+                            0
+                        )
+                    ) }}
+
+                </div>
+
+            </div>
+
+
+            <!-- Diagnostics -->
+
+            <div class="pl-row">
+
+                <div class="pl-indent">
+                    Diagnostic Services
+                </div>
+
+                <div class="amount">
+
+                    KES
+                    {{ "{:,.2f}".format(
+                        revenue_categories.get(
+                            "Diagnostic Services",
+                            0
+                        )
+                    ) }}
+
+                </div>
+
+            </div>
+
+
+            <!-- Inspection -->
+
+            <div class="pl-row">
+
+                <div class="pl-indent">
+                    Inspection Services
+                </div>
+
+                <div class="amount">
+
+                    KES
+                    {{ "{:,.2f}".format(
+                        revenue_categories.get(
+                            "Inspection Services",
+                            0
+                        )
+                    ) }}
+
+                </div>
+
+            </div>
+
+
+            <!-- Recovery -->
+
+            <div class="pl-row">
+
+                <div class="pl-indent">
+                    Vehicle Recovery / Towing
+                </div>
+
+                <div class="amount">
+
+                    KES
+                    {{ "{:,.2f}".format(
+                        revenue_categories.get(
+                            "Vehicle Recovery / Towing",
+                            0
+                        )
+                    ) }}
+
+                </div>
+
+            </div>
+
+
+            <!-- Other -->
+
+            <div class="pl-row">
+
+                <div class="pl-indent">
+                    Other Garage Revenue
+                </div>
+
+                <div class="amount">
+
+                    KES
+                    {{ "{:,.2f}".format(
+                        revenue_categories.get(
+                            "Other Garage Revenue",
+                            0
+                        )
+                    ) }}
+
+                </div>
+
+            </div>
+
+
+            <!-- TOTAL -->
+
+            <div class="pl-row pl-total">
+
+                <div>
+                    Total Revenue
+                </div>
+
+                <div class="amount">
+
+                    KES
+                    {{ "{:,.2f}".format(
+                        total_revenue
+                    ) }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             COST OF SALES
+             ================================================= -->
+
+        <div class="pl-section">
+
+            <div class="pl-section-title">
+                Cost of Sales / Direct Costs
+            </div>
+
+
+            <!-- Parts -->
+
+            <div class="pl-row">
+
+                <div class="pl-indent">
+                    Parts &amp; Materials Used
+                </div>
+
+                <div class="amount">
+
+                    KES
+                    {{ "{:,.2f}".format(
+                        direct_costs.get(
+                            "Parts & Materials Used",
+                            0
+                        )
+                    ) }}
+
+                </div>
+
+            </div>
+
+
+            <!-- Lubricants -->
+
+            <div class="pl-row">
+
+                <div class="pl-indent">
+                    Lubricants &amp; Fluids
+                </div>
+
+                <div class="amount">
+
+                    KES
+                    {{ "{:,.2f}".format(
+                        direct_costs.get(
+                            "Lubricants & Fluids",
+                            0
+                        )
+                    ) }}
+
+                </div>
+
+            </div>
+
+
+            <!-- Subcontracted -->
+
+            <div class="pl-row">
+
+                <div class="pl-indent">
+                    Subcontracted Repairs
+                </div>
+
+                <div class="amount">
+
+                    KES
+                    {{ "{:,.2f}".format(
+                        direct_costs.get(
+                            "Subcontracted Repairs",
+                            0
+                        )
+                    ) }}
+
+                </div>
+
+            </div>
+
+
+            <!-- Labour -->
+
+            <div class="pl-row">
+
+                <div class="pl-indent">
+                    Direct Labour
+                </div>
+
+                <div class="amount">
+
+                    KES
+                    {{ "{:,.2f}".format(
+                        direct_costs.get(
+                            "Direct Labour",
+                            0
+                        )
+                    ) }}
+
+                </div>
+
+            </div>
+
+
+            <!-- Other Direct -->
+
+            <div class="pl-row">
+
+                <div class="pl-indent">
+                    Other Direct Job Costs
+                </div>
+
+                <div class="amount">
+
+                    KES
+                    {{ "{:,.2f}".format(
+                        direct_costs.get(
+                            "Other Direct Job Costs",
+                            0
+                        )
+                    ) }}
+
+                </div>
+
+            </div>
+
+
+            <!-- TOTAL -->
+
+            <div class="pl-row pl-total">
+
+                <div>
+                    Total Cost of Sales
+                </div>
+
+                <div class="amount">
+
+                    KES
+                    {{ "{:,.2f}".format(
+                        total_cost_of_sales
+                    ) }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             GROSS PROFIT
+             ================================================= -->
+
+        <div class="pl-section">
+
+            <div class="pl-row pl-profit">
+
+                <div>
+                    GROSS PROFIT
+                </div>
+
+                <div class="amount">
+
+                    KES
+                    {{ "{:,.2f}".format(
+                        gross_profit
+                    ) }}
+
+                </div>
+
+            </div>
+
+
+            <div class="pl-row pl-margin">
+
+                <div>
+                    Gross Profit Margin %
+                </div>
+
+                <div class="amount">
+
+                    {{ "{:,.2f}".format(
+                        gross_profit_margin
+                    ) }}%
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+
+        <!-- =================================================
+             OPERATING EXPENSES
+             ================================================= -->
+
+        <div class="pl-section">
+
+            <div class="pl-section-title">
+                Operating Expenses
+            </div>
+
+
+            {% if operating_expenses %}
+
+                {% for category, amount in operating_expenses.items() %}
+
+                    <div class="pl-row">
+
+                        <div class="pl-indent">
+                            {{ category }}
+                        </div>
+
+                        <div class="amount">
+
+                            KES
+                            {{ "{:,.2f}".format(
+                                amount
+                            ) }}
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="pl-row">
+
+                    <div class="pl-indent pl-empty">
+                        No operating expenses recorded
+                    </div>
+
+                    <div class="amount">
+                        KES 0.00
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- TOTAL OPERATING EXPENSES -->
+
+            <div class="pl-row pl-total">
+
+                <div>
+                    Total Operating Expenses
+                </div>
+
+                <div class="amount">
+
+                    KES
+                    {{ "{:,.2f}".format(
+                        total_operating_expenses
+                    ) }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             OPERATING PROFIT
+             ================================================= -->
+
+        <div class="pl-section">
+
+            <div class="pl-row pl-profit">
+
+                <div>
+                    OPERATING PROFIT
+                </div>
+
+                <div class="amount">
+
+                    KES
+                    {{ "{:,.2f}".format(
+                        operating_profit
+                    ) }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             OTHER INCOME / EXPENSES
+             ================================================= -->
+
+        <div class="pl-section">
+
+            <div class="pl-section-title">
+                Other Income &amp; Expenses
+            </div>
+
+
+            <div class="pl-row">
+
+                <div class="pl-indent">
+                    Finance / Interest Expense
+                </div>
+
+                <div class="amount">
+
+                    KES
+                    {{ "{:,.2f}".format(
+                        finance_interest_expense
+                    ) }}
+
+                </div>
+
+            </div>
+
+
+            <div class="pl-row">
+
+                <div class="pl-indent">
+                    Other Income
+                </div>
+
+                <div class="amount">
+
+                    KES
+                    {{ "{:,.2f}".format(
+                        other_income
+                    ) }}
+
+                </div>
+
+            </div>
+
+
+            <div class="pl-row">
+
+                <div class="pl-indent">
+                    Other Expenses
+                </div>
+
+                <div class="amount">
+
+                    KES
+                    {{ "{:,.2f}".format(
+                        other_expenses
+                    ) }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             PROFIT BEFORE TAX
+             ================================================= -->
+
+        <div class="pl-section">
+
+            <div class="pl-row pl-profit">
+
+                <div>
+                    PROFIT BEFORE TAX
+                </div>
+
+                <div class="amount">
+
+                    KES
+                    {{ "{:,.2f}".format(
+                        profit_before_tax
+                    ) }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             INCOME TAX
+             ================================================= -->
+
+        <div class="pl-section">
+
+            <div class="pl-row">
+
+                <div>
+                    Income Tax
+                </div>
+
+                <div class="amount">
+
+                    KES
+                    {{ "{:,.2f}".format(
+                        income_tax
+                    ) }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             NET PROFIT
+             ================================================= -->
+
+        <div class="pl-section">
+
+            <div class="pl-row pl-profit">
+
+                <div>
+                    NET PROFIT
+                </div>
+
+                <div class="amount">
+
+                    KES
+                    {{ "{:,.2f}".format(
+                        net_profit
+                    ) }}
+
+                </div>
+
+            </div>
+
+
+            <div class="pl-row pl-margin">
+
+                <div>
+                    Net Profit Margin %
+                </div>
+
+                <div class="amount">
+
+                    {{ "{:,.2f}".format(
+                        net_profit_margin
+                    ) }}%
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             SIGNATURES
+             ================================================= -->
+
+        <div class="pl-signatures">
+
+
+            <!-- PREPARED BY -->
+
+            <div>
+
+                <div class="pl-signature-line">
+                    Prepared By
+                </div>
+
+                <div style="margin-top: 8px;">
+
+                    {{ user or "____________________________" }}
+
+                </div>
+
+                <div style="margin-top: 15px;">
+
+                    Date:
+
+                    {{ end_date.strftime(
+                        "%d %B %Y"
+                    ) }}
+
+                </div>
+
+            </div>
+
+
+            <!-- APPROVED BY -->
+
+            <div>
+
+                <div class="pl-signature-line">
+                    Approved By / Signature
+                </div>
+
+                <div style="height: 30px;"></div>
+
+                <div>
+
+                    Date:
+                    ____________________
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,1284 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="module-page inventory-page">
+
+
+<!-- =====================================================
+     PAGE HEADER
+     ===================================================== -->
+
+<div class="module-header">
+
+    <div>
+
+        <h1>
+            Inventory
+        </h1>
+
+        <p>
+            Monitor parts stock, stock movements, low-stock items and adjustments.
+        </p>
+
+    </div>
+
+    <div class="module-header-actions">
+
+        <button
+            type="button"
+            class="secondary-btn"
+        >
+            <i class="bx bx-download"></i>
+            Export
+        </button>
+
+        <button
+            type="button"
+            class="primary-btn"
+        >
+            <i class="bx bx-plus"></i>
+            Add Part
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     INVENTORY TABS
+     ===================================================== -->
+
+<div class="module-tabs">
+
+    <button
+        type="button"
+        class="module-tab active"
+        data-inventory-tab="inventory-overview"
+    >
+        <i class="bx bx-grid-alt"></i>
+        Overview
+    </button>
+
+
+    <button
+        type="button"
+        class="module-tab"
+        data-inventory-tab="inventory-stock"
+    >
+        <i class="bx bx-package"></i>
+        Parts Stock
+    </button>
+
+
+    <button
+        type="button"
+        class="module-tab"
+        data-inventory-tab="inventory-movements"
+    >
+        <i class="bx bx-transfer"></i>
+        Stock Movements
+    </button>
+
+
+    <button
+        type="button"
+        class="module-tab"
+        data-inventory-tab="inventory-low-stock"
+    >
+        <i class="bx bx-error-circle"></i>
+        Low Stock
+    </button>
+
+
+    <button
+        type="button"
+        class="module-tab"
+        data-inventory-tab="inventory-adjustments"
+    >
+        <i class="bx bx-edit"></i>
+        Adjustments
+    </button>
+
+</div>
+
+
+
+<!-- =====================================================
+     OVERVIEW
+     ===================================================== -->
+
+<section
+    class="inventory-module-tab active"
+    id="inventory-overview"
+>
+
+    <div class="financial-summary">
+
+
+        <!-- Total Parts -->
+
+        <div class="financial-card">
+
+            <div class="financial-card-top">
+
+                <div class="financial-icon">
+                    <i class="bx bx-package"></i>
+                </div>
+
+                <span class="financial-label">
+                    Total Parts
+                </span>
+
+            </div>
+
+            <div class="financial-value">
+                486
+            </div>
+
+            <div class="financial-description">
+                Parts currently in inventory
+            </div>
+
+        </div>
+
+
+        <!-- Stock Value -->
+
+        <div class="financial-card">
+
+            <div class="financial-card-top">
+
+                <div class="financial-icon">
+                    <i class="bx bx-money"></i>
+                </div>
+
+                <span class="financial-label">
+                    Stock Value
+                </span>
+
+            </div>
+
+            <div class="financial-value">
+                KES 2,845,500
+            </div>
+
+            <div class="financial-description">
+                Estimated current inventory value
+            </div>
+
+        </div>
+
+
+        <!-- Low Stock -->
+
+        <div class="financial-card">
+
+            <div class="financial-card-top">
+
+                <div class="financial-icon">
+                    <i class="bx bx-error-circle"></i>
+                </div>
+
+                <span class="financial-label">
+                    Low Stock
+                </span>
+
+            </div>
+
+            <div class="financial-value">
+                18
+            </div>
+
+            <div class="financial-description">
+                Parts below minimum stock level
+            </div>
+
+        </div>
+
+
+        <!-- Out of Stock -->
+
+        <div class="financial-card">
+
+            <div class="financial-card-top">
+
+                <div class="financial-icon">
+                    <i class="bx bx-x-circle"></i>
+                </div>
+
+                <span class="financial-label">
+                    Out of Stock
+                </span>
+
+            </div>
+
+            <div class="financial-value">
+                6
+            </div>
+
+            <div class="financial-description">
+                Parts currently unavailable
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =================================================
+         INVENTORY OVERVIEW PANELS
+         ================================================= -->
+
+    <div class="financial-overview">
+
+
+        <!-- Recent Movements -->
+
+        <div class="financial-panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <h3>
+                        Recent Stock Movements
+                    </h3>
+
+                    <p>
+                        Latest inventory activity
+                    </p>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="view-all-btn"
+                >
+                    View All
+                    <i class="bx bx-right-arrow-alt"></i>
+                </button>
+
+            </div>
+
+
+            <div class="financial-table-wrapper">
+
+                <table class="financial-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Part
+                            </th>
+
+                            <th>
+                                Type
+                            </th>
+
+                            <th>
+                                Quantity
+                            </th>
+
+                            <th>
+                                Date
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        <tr>
+
+                            <td>
+                                Toyota Oil Filter
+                            </td>
+
+                            <td>
+                                Stock In
+                            </td>
+
+                            <td>
+                                +25
+                            </td>
+
+                            <td>
+                                15 Aug 2026
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <td>
+                                Brake Pads
+                            </td>
+
+                            <td>
+                                Stock Out
+                            </td>
+
+                            <td>
+                                -4
+                            </td>
+
+                            <td>
+                                15 Aug 2026
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <td>
+                                Engine Oil 5W-30
+                            </td>
+
+                            <td>
+                                Stock In
+                            </td>
+
+                            <td>
+                                +40
+                            </td>
+
+                            <td>
+                                14 Aug 2026
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- Stock Status -->
+
+        <div class="financial-panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <h3>
+                        Stock Status
+                    </h3>
+
+                    <p>
+                        Current inventory condition
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="financial-metrics">
+
+
+                <div class="metric">
+
+                    <span>
+                        In Stock
+                    </span>
+
+                    <strong>
+                        462 Parts
+                    </strong>
+
+                </div>
+
+
+                <div class="metric">
+
+                    <span>
+                        Low Stock
+                    </span>
+
+                    <strong>
+                        18 Parts
+                    </strong>
+
+                </div>
+
+
+                <div class="metric">
+
+                    <span>
+                        Out of Stock
+                    </span>
+
+                    <strong>
+                        6 Parts
+                    </strong>
+
+                </div>
+
+
+                <div class="metric">
+
+                    <span>
+                        Stock Value
+                    </span>
+
+                    <strong>
+                        KES 2.85M
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     PARTS STOCK
+     ===================================================== -->
+
+<section
+    class="inventory-module-tab"
+    id="inventory-stock"
+>
+
+    <div class="financial-list-panel">
+
+        <div class="financial-list-header">
+
+            <div>
+
+                <h3>
+                    Parts Stock
+                </h3>
+
+                <p>
+                    View and manage all parts currently held in inventory.
+                </p>
+
+            </div>
+
+            <button
+                type="button"
+                class="primary-btn"
+            >
+                <i class="bx bx-plus"></i>
+                Add Part
+            </button>
+
+        </div>
+
+
+        <div class="financial-table-wrapper">
+
+            <table class="financial-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Part No.
+                        </th>
+
+                        <th>
+                            Part Name
+                        </th>
+
+                        <th>
+                            Category
+                        </th>
+
+                        <th>
+                            Quantity
+                        </th>
+
+                        <th>
+                            Reorder Level
+                        </th>
+
+                        <th>
+                            Unit Cost
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    <tr>
+
+                        <td>
+                            OIL-001
+                        </td>
+
+                        <td>
+                            Toyota Oil Filter
+                        </td>
+
+                        <td>
+                            Filters
+                        </td>
+
+                        <td>
+                            25
+                        </td>
+
+                        <td>
+                            10
+                        </td>
+
+                        <td>
+                            KES 850
+                        </td>
+
+                        <td>
+                            <span class="payment-status paid">
+                                In Stock
+                            </span>
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            BRK-014
+                        </td>
+
+                        <td>
+                            Front Brake Pads
+                        </td>
+
+                        <td>
+                            Brakes
+                        </td>
+
+                        <td>
+                            4
+                        </td>
+
+                        <td>
+                            8
+                        </td>
+
+                        <td>
+                            KES 6,500
+                        </td>
+
+                        <td>
+                            <span class="payment-status partial">
+                                Low Stock
+                            </span>
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            OIL-030
+                        </td>
+
+                        <td>
+                            Engine Oil 5W-30
+                        </td>
+
+                        <td>
+                            Lubricants
+                        </td>
+
+                        <td>
+                            40
+                        </td>
+
+                        <td>
+                            15
+                        </td>
+
+                        <td>
+                            KES 2,400
+                        </td>
+
+                        <td>
+                            <span class="payment-status paid">
+                                In Stock
+                            </span>
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            BAT-006
+                        </td>
+
+                        <td>
+                            70AH Battery
+                        </td>
+
+                        <td>
+                            Electrical
+                        </td>
+
+                        <td>
+                            0
+                        </td>
+
+                        <td>
+                            5
+                        </td>
+
+                        <td>
+                            KES 12,500
+                        </td>
+
+                        <td>
+                            <span class="payment-status unpaid">
+                                Out of Stock
+                            </span>
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     STOCK MOVEMENTS
+     ===================================================== -->
+
+<section
+    class="inventory-module-tab"
+    id="inventory-movements"
+>
+
+    <div class="financial-list-panel">
+
+        <div class="financial-list-header">
+
+            <div>
+
+                <h3>
+                    Stock Movements
+                </h3>
+
+                <p>
+                    Track all inventory additions, usage and transfers.
+                </p>
+
+            </div>
+
+            <button
+                type="button"
+                class="primary-btn"
+            >
+                <i class="bx bx-transfer"></i>
+                Record Movement
+            </button>
+
+        </div>
+
+
+        <div class="financial-table-wrapper">
+
+            <table class="financial-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Date
+                        </th>
+
+                        <th>
+                            Part
+                        </th>
+
+                        <th>
+                            Reference
+                        </th>
+
+                        <th>
+                            Movement
+                        </th>
+
+                        <th>
+                            Quantity
+                        </th>
+
+                        <th>
+                            Balance
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    <tr>
+
+                        <td>
+                            15 Aug 2026
+                        </td>
+
+                        <td>
+                            Toyota Oil Filter
+                        </td>
+
+                        <td>
+                            GRN-00187
+                        </td>
+
+                        <td>
+                            Stock In
+                        </td>
+
+                        <td>
+                            +25
+                        </td>
+
+                        <td>
+                            25
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            15 Aug 2026
+                        </td>
+
+                        <td>
+                            Front Brake Pads
+                        </td>
+
+                        <td>
+                            JOB-00231
+                        </td>
+
+                        <td>
+                            Stock Out
+                        </td>
+
+                        <td>
+                            -4
+                        </td>
+
+                        <td>
+                            4
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            14 Aug 2026
+                        </td>
+
+                        <td>
+                            Engine Oil 5W-30
+                        </td>
+
+                        <td>
+                            GRN-00186
+                        </td>
+
+                        <td>
+                            Stock In
+                        </td>
+
+                        <td>
+                            +40
+                        </td>
+
+                        <td>
+                            40
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     LOW STOCK
+     ===================================================== -->
+
+<section
+    class="inventory-module-tab"
+    id="inventory-low-stock"
+>
+
+    <div class="financial-list-panel">
+
+        <div class="financial-list-header">
+
+            <div>
+
+                <h3>
+                    Low Stock
+                </h3>
+
+                <p>
+                    Parts that have reached or fallen below their reorder level.
+                </p>
+
+            </div>
+
+            <button
+                type="button"
+                class="primary-btn"
+            >
+                <i class="bx bx-cart-add"></i>
+                Create Purchase Request
+            </button>
+
+        </div>
+
+
+        <div class="financial-table-wrapper">
+
+            <table class="financial-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Part No.
+                        </th>
+
+                        <th>
+                            Part
+                        </th>
+
+                        <th>
+                            Category
+                        </th>
+
+                        <th>
+                            Current Stock
+                        </th>
+
+                        <th>
+                            Reorder Level
+                        </th>
+
+                        <th>
+                            Suggested Order
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    <tr>
+
+                        <td>
+                            BRK-014
+                        </td>
+
+                        <td>
+                            Front Brake Pads
+                        </td>
+
+                        <td>
+                            Brakes
+                        </td>
+
+                        <td>
+                            4
+                        </td>
+
+                        <td>
+                            8
+                        </td>
+
+                        <td>
+                            20
+                        </td>
+
+                        <td>
+                            <span class="payment-status partial">
+                                Low Stock
+                            </span>
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            BAT-006
+                        </td>
+
+                        <td>
+                            70AH Battery
+                        </td>
+
+                        <td>
+                            Electrical
+                        </td>
+
+                        <td>
+                            0
+                        </td>
+
+                        <td>
+                            5
+                        </td>
+
+                        <td>
+                            10
+                        </td>
+
+                        <td>
+                            <span class="payment-status unpaid">
+                                Out of Stock
+                            </span>
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            FIL-022
+                        </td>
+
+                        <td>
+                            Air Filter
+                        </td>
+
+                        <td>
+                            Filters
+                        </td>
+
+                        <td>
+                            6
+                        </td>
+
+                        <td>
+                            10
+                        </td>
+
+                        <td>
+                            15
+                        </td>
+
+                        <td>
+                            <span class="payment-status partial">
+                                Low Stock
+                            </span>
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     ADJUSTMENTS
+     ===================================================== -->
+
+<section
+    class="inventory-module-tab"
+    id="inventory-adjustments"
+>
+
+    <div class="financial-list-panel">
+
+        <div class="financial-list-header">
+
+            <div>
+
+                <h3>
+                    Stock Adjustments
+                </h3>
+
+                <p>
+                    Record corrections caused by stock counts, damage or losses.
+                </p>
+
+            </div>
+
+            <button
+                type="button"
+                class="primary-btn"
+            >
+                <i class="bx bx-plus"></i>
+                New Adjustment
+            </button>
+
+        </div>
+
+
+        <div class="financial-table-wrapper">
+
+            <table class="financial-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Date
+                        </th>
+
+                        <th>
+                            Reference
+                        </th>
+
+                        <th>
+                            Part
+                        </th>
+
+                        <th>
+                            Adjustment
+                        </th>
+
+                        <th>
+                            Reason
+                        </th>
+
+                        <th>
+                            User
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    <tr>
+
+                        <td>
+                            15 Aug 2026
+                        </td>
+
+                        <td>
+                            ADJ-00018
+                        </td>
+
+                        <td>
+                            Front Brake Pads
+                        </td>
+
+                        <td>
+                            -2
+                        </td>
+
+                        <td>
+                            Damaged stock
+                        </td>
+
+                        <td>
+                            Admin
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            12 Aug 2026
+                        </td>
+
+                        <td>
+                            ADJ-00017
+                        </td>
+
+                        <td>
+                            Engine Oil 5W-30
+                        </td>
+
+                        <td>
+                            +3
+                        </td>
+
+                        <td>
+                            Stock count correction
+                        </td>
+
+                        <td>
+                            Admin
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+</div>
+
+<!-- =========================================================
+     INVENTORY TAB JAVASCRIPT
+     ========================================================= -->
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const tabs =
+            document.querySelectorAll(
+                "[data-inventory-tab]"
+            );
+
+        const contents =
+            document.querySelectorAll(
+                ".inventory-module-tab"
+            );
+
+
+        tabs.forEach(function (tab) {
+
+            tab.addEventListener(
+                "click",
+                function () {
+
+                    const target =
+                        this.dataset.inventoryTab;
+
+
+                    /*
+                     * Remove active state
+                     */
+
+                    tabs.forEach(function (item) {
+
+                        item.classList.remove(
+                            "active"
+                        );
+
+                    });
+
+
+                    contents.forEach(function (content) {
+
+                        content.classList.remove(
+                            "active"
+                        );
+
+                    });
+
+
+                    /*
+                     * Activate selected tab
+                     */
+
+                    this.classList.add(
+                        "active"
+                    );
+
+
+                    const selected =
+                        document.getElementById(
+                            target
+                        );
+
+
+                    if (selected) {
+
+                        selected.classList.add(
+                            "active"
+                        );
+
+                    }
+
+                }
+            );
+
+        });
+
+    }
+);
+
+</script>
+
+{% endblock %}

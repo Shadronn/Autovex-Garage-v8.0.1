@@ -1,0 +1,720 @@
+{% extends "base.html" %}
+
+
+{% block sidebar %}
+
+
+{% endblock %}
+
+
+
+{% block content %}
+
+<div class="table-page">
+
+
+    <!-- =====================================================
+         PAGE HEADER
+         ===================================================== -->
+
+    <div class="module-header">
+
+        <div>
+
+            <h1>Jobs</h1>
+
+            <p>
+                Manage vehicle repair jobs, assignments and deadlines.
+            </p>
+
+        </div>
+
+
+        <div class="module-header-actions">
+
+            <a
+                href="{{ url_for('create_job') }}"
+                class="table-filter-btn"
+            >
+
+                <i class='bx bx-plus'></i>
+
+                Add New Job
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         JOBS PANEL
+         ===================================================== -->
+
+    <div class="table-panel">
+
+
+        <!-- =================================================
+             TOOLBAR
+             ================================================= -->
+
+        <div class="table-toolbar">
+
+
+            <!-- Search -->
+
+            <div class="table-toolbar-left">
+
+                <div class="table-search">
+
+                    <i class='bx bx-search'></i>
+
+                    <form
+                        method="GET"
+                        action="{{ url_for('jobs') }}"
+                    >
+
+                        <input
+                            type="text"
+                            name="search"
+                            placeholder="Search vehicle or customer..."
+                            value="{{ search }}"
+                            oninput="debouncedSubmit(this.form)"
+                        >
+
+                        {% if active_status %}
+
+                        <input
+                            type="hidden"
+                            name="status"
+                            value="{{ active_status }}"
+                        >
+
+                        {% endif %}
+
+                    </form>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- Filters -->
+
+            <form
+                method="GET"
+                action="{{ url_for('jobs') }}"
+                class="table-filters"
+            >
+
+                <!-- Preserve Search -->
+
+                <input
+                    type="hidden"
+                    name="search"
+                    value="{{ search }}"
+                >
+
+
+                <!-- Status -->
+
+                <select name="status">
+
+                    <option
+                        value=""
+                        {% if not active_status %}
+                        selected
+                        {% endif %}
+                    >
+                        All Status
+                    </option>
+
+                    <option
+                        value="Open"
+                        {% if active_status == "Open" %}
+                        selected
+                        {% endif %}
+                    >
+                        Open
+                    </option>
+
+                    <option
+                        value="Complete"
+                        {% if active_status == "Complete" %}
+                        selected
+                        {% endif %}
+                    >
+                        Complete
+                    </option>
+
+                </select>
+
+
+                <!-- Filter -->
+
+                <button
+                    type="submit"
+                    class="table-filter-btn"
+                >
+
+                    <i class='bx bx-filter-alt'></i>
+
+                    Filter
+
+                </button>
+
+
+                <!-- Export -->
+
+                <div class="table-export">
+
+                    <button
+                        type="button"
+                        class="table-export-btn"
+                        onclick="toggleExportMenu()"
+                    >
+
+                        <i class='bx bx-export'></i>
+
+                        <span>Export</span>
+
+                        <i class='bx bx-chevron-down'></i>
+
+                    </button>
+
+
+                    <div
+                        id="exportMenu"
+                        class="table-export-menu"
+                    >
+
+                        <a href="{{ url_for(
+                            'export_jobs_excel',
+                            search=search,
+                            status=active_status
+                        ) }}">
+
+                            <i class='bx bx-spreadsheet'></i>
+
+                            <span>Export Excel</span>
+
+                        </a>
+
+
+                        <a href="{{ url_for(
+                            'export_jobs_csv',
+                            search=search,
+                            status=active_status
+                        ) }}">
+
+                            <i class='bx bx-file'></i>
+
+                            <span>Export CSV</span>
+
+                        </a>
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+
+        <!-- =================================================
+             TABLE
+             ================================================= -->
+
+        <div class="table-wrapper">
+
+            <table class="data-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>ID</th>
+
+                        <th>Reg No.</th>
+
+                        <th>Description</th>
+
+                        <th>Customer</th>
+
+                        <th>Date</th>
+
+                        <th>Deadline</th>
+
+                        <th>Status</th>
+
+                        <th>Action</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+
+                    {% for job in jobs.items %}
+
+                    <tr>
+
+
+                        <!-- ID -->
+
+                        <td>
+
+                            <span class="table-number">
+
+                                #{{ job.id }}
+
+                            </span>
+
+                        </td>
+
+
+                        <!-- Registration -->
+
+                        <td>
+
+                            <span class="table-primary-text">
+
+                                {{ job.vehicle }}
+
+                            </span>
+
+                        </td>
+
+
+                        <!-- Description -->
+
+                        <td>
+
+                            <span class="table-description">
+
+                                {{ job.description }}
+
+                            </span>
+
+                        </td>
+
+
+                        <!-- Customer -->
+
+                        <td>
+
+                            <span class="table-primary-text">
+
+                                {{ job.customer_name }}
+
+                            </span>
+
+                        </td>
+
+
+                        <!-- Date -->
+
+                        <td>
+
+                            <span class="table-date">
+
+                                {{ job.created_at.strftime("%d %b %Y") }}
+
+                            </span>
+
+                        </td>
+                        <!-- Deadline -->
+
+                        <td>
+
+                            {% if job.status|trim|lower == "open" %}
+
+                                {% if job.deadline %}
+
+                                    {% set remaining = job.deadline - now %}
+
+                                    {% set seconds = remaining.total_seconds() %}
+
+
+                                    {% if seconds < 0 %}
+
+                                        {% set overdue_days =
+                                            (((0 - seconds) + 86399) // 86400)|int
+                                        %}
+
+                                        <span class="table-deadline overdue">
+
+                                            <i class='bx bx-error-circle'></i>
+
+                                            {{ overdue_days }}
+                                            day{{ "s" if overdue_days != 1 else "" }}
+                                            overdue
+
+                                        </span>
+
+
+                                    {% elif seconds < 86400 %}
+
+                                        <span class="table-deadline urgent">
+
+                                            <i class='bx bx-time-five'></i>
+
+                                            Due today
+
+                                        </span>
+
+
+                                    {% else %}
+
+                                        {% set days_left =
+                                            ((seconds + 86399) // 86400)|int
+                                        %}
+
+                                        <span class="table-deadline normal">
+
+                                            <i class='bx bx-calendar'></i>
+
+                                            {{ days_left }}
+                                            day{{ "s" if days_left != 1 else "" }}
+                                            remaining
+
+                                        </span>
+
+                                    {% endif %}
+
+
+                                {% else %}
+
+                                    <span class="table-deadline no-deadline">
+
+                                        No Deadline
+
+                                    </span>
+
+                                {% endif %}
+
+                            {% else %}
+
+                                <span class="table-secondary-text">
+
+                                    —
+
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- Status -->
+
+                        <td>
+
+                            {% if job.status|trim|lower == "open" %}
+
+                            <span
+                                class="table-status table-status-open"
+                            >
+
+                                <span class="table-status-dot"></span>
+
+                                Open
+
+                            </span>
+
+                            {% elif job.status|trim|lower in ["complete", "completed"] %}
+
+                            <span
+                                class="table-status table-status-paid"
+                            >
+
+                                <span class="table-status-dot"></span>
+
+                                Complete
+
+                            </span>
+
+                            {% else %}
+
+                            <span class="table-status">
+
+                                <span class="table-status-dot"></span>
+
+                                {{ job.status }}
+
+                            </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- Action -->
+
+                        <td>
+
+                            <a
+                                href="{{ url_for(
+                                    'job_detail',
+                                    job_id=job.id
+                                ) }}"
+                                class="table-action-view"
+                            >
+
+                                View
+
+                                <i class='bx bx-chevron-right'></i>
+
+                            </a>
+
+                        </td>
+
+
+                    </tr>
+
+
+                    {% else %}
+
+
+                    <!-- Empty -->
+
+                    <tr>
+
+                        <td colspan="10">
+
+                            <div class="table-empty">
+
+                                <div class="table-empty-icon">
+
+                                    <i class='bx bx-briefcase'></i>
+
+                                </div>
+
+                                <strong>
+                                    No jobs found
+                                </strong>
+
+                                <span>
+                                    Try changing your search or filter.
+                                </span>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+
+                    {% endfor %}
+
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+
+        <!-- =================================================
+             PAGINATION
+             ================================================= -->
+
+        {% if jobs.pages > 1 %}
+
+        <div class="table-pagination">
+
+
+            <!-- Previous -->
+
+            {% if jobs.has_prev %}
+
+            <a
+                href="{{ url_for(
+                    'jobs',
+                    page=jobs.prev_num,
+                    search=search,
+                    status=active_status
+                ) }}"
+                class="table-page-btn"
+            >
+
+                <i class='bx bx-chevron-left'></i>
+
+                Previous
+
+            </a>
+
+            {% else %}
+
+            <span class="table-page-btn disabled">
+
+                <i class='bx bx-chevron-left'></i>
+
+                Previous
+
+            </span>
+
+            {% endif %}
+
+
+
+            <!-- Page Numbers -->
+
+            <div class="table-page-numbers">
+
+                {% for p in range(1, jobs.pages + 1) %}
+
+                    {% if p == jobs.page %}
+
+                    <span class="table-page-number active">
+
+                        {{ p }}
+
+                    </span>
+
+                    {% else %}
+
+                    <a
+                        href="{{ url_for(
+                            'jobs',
+                            page=p,
+                            search=search,
+                            status=active_status
+                        ) }}"
+                        class="table-page-number"
+                    >
+
+                        {{ p }}
+
+                    </a>
+
+                    {% endif %}
+
+                {% endfor %}
+
+            </div>
+
+
+
+            <!-- Next -->
+
+            {% if jobs.has_next %}
+
+            <a
+                href="{{ url_for(
+                    'jobs',
+                    page=jobs.next_num,
+                    search=search,
+                    status=active_status
+                ) }}"
+                class="table-page-btn"
+            >
+
+                Next
+
+                <i class='bx bx-chevron-right'></i>
+
+            </a>
+
+            {% else %}
+
+            <span class="table-page-btn disabled">
+
+                Next
+
+                <i class='bx bx-chevron-right'></i>
+
+            </span>
+
+            {% endif %}
+
+
+        </div>
+
+        {% endif %}
+
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================================
+     JAVASCRIPT
+     ========================================================= -->
+
+<script>
+
+
+/*
+ * Search debounce
+ */
+
+let debounceTimer;
+
+
+function debouncedSubmit(form) {
+
+    clearTimeout(debounceTimer);
+
+    debounceTimer = setTimeout(() => {
+
+        form.submit();
+
+    }, 500);
+
+}
+
+
+
+/*
+ * Export dropdown
+ */
+
+function toggleExportMenu() {
+
+    const menu =
+        document.getElementById("exportMenu");
+
+    menu.classList.toggle("show");
+
+}
+
+
+
+/*
+ * Close export dropdown
+ * when clicking outside
+ */
+
+document.addEventListener("click", function(event) {
+
+    const exportWrapper =
+        document.querySelector(".table-export");
+
+    const menu =
+        document.getElementById("exportMenu");
+
+    if (
+        exportWrapper &&
+        menu &&
+        !exportWrapper.contains(event.target)
+    ) {
+
+        menu.classList.remove("show");
+
+    }
+
+});
+
+</script>
+
+{% endblock %}

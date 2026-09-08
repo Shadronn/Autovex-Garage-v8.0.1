@@ -1,0 +1,3915 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="module-page financials-page">
+
+    <!-- =====================================================
+         PAGE HEADER
+         ===================================================== -->
+
+    <div class="module-header">
+
+        <div>
+            <h1>Financials</h1>
+
+            <p>
+                Monitor revenue, expenses, debts, creditors and payments.
+            </p>
+        </div>
+
+        <div class="module-header-actions">
+
+            <button type="button" class="secondary-btn">
+                <i class="bx bx-download"></i>
+                Export
+            </button>
+
+            <button type="button" class="secondary-btn">
+                <i class="bx bx-plus"></i>
+                New Transaction
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         FINANCIAL TABS
+         ===================================================== -->
+
+    <div class="module-tabs">
+
+        <button
+            type="button"
+            class="module-tab active"
+            data-financial-tab="financial-overview"
+        >
+            <i class="bx bx-grid-alt"></i>
+            Overview
+        </button>
+
+        <button
+            type="button"
+            class="module-tab"
+            data-financial-tab="financial-expenses"
+        >
+            <i class="bx bx-receipt"></i>
+            Expenses
+        </button>
+
+        <button
+            type="button"
+            class="module-tab"
+            data-financial-tab="financial-debtors"
+        >
+            <i class="bx bx-wallet"></i>
+            Debtors
+        </button>
+
+        <button
+            type="button"
+            class="module-tab"
+            data-financial-tab="financial-creditors"
+        >
+            <i class="bx bx-credit-card"></i>
+            Creditors
+        </button>
+
+        <button
+            type="button"
+            class="module-tab"
+            data-financial-tab="financial-payments"
+        >
+            <i class="bx bx-money"></i>
+            Payments
+        </button>
+
+        <button
+            type="button"
+            class="module-tab"
+            data-financial-tab="financial-reports"
+        >
+            <i class="bx bx-bar-chart-alt-2"></i>
+            Reports
+        </button>
+
+    </div>
+
+
+    <!-- =====================================================
+         OVERVIEW
+         ===================================================== -->
+
+    <section
+        class="financial-module-tab active"
+        id="financial-overview"
+    >
+
+        <div class="financial-summary">
+
+            <!-- Revenue -->
+
+            <div
+                class="financial-card financial-card-clickable"
+                data-financial-detail="revenue"
+            >
+
+                <div class="financial-card-top">
+
+                    <div class="financial-icon">
+                        <i class="bx bx-money"></i>
+                    </div>
+
+                    <span class="financial-label">
+                        Revenue
+                    </span>
+
+                </div>
+
+                <div class="financial-value">
+                    <h5>KES {{ "{:,.2f}".format(revenue) }}</h5>
+                </div>
+
+                <div class="financial-description">
+                    Total payments received
+                    <i class="bx bx-right-arrow-alt"></i>
+                </div>
+
+            </div>
+
+
+            <!-- Expenses -->
+
+            <div class="financial-card">
+
+                <div class="financial-card-top">
+
+                    <div class="financial-icon">
+                        <i class="bx bx-receipt"></i>
+                    </div>
+
+                    <span class="financial-label">
+                        Expenses
+                    </span>
+
+                </div>
+
+                <div class="financial-value">
+                    <h5>KES {{ "{:,.2f}".format(expenses) }}</h5>
+                </div>
+
+                <div class="financial-description">
+                    Total expenses this month
+                </div>
+
+            </div>
+
+
+            <!-- Outstanding Debt -->
+
+            <div
+                class="financial-card"
+            >
+
+                <div class="financial-card-top">
+
+                    <div class="financial-icon">
+                        <i class="bx bx-credit-card"></i>
+                    </div>
+
+                    <span class="financial-label">
+                        Outstanding Debt
+                    </span>
+
+                </div>
+
+                <div class="financial-value">
+                    <h5>KES {{ "{:,.2f}".format(outstanding_debt) }}</h5>
+                </div>
+
+                <div class="financial-description">
+                    Amount still outstanding
+                    <i class="bx bx-right-arrow-alt"></i>
+                </div>
+
+            </div>
+
+
+            <!-- Creditors -->
+
+            <div class="financial-card">
+
+                <div class="financial-card-top">
+
+                    <div class="financial-icon">
+                        <i class="bx bx-credit-card"></i>
+                    </div>
+
+                    <span class="financial-label">
+                        Creditors
+                    </span>
+
+                </div>
+
+                <div class="financial-value">
+                    <h5>KES {{ "{:,.2f}".format(creditors) }}</h5>
+                </div>
+
+                <div class="financial-description">
+                    Amount owed to suppliers
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Financial Position -->
+
+        <div class="financial-overview">
+
+            <div class="financial-panel">
+
+                <div class="panel-header">
+
+                    <div>
+                        <h3>Financial Position</h3>
+
+                        <p>
+                            Current financial position
+                        </p>
+                    </div>
+
+                    <select class="financial-period">
+
+                        <option>This Month</option>
+                        <option>Last Month</option>
+                        <option>This Year</option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="financial-metrics">
+
+                    <div class="metric">
+                        <span>Revenue</span>
+                        <strong>KES {{ "{:,.2f}".format(revenue) }}</strong>
+                    </div>
+
+                    <div class="metric">
+                        <span>Expenses</span>
+                        <strong>KES {{ "{:,.2f}".format(expenses) }}</strong>
+                    </div>
+
+                    <div class="metric">
+                        <span>Net Position</span>
+                        <strong>KES {{ "{:,.2f}".format(revenue) }}</strong>
+                    </div>
+
+                    <div class="metric">
+                        <span>Outstanding</span>
+                        <strong>KES {{ "{:,.2f}".format(outstanding_debt) }}</strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Recent Payments -->
+
+            <div class="financial-panel">
+
+                <div class="panel-header">
+
+                    <div>
+                        <h3>Recent Payments</h3>
+
+                        <p>
+                            Latest financial transactions
+                        </p>
+                    </div>
+
+                    <button
+                        type="button"
+                        class="view-all-btn"
+                    >
+                        View All
+                        <i class="bx bx-right-arrow-alt"></i>
+                    </button>
+
+                </div>
+
+
+                <div class="financial-table-wrapper">
+
+                    <table class="financial-table">
+
+                        <thead>
+                            <tr>
+                                <th>Reference</th>
+                                <th>Customer</th>
+                                <th>Method</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            <tr>
+                                <td>INV-00124</td>
+                                <td>John Kamau</td>
+                                <td>M-Pesa</td>
+                                <td>KES 25,000</td>
+                            </tr>
+
+                            <tr>
+                                <td>INV-00123</td>
+                                <td>Mary Wanjiku</td>
+                                <td>Bank</td>
+                                <td>KES 18,500</td>
+                            </tr>
+
+                            <tr>
+                                <td>INV-00122</td>
+                                <td>ABC Logistics</td>
+                                <td>Cash</td>
+                                <td>KES 12,000</td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+            
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+     EXPENSES
+     ===================================================== -->
+
+<section
+    class="financial-module-tab"
+    id="financial-expenses"
+>
+
+    <div class="financial-list-panel">
+
+        <!-- EXPENSE HEADER -->
+
+        <div class="financial-list-header">
+
+            <div>
+                <h3>Expense Management</h3>
+
+                <p>
+                    Record, monitor and analyze workshop expenses.
+                </p>
+            </div>
+
+            <button
+                type="button"
+                class="primary-btn"
+                id="openExpenseModal"
+            >
+                <i class="bx bx-plus"></i>
+                New Expense
+            </button>
+
+        </div>
+
+
+        <!-- EXPENSE SUMMARY -->
+
+        <div class="financial-summary">
+
+            <!-- This Month -->
+
+            <div class="financial-card">
+
+                <div class="financial-card-top">
+
+                    <div class="financial-icon">
+                        <i class="bx bx-calendar"></i>
+                    </div>
+
+                    <span class="financial-label">
+                        This Month
+                    </span>
+
+                </div>
+
+                <div class="financial-value">
+                    KES {{ "{:,.2f}".format(expense_this_month or 0) }}
+                </div>
+
+                <div class="financial-description">
+                    Total expenses this month
+                </div>
+
+            </div>
+
+
+            <!-- Pending -->
+
+            <div class="financial-card">
+
+                <div class="financial-card-top">
+
+                    <div class="financial-icon">
+                        <i class="bx bx-time-five"></i>
+                    </div>
+
+                    <span class="financial-label">
+                        Pending
+                    </span>
+
+                </div>
+
+                <div class="financial-value">
+                    KES {{ "{:,.2f}".format(pending_expenses or 0) }}   
+                </div>
+
+                <div class="financial-description">
+                    Awaiting approval
+                </div>
+
+            </div>
+
+
+            <!-- Approved -->
+
+            <div class="financial-card">
+
+                <div class="financial-card-top">
+
+                    <div class="financial-icon">
+                        <i class="bx bx-check-circle"></i>
+                    </div>
+
+                    <span class="financial-label">
+                        Approved
+                    </span>
+
+                </div>
+
+                <div class="financial-value">
+                     KES {{ "{:,.2f}".format(approved_expenses or 0) }}
+                </div>
+
+                <div class="financial-description">
+                    Approved expenses
+                </div>
+
+            </div>
+
+
+            <!-- Total -->
+
+            <div class="financial-card">
+
+                <div class="financial-card-top">
+
+                    <div class="financial-icon">
+                        <i class="bx bx-receipt"></i>
+                    </div>
+
+                    <span class="financial-label">
+                        Total Expenses
+                    </span>
+
+                </div>
+
+                <div class="financial-value">
+                    KES {{ "{:,.2f}".format(total_expenses_year or 0) }}
+                </div>
+
+                <div class="financial-description">
+                    Expenses recorded this year
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- EXPENSE CATEGORY SUMMARY -->
+
+        <div class="financial-panel expense-category-panel">
+
+            <div class="panel-header">
+
+                <div>
+                    <h3>Expense Categories</h3>
+
+                    <p>
+                        Breakdown of expenses by category.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="expense-category-grid">
+
+    {% if expense_categories %}
+
+        {% set max_category_total = expense_categories[0].total %}
+
+        {% for category, total in expense_categories %}
+
+            <div class="expense-category-item">
+
+                <div class="expense-category-info">
+
+                    <span>
+                        {{ category }}
+                    </span>
+
+                    <strong>
+                        KES {{ "{:,.2f}".format(total or 0) }}
+                    </strong>
+
+                </div>
+
+                <div class="expense-category-bar">
+
+                    <span
+                        style="width: {{ ((total / max_category_total) * 100) if max_category_total else 0 }}%;"
+                    ></span>
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="expense-empty-state">
+
+            <i class="bx bx-receipt"></i>
+
+            <p>No expenses have been recorded yet.</p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+        <!-- EXPENSE FILTERS -->
+
+        <div class="financial-panel expense-filter-panel">
+
+            <div class="expense-filter-grid">
+
+                <div class="expense-filter-field">
+
+                    <label for="expenseSearch">
+                        Search
+                    </label>
+
+                    <div class="expense-search">
+
+                        <i class="bx bx-search"></i>
+
+                        <input
+                            type="text"
+                            id="expenseSearch"
+                            placeholder="Search expenses..."
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="expense-filter-field">
+
+                    <label for="expenseCategory">
+                        Category
+                    </label>
+
+                    <select id="expenseCategory">
+
+                        <option value="">
+                            All Categories
+                        </option>
+
+                        <option>
+                            Utilities
+                        </option>
+
+                        <option>
+                            Supplies
+                        </option>
+
+                        <option>
+                            Repairs & Maintenance
+                        </option>
+
+                        <option>
+                            Transport
+                        </option>
+
+                        <option>
+                            Salaries & Wages
+                        </option>
+
+                        <option>
+                            Other
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="expense-filter-field">
+
+                    <label for="expenseStatus">
+                        Status
+                    </label>
+
+                    <select id="expenseStatus">
+
+                        <option value="">
+                            All Statuses
+                        </option>
+
+                        <option>
+                            Approved
+                        </option>
+
+                        <option>
+                            Pending
+                        </option>
+
+                        <option>
+                            Rejected
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="expense-filter-field">
+
+                <label for="expensePeriod">
+                    Period
+                </label>
+
+                <select id="expensePeriod">
+
+                    <option value="this_month">
+                        This Month
+                    </option>
+
+                    <option value="last_month">
+                        Last Month
+                    </option>
+
+                    <option value="this_quarter">
+                        This Quarter
+                    </option>
+
+                    <option value="this_year">
+                        This Year
+                    </option>
+
+                    <option value="all_time">
+                        All Time
+                    </option>
+
+                </select>
+
+            </div>
+            <div class="expense-filter-actions">
+
+                <button
+                    type="button"
+                    id="clearExpenseFilters"
+                    class="expense-filter-clear"
+                >
+                    <i class="bx bx-reset"></i>
+                    Clear Filters
+                </button>
+
+            </div>
+
+            <div class="expense-filter-footer">
+
+                <span id="expenseFilterCount">
+                    Showing all expenses
+                </span>
+
+            </div>
+        </div>
+        
+
+        <!-- EXPENSE TABLE -->
+
+        <div class="financial-panel">
+
+            <div class="panel-header">
+
+                <div>
+                    <h3>Expense Records</h3>
+
+                    <p>
+                        Detailed record of workshop expenses.
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    class="view-all-btn"
+                >
+                    View All
+                    <i class="bx bx-right-arrow-alt"></i>
+                </button>
+
+            </div>
+
+
+            <div class="financial-table-wrapper">
+
+                <table class="financial-table">
+
+                    <thead>
+
+                        <tr>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Category</th>
+                            <th>Reference</th>
+                            <th>Payment Method</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                    {% if recent_expenses %}
+
+                        {% for expense in recent_expenses %}
+
+                        <tr 
+                            data-expense-id="{{ expense.id }}"
+                            data-expense-date="{{ expense.expense_date.strftime('%Y-%m-%d') if expense.expense_date else '' }}"
+                            data-category="{{ expense.category or '' }}"
+                            data-status="{{ expense.status or '' }}"
+                        >
+
+                            <td>
+                                {{ expense.expense_date.strftime('%d %b %Y') if expense.expense_date else '—' }}
+                            </td>
+
+                            <td>
+                                <div class="expense-description">
+                                    <strong>{{ expense.description }}</strong>
+
+                                    {% if expense.notes %}
+                                        <small>{{ expense.notes }}</small>
+                                    {% endif %}
+                                </div>
+                            </td>
+
+                            <td>
+                                <span class="category-badge">
+                                    {{ expense.category }}
+                                </span>
+                            </td>
+
+                            <td>
+                                {{ expense.reference or '—' }}
+                            </td>
+
+                            <td>
+                                {{ expense.payment_method or '—' }}
+                            </td>
+
+                            <td>
+                                <strong>
+                                    KES {{ "{:,.2f}".format(expense.amount or 0) }}
+                                </strong>
+                            </td>
+
+                            <td>
+
+                                {% if expense.status == "Approved" %}
+
+                                    <span class="status-badge status-approved">
+                                        Approved
+                                    </span>
+
+                                {% elif expense.status == "Paid" %}
+
+                                    <span class="status-badge status-paid">
+                                        Paid
+                                    </span>
+
+                                {% elif expense.status == "Pending" %}
+
+                                    <span class="status-badge status-pending">
+                                        Pending
+                                    </span>
+
+                                {% elif expense.status == "Rejected" %}
+
+                                    <span class="status-badge status-rejected">
+                                        Rejected
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="status-badge">
+                                        {{ expense.status }}
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+
+                                <div class="expense-actions">
+
+                                    <button
+                                        type="button"
+                                        class="table-action-btn"
+                                        title="View Expense"
+                                        data-expense-id="{{ expense.id }}"
+                                    >
+                                        <i class="bx bx-show"></i>
+                                    </button>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    {% else %}
+
+                        <tr>
+
+                            <td colspan="8">
+
+                                <div class="expense-empty-state">
+
+                                    <i class="bx bx-receipt"></i>
+
+                                    <p>No expenses have been recorded yet.</p>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    {% endif %}
+
+                </tbody>
+
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+<!-- =====================================================
+     NEW EXPENSE MODAL
+     ===================================================== -->
+
+<div class="expense-modal-overlay" id="expenseModal">
+
+    <div class="expense-modal">
+
+        <div class="expense-modal-header">
+
+            <div>
+                <h3>New Expense</h3>
+                <p>Record a new workshop expense.</p>
+            </div>
+
+            <button
+                type="button"
+                class="expense-modal-close"
+                id="closeExpenseModal"
+            >
+                <i class="bx bx-x"></i>
+            </button>
+
+        </div>
+
+
+        <form
+            method="POST"
+            action="{{ url_for('create_expense') }}"
+        >
+
+            <div class="expense-form-grid">
+
+                <div class="form-group">
+
+                    <label for="expense_date">
+                        Expense Date
+                    </label>
+
+                    <input
+                        type="date"
+                        id="expense_date"
+                        name="expense_date"
+                        value="{{ now.strftime('%Y-%m-%d') if now else '' }}"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="category">
+                        Category
+                    </label>
+
+                    <select
+                        id="category"
+                        name="category"
+                        required
+                    >
+
+                        <option value="">
+                            Select category
+                        </option>
+
+                        <option value="Utilities">
+                            Utilities
+                        </option>
+
+                        <option value="Supplies">
+                            Supplies
+                        </option>
+
+                        <option value="Repairs & Maintenance">
+                            Repairs & Maintenance
+                        </option>
+
+                        <option value="Transport">
+                            Transport
+                        </option>
+
+                        <option value="Salaries & Wages">
+                            Salaries & Wages
+                        </option>
+
+                        <option value="Other">
+                            Other
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group form-group-full">
+
+                    <label for="description">
+                        Description
+                    </label>
+
+                    <input
+                        type="text"
+                        id="description"
+                        name="description"
+                        placeholder="e.g. Workshop electricity"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="reference">
+                        Reference
+                    </label>
+
+                    <input
+                        type="text"
+                        id="reference"
+                        name="reference"
+                        placeholder="Receipt / invoice number"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="payment_method">
+                        Payment Method
+                    </label>
+
+                    <select
+                        id="payment_method"
+                        name="payment_method"
+                    >
+
+                        <option value="">
+                            Select payment method
+                        </option>
+
+                        <option value="Cash">
+                            Cash
+                        </option>
+
+                        <option value="M-Pesa">
+                            M-Pesa
+                        </option>
+
+                        <option value="Bank">
+                            Bank
+                        </option>
+
+                        <option value="Card">
+                            Card
+                        </option>
+
+                        <option value="Cheque">
+                            Cheque
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="amount">
+                        Amount (KES)
+                    </label>
+
+                    <input
+                        type="number"
+                        id="amount"
+                        name="amount"
+                        min="0.01"
+                        step="0.01"
+                        placeholder="0.00"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group form-group-full">
+
+                    <label for="notes">
+                        Notes
+                    </label>
+
+                    <textarea
+                        id="notes"
+                        name="notes"
+                        rows="3"
+                        placeholder="Additional notes..."
+                    ></textarea>
+
+                </div>
+
+            </div>
+
+
+            <div class="expense-modal-footer">
+
+                <button
+                    type="button"
+                    class="btn"
+                    id="cancelExpenseModal"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="submit"
+                    class="primary-btn"
+                >
+                    <i class="bx bx-save"></i>
+                    Save Expense
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+    <!-- =====================================================
+     DEBTORS
+     ===================================================== -->
+
+<section
+    class="financial-module-tab"
+    id="financial-debtors"
+>
+
+    <div class="financial-list-panel">
+
+        <!-- DEBTOR HEADER -->
+
+        <div class="financial-list-header">
+
+            <div>
+                <h3>Debtor Management</h3>
+
+                <p>
+                    Monitor outstanding customer balances,
+                    overdue invoices and payment aging.
+                </p>
+            </div>
+
+            <button
+                type="button"
+                class="secondary-btn"
+            >
+                <i class="bx bx-download"></i>
+                Export
+            </button>
+
+        </div>
+
+
+        <!-- DEBTOR SUMMARY -->
+
+        <div class="financial-summary">
+
+            <!-- Total Outstanding -->
+
+            <div class="financial-card">
+
+                <div class="financial-card-top">
+
+                    <div class="financial-icon">
+                        <i class="bx bx-wallet"></i>
+                    </div>
+
+                    <span class="financial-label">
+                        Total Receivable
+                    </span>
+
+                </div>
+
+                <div class="financial-value">
+                    KES {{ "{:,.2f}".format(total_outstanding or 0) }}
+                </div>
+
+                <div class="financial-description">
+                    Total customer balances
+                </div>
+
+            </div>
+
+
+            <!-- Overdue -->
+
+            <div class="financial-card">
+
+                <div class="financial-card-top">
+
+                    <div class="financial-icon">
+                        <i class="bx bx-error-circle"></i>
+                    </div>
+
+                    <span class="financial-label">
+                        Overdue
+                    </span>
+
+                </div>
+
+                <div class="financial-value">
+                    KES {{ "{:,.2f}".format(total_overdue or 0) }}
+                </div>
+
+                <div class="financial-description">
+                    Past due date
+                </div>
+
+            </div>
+
+
+            <!-- Current -->
+
+            <div class="financial-card">
+
+                <div class="financial-card-top">
+
+                    <div class="financial-icon">
+                        <i class="bx bx-time-five"></i>
+                    </div>
+
+                    <span class="financial-label">
+                        Current
+                    </span>
+
+                </div>
+
+                <div class="financial-value">
+                    KES {{ "{:,.2f}".format(current_amount or 0) }}
+                </div>
+
+                <div class="financial-description">
+                    Within payment period
+                </div>
+
+            </div>
+
+
+            <!-- Debtor Count -->
+
+            <div class="financial-card">
+
+                <div class="financial-card-top">
+
+                    <div class="financial-icon">
+                        <i class="bx bx-group"></i>
+                    </div>
+
+                    <span class="financial-label">
+                        Debtors
+                    </span>
+
+                </div>
+
+                <div class="financial-value">
+                    {{ total_debtors or 0 }}
+                </div>
+
+                <div class="financial-description">
+                    Customers with balances
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- AGING SUMMARY -->
+
+        <div class="financial-panel debtor-aging-panel">
+
+            <div class="panel-header">
+
+                <div>
+                    <h3>Debt Aging</h3>
+
+                    <p>
+                        Outstanding balances grouped by age.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="debtor-aging-grid">
+
+                <!-- Current -->
+
+                <div class="debtor-aging-item">
+
+                    <div class="debtor-aging-top">
+
+                        <strong>
+                            KES {{ "{:,.2f}".format(current_amount or 0) }}
+                        </strong>
+
+                    </div>
+
+                    <div class="debtor-aging-bar">
+                        <span
+                            style="width: {{
+                                ((current_amount or 0) / (total_outstanding or 1) * 100)
+                                | round(0)
+                            }}%;"
+                        ></span>
+                    </div>
+
+                    <small>
+                        0–30 days
+                    </small>
+
+                </div>
+
+
+                <!-- 31–60 Days -->
+
+                <div class="debtor-aging-item">
+
+                    <div class="debtor-aging-top">
+
+                        <strong>
+                            KES {{ "{:,.2f}".format(days_31_60_amount or 0) }}
+                        </strong>
+
+                    </div>
+
+                    <div class="debtor-aging-bar">
+                        <span
+                            style="width: {{
+                                ((days_31_60_amount or 0) / (total_outstanding or 1) * 100)
+                                | round(0)
+                            }}%;"
+                        ></span>
+                    </div>
+
+                    <small>
+                        31–60 days
+                    </small>
+
+                </div>
+
+
+                <!-- 61–90 Days -->
+
+                <div class="debtor-aging-item">
+
+                    <div class="debtor-aging-top">
+
+                        <strong>
+                            KES {{ "{:,.2f}".format(days_61_90_amount or 0) }}
+                        </strong>
+
+                    </div>
+
+                    <div class="debtor-aging-bar">
+                        <span
+                            style="width: {{
+                                ((days_61_90_amount or 0) / (total_outstanding or 1) * 100)
+                                | round(0)
+                            }}%;"
+                        ></span>
+                    </div>
+
+                    <small>
+                        61–90 days
+                    </small>
+
+                </div>
+
+
+                <!-- 90+ Days -->
+
+                <div class="debtor-aging-item">
+
+                    <div class="debtor-aging-top">
+
+                        <strong>
+                            KES {{ "{:,.2f}".format(days_90_plus_amount or 0) }}
+                        </strong>
+
+                    </div>
+
+                    <div class="debtor-aging-bar">
+                        <span
+                            style="width: {{
+                                ((days_90_plus_amount or 0) / (total_outstanding or 1) * 100)
+                                | round(0)
+                            }}%;"
+                        ></span>
+                    </div>
+
+                    <small>
+                        Over 90 days
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- DEBTOR FILTERS -->
+
+        <div class="financial-panel debtor-filter-panel">
+
+            <div class="debtor-filter-grid">
+
+                <div class="debtor-filter-field debtor-search-field">
+
+                    <label for="debtorSearch">
+                        Search
+                    </label>
+
+                    <div class="debtor-search">
+
+                        <i class="bx bx-search"></i>
+
+                        <input
+                            type="text"
+                            id="debtorSearch"
+                            placeholder="Search customer or invoice..."
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="debtor-filter-field">
+
+                    <label for="debtorAging">
+                        Aging
+                    </label>
+
+                    <select id="debtorAging">
+
+                        <option value="">
+                            All Aging
+                        </option>
+
+                        <option>
+                            Current
+                        </option>
+
+                        <option>
+                            31–60 Days
+                        </option>
+
+                        <option>
+                            61–90 Days
+                        </option>
+
+                        <option>
+                            90+ Days
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="debtor-filter-field">
+
+                    <label for="debtorStatus">
+                        Status
+                    </label>
+
+                    <select id="debtorStatus">
+
+                        <option value="">
+                            All Statuses
+                        </option>
+
+                        <option>
+                            Partial
+                        </option>
+
+                        <option>
+                            Outstanding
+                        </option>
+
+                        <option>
+                            Overdue
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="debtor-filter-field">
+
+                    <label for="debtorPeriod">
+                        Period
+                    </label>
+
+                    <select id="debtorPeriod">
+
+                        <option>
+                            All Time
+                        </option>
+
+                        <option>
+                            This Month
+                        </option>
+
+                        <option>
+                            Last Month
+                        </option>
+
+                        <option>
+                            This Quarter
+                        </option>
+
+                        <option>
+                            This Year
+                        </option>
+
+                    </select>
+
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- DEBTOR TABLE -->
+
+        <div class="financial-panel">
+
+            <div class="panel-header">
+
+                <div>
+                    <h3>Outstanding Invoices</h3>
+
+                    <p>
+                        Customer invoices with unpaid balances.
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    id="viewAllDebtors"
+                    class="btn"
+                >
+                    View All
+                </button>
+
+            </div>
+
+
+            <div class="financial-table-wrapper">
+
+                <table class="financial-table">
+
+                    <thead>
+
+                        <tr>
+                            <th>Customer</th>
+                            <th>Invoice</th>
+                            <th>Invoice Date</th>
+                            <th>Due Date</th>
+                            <th>Invoice Amount</th>
+                            <th>Paid</th>
+                            <th>Balance</th>
+                            <th>Age</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+
+                    </thead>
+                    <tbody>
+
+                    {% if debtor_invoices %}
+
+                        {% for debtor in debtor_invoices %}
+
+                            <tr>
+
+                                <!-- Customer -->
+                                <td>
+                                    {{ debtor.customer_name }}
+                                </td>
+
+
+                                <!-- Invoice -->
+                                <td>
+                                    {{ debtor.invoice_number }}
+                                </td>
+
+
+                                <!-- Invoice Date -->
+                                <td>
+                                    {{ debtor.invoice_date }}
+                                </td>
+
+
+                                <!-- Due Date -->
+                                <td>
+                                    {{ debtor.due_date }}
+                                </td>
+
+
+                                <!-- Invoice Amount -->
+                                <td>
+                                    KES {{ "{:,.2f}".format(debtor.invoice_amount or 0) }}
+                                </td>
+
+
+                                <!-- Paid -->
+                                <td>
+                                    KES {{ "{:,.2f}".format(debtor.amount_paid or 0) }}
+                                </td>
+
+
+                                <!-- Balance -->
+                                <td>
+
+                                    <strong>
+                                        KES {{ "{:,.2f}".format(debtor.balance or 0) }}
+                                    </strong>
+
+                                </td>
+
+
+                                <!-- Age -->
+                                <td>
+
+                                    {% if debtor.days_overdue > 0 %}
+
+                                        {{ debtor.days_overdue }} days
+
+                                    {% else %}
+
+                                        0 days
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- Status -->
+                                <td>
+
+                                    {% if debtor.status == "Overdue" %}
+
+                                        <span class="payment-status unpaid">
+                                            Overdue
+                                        </span>
+
+                                    {% elif debtor.status == "Partial" %}
+
+                                        <span class="payment-status partial">
+                                            Partial
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="payment-status">
+                                            {{ debtor.status }}
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- Action -->
+                                <td>
+
+                                     <a
+                                        href="{{ url_for('invoice_detail', invoice_id=debtor.invoice.id) }}"
+                                        class="btn"
+                                    >
+                                        View
+                                    </a>
+
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    {% else %}
+
+                        <tr>
+
+                            <td
+                                colspan="10"
+                                style="text-align: center;"
+                            >
+
+                                No outstanding debtor invoices found.
+
+                            </td>
+
+                        </tr>
+
+                    {% endif %}
+
+                </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+    <!-- =====================================================
+     CREDITORS
+     ===================================================== -->
+
+<section
+    class="financial-module-tab"
+    id="financial-creditors"
+>
+
+    <div class="financial-list-panel">
+
+        <!-- CREDITOR HEADER -->
+
+        <div class="financial-list-header">
+
+            <div>
+                <h3>Creditor Management</h3>
+
+                <p>
+                    Monitor supplier balances, outstanding bills
+                    and upcoming payment obligations.
+                </p>
+            </div>
+
+            <button
+                type="button"
+                class="secondary-btn"
+            >
+                <i class="bx bx-download"></i>
+                Export
+            </button>
+
+        </div>
+
+
+        <!-- CREDITOR SUMMARY -->
+
+        <div class="financial-summary">
+
+            <!-- Total Payables -->
+
+            <div class="financial-card">
+
+                <div class="financial-card-top">
+
+                    <div class="financial-icon">
+                        <i class="bx bx-credit-card"></i>
+                    </div>
+
+                    <span class="financial-label">
+                        Total Payables
+                    </span>
+
+                </div>
+
+                <div class="financial-value">
+                    KES {{ "{:,.2f}".format(total_payables or 0) }}
+                </div>
+
+                <div class="financial-description">
+                    Total amount owed
+                </div>
+
+            </div>
+
+
+            <!-- Overdue -->
+
+            <div class="financial-card">
+
+                <div class="financial-card-top">
+
+                    <div class="financial-icon">
+                        <i class="bx bx-error-circle"></i>
+                    </div>
+
+                    <span class="financial-label">
+                        Overdue
+                    </span>
+
+                </div>
+
+                <div class="financial-value">
+                    KES {{ "{:,.2f}".format(creditor_overdue or 0) }}
+                </div>
+
+                <div class="financial-description">
+                    Past supplier due dates
+                </div>
+
+            </div>
+
+
+            <!-- Due Soon -->
+
+            <div class="financial-card">
+
+                <div class="financial-card-top">
+
+                    <div class="financial-icon">
+                        <i class="bx bx-time-five"></i>
+                    </div>
+
+                    <span class="financial-label">
+                        Due Soon
+                    </span>
+
+                </div>
+
+                <div class="financial-value">
+                    KES {{ "{:,.2f}".format(creditor_due_soon or 0) }}
+                </div>
+
+                <div class="financial-description">
+                    Due within 7 days
+                </div>
+
+            </div>
+
+
+            <!-- Creditor Count -->
+
+            <div class="financial-card">
+
+                <div class="financial-card-top">
+
+                    <div class="financial-icon">
+                        <i class="bx bx-group"></i>
+                    </div>
+
+                    <span class="financial-label">
+                        Creditors
+                    </span>
+
+                </div>
+
+                <div class="financial-value">
+                     {{ total_creditors or 0 }}
+                </div>
+
+                <div class="financial-description">
+                    Suppliers with balances
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PAYMENT SCHEDULE -->
+
+        <div class="financial-panel creditor-schedule-panel">
+
+            <div class="panel-header">
+
+                <div>
+                    <h3>Payment Schedule</h3>
+
+                    <p>
+                        Upcoming supplier obligations.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="creditor-schedule-grid">
+
+                {% for creditor in creditor_bills
+                    if creditor.due_date
+                    and creditor.days_overdue == 0
+                %}
+
+                    <div class="creditor-schedule-item">
+
+                        <div class="creditor-schedule-date">
+
+                            <strong>
+                                {{ creditor.due_date.strftime('%d') }}
+                            </strong>
+
+                            <span>
+                                {{ creditor.due_date.strftime('%b')|upper }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="creditor-schedule-info">
+
+                            <strong>
+                                {{ creditor.supplier_name }}
+                            </strong>
+
+                            <span>
+                                {{ creditor.bill_number }}
+                                ·
+                                KES {{ "{:,.2f}".format(creditor.balance) }}
+                            </span>
+
+                        </div>
+
+
+                        <span class="payment-status partial">
+
+                            {% if creditor.due_date == now.date() %}
+
+                                Due Today
+
+                            {% else %}
+
+                                Due Soon
+
+                            {% endif %}
+
+                        </span>
+
+                    </div>
+
+                {% else %}
+
+                    <div class="empty-table-state">
+
+                        <i class="bx bx-calendar-check"></i>
+
+                        <div>
+
+                            <strong>
+                                No upcoming payments
+                            </strong>
+
+                            <p>
+                                There are no supplier bills due soon.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+
+        <!-- CREDITOR FILTERS -->
+
+        <div class="financial-panel creditor-filter-panel">
+
+            <div class="creditor-filter-grid">
+
+                <div class="creditor-filter-field creditor-search-field">
+
+                    <label for="creditorSearch">
+                        Search
+                    </label>
+
+                    <div class="creditor-search">
+
+                        <i class="bx bx-search"></i>
+
+                        <input
+                            type="text"
+                            id="creditorSearch"
+                            placeholder="Search supplier or invoice..."
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="creditor-filter-field">
+
+                    <label for="creditorStatus">
+                        Status
+                    </label>
+
+                    <select id="creditorStatus">
+
+                        <option value="">
+                            All Statuses
+                        </option>
+
+                        <option>
+                            Current
+                        </option>
+
+                        <option>
+                            Due Soon
+                        </option>
+
+                        <option>
+                            Overdue
+                        </option>
+
+                        <option>
+                            Partially Paid
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="creditor-filter-field">
+
+                    <label for="creditorPeriod">
+                        Period
+                    </label>
+
+                    <select id="creditorPeriod">
+
+                        <option>
+                            All Time
+                        </option>
+
+                        <option>
+                            This Month
+                        </option>
+
+                        <option>
+                            Last Month
+                        </option>
+
+                        <option>
+                            This Quarter
+                        </option>
+
+                        <option>
+                            This Year
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="creditor-filter-field">
+
+                    <label for="creditorPayment">
+
+                        Payment Status
+
+                    </label>
+
+                    <select id="creditorPayment">
+
+                        <option value="">
+                            All Payments
+                        </option>
+
+                        <option>
+                            Unpaid
+                        </option>
+
+                        <option>
+                            Partial
+                        </option>
+
+                        <option>
+                            Paid
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- CREDITOR TABLE -->
+
+        <div class="financial-panel">
+
+            <div class="panel-header">
+
+                <div>
+                    <h3>Outstanding Supplier Bills</h3>
+
+                    <p>
+                        Supplier invoices with unpaid balances.
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    class="view-all-btn"
+                >
+                    View All
+                    <i class="bx bx-right-arrow-alt"></i>
+                </button>
+
+            </div>
+
+
+            <div class="financial-table-wrapper">
+
+                <table class="financial-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Supplier</th>
+                            <th>Invoice</th>
+                            <th>Invoice Date</th>
+                            <th>Due Date</th>
+                            <th>Invoice Amount</th>
+                            <th>Paid</th>
+                            <th>Balance</th>
+                            <th>Status</th>
+                            <th>Action</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for creditor in creditor_bills %}
+
+                        <tr>
+
+                            <!-- Supplier -->
+
+                            <td>
+                                <strong>
+                                    {{ creditor.supplier_name }}
+                                </strong>
+                            </td>
+
+
+                            <!-- Invoice -->
+
+                            <td>
+                                {{ creditor.bill_number }}
+                            </td>
+
+
+                            <!-- Invoice Date -->
+
+                            <td>
+
+                                {% if creditor.bill_date %}
+
+                                    {{ creditor.bill_date.strftime('%d %b %Y') }}
+
+                                {% else %}
+
+                                    —
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- Due Date -->
+
+                            <td>
+
+                                {% if creditor.due_date %}
+
+                                    {{ creditor.due_date.strftime('%d %b %Y') }}
+
+                                {% else %}
+
+                                    —
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- Invoice Amount -->
+
+                            <td>
+                                KES {{ "{:,.2f}".format(creditor.amount) }}
+                            </td>
+
+
+                            <!-- Paid -->
+
+                            <td>
+                                KES {{ "{:,.2f}".format(creditor.amount_paid) }}
+                            </td>
+
+
+                            <!-- Balance -->
+
+                            <td>
+
+                                <strong>
+                                    KES {{ "{:,.2f}".format(creditor.balance) }}
+                                </strong>
+
+                            </td>
+
+
+                            <!-- Status -->
+
+                            <td>
+
+                                {% if creditor.aging == "Current" %}
+
+                                    {% if creditor.due_date
+                                        and (creditor.due_date.date() - now.date()).days <= 7
+                                        and (creditor.due_date.date() - now.date()).days >= 0
+                                    %}
+
+                                        <span class="payment-status partial">
+                                            Due Soon
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="payment-status paid">
+                                            Current
+                                        </span>
+
+                                    {% endif %}
+
+
+                                {% elif creditor.aging == "1–30 Days" %}
+
+                                    <span class="payment-status unpaid">
+                                        Overdue
+                                    </span>
+
+
+                                {% elif creditor.aging == "31–60 Days" %}
+
+                                    <span class="payment-status unpaid">
+                                        Overdue
+                                    </span>
+
+
+                                {% elif creditor.aging == "61–90 Days" %}
+
+                                    <span class="payment-status unpaid">
+                                        Overdue
+                                    </span>
+
+
+                                {% elif creditor.aging == "90+ Days" %}
+
+                                    <span class="payment-status unpaid">
+                                        Overdue
+                                    </span>
+
+
+                                {% else %}
+
+                                    <span class="payment-status partial">
+                                        {{ creditor.status }}
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- Action -->
+
+                            <td>
+
+                                <a
+                                    href="{{ url_for(
+                                        'supplier_bill_detail',
+                                        bill_id=creditor.bill.id
+                                    ) }}"
+                                    class="btn"
+                                    title="View Supplier Bill"
+                                >
+
+                                    <i class="bx bx-show"></i>
+                                    View
+
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                        {% else %}
+
+                        <tr>
+
+                            <td
+                                colspan="9"
+                                style="text-align:center;"
+                            >
+
+                                <div class="empty-table-state">
+
+                                    <i class="bx bx-receipt"></i>
+
+                                    <strong>
+                                        No outstanding supplier bills
+                                    </strong>
+
+                                    <p>
+                                        Suppliers with unpaid balances will appear here.
+                                    </p>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- =====================================================
+     PAYMENTS
+     ===================================================== -->
+
+<section
+    class="financial-module-tab"
+    id="financial-payments"
+>
+
+    <div class="financial-list-panel">
+
+        <!-- HEADER -->
+
+        <div class="financial-list-header">
+
+            <div>
+                <h3>Payment Management</h3>
+
+                <p>
+                    Monitor customer receipts, supplier payments
+                    and recent financial transactions.
+                </p>
+            </div>
+
+            <div class="module-header-actions">
+
+                <button
+                    type="button"
+                    class="secondary-btn"
+                    id="exportPaymentsBtn"
+                    data-export-url="{{ url_for('export_financial_payments') }}"
+                >
+                    <i class="bx bx-download"></i>
+                    Export
+                </button>
+
+                <button
+                    type="button"
+                    class="primary-btn"
+                >
+                    <i class="bx bx-plus"></i>
+                    Record Payment
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- PAYMENT SUMMARY -->
+
+        <div class="financial-summary">
+
+            <!-- Money In -->
+
+            <div class="financial-card">
+
+                <div class="financial-card-top">
+
+                    <div class="financial-icon">
+                        <i class="bx bx-down-arrow-circle"></i>
+                    </div>
+
+                    <span class="financial-label">
+                        Money In
+                    </span>
+
+                </div>
+
+                <div class="financial-value">
+                    KES {{ "{:,.2f}".format(payment_money_in) }}
+                </div>
+
+                <div class="financial-description">
+                    Customer payments received
+                </div>
+
+            </div>
+
+
+            <!-- Money Out -->
+
+            <div class="financial-card">
+
+                <div class="financial-card-top">
+
+                    <div class="financial-icon">
+                        <i class="bx bx-up-arrow-circle"></i>
+                    </div>
+
+                    <span class="financial-label">
+                        Money Out
+                    </span>
+
+                </div>
+
+                <div class="financial-value">
+                    KES {{ "{:,.2f}".format(payment_money_out) }}
+                </div>
+
+                <div class="financial-description">
+                    Supplier payments made
+                </div>
+
+            </div>
+
+
+            <!-- Net Movement -->
+
+            <div class="financial-card">
+
+                <div class="financial-card-top">
+
+                    <div class="financial-icon">
+                        <i class="bx bx-transfer"></i>
+                    </div>
+
+                    <span class="financial-label">
+                        Net Movement
+                    </span>
+
+                </div>
+
+                <div class="financial-value">
+                    KES {{ "{:,.2f}".format(payment_net_movement) }}
+                </div>
+
+                <div class="financial-description">
+                    Net cash movement
+                </div>
+
+            </div>
+
+
+            <!-- Transactions -->
+
+            <div class="financial-card">
+
+                <div class="financial-card-top">
+
+                    <div class="financial-icon">
+                        <i class="bx bx-receipt"></i>
+                    </div>
+
+                    <span class="financial-label">
+                        Transactions
+                    </span>
+
+                </div>
+
+                <div class="financial-value">
+                    {{ payment_transaction_count }}
+                </div>
+
+                <div class="financial-description">
+                    Payments recorded
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PAYMENT FILTERS -->
+
+        <div class="financial-panel payment-filter-panel">
+
+            <div class="payment-filter-grid">
+
+                <div class="payment-filter-field">
+
+                    <label for="paymentSearch">
+                        Search
+                    </label>
+
+                    <div class="payment-search">
+
+                        <i class="bx bx-search"></i>
+
+                        <input
+                            type="text"
+                            id="paymentSearch"
+                            placeholder="Search customer, supplier or reference..."
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="payment-filter-field">
+
+                    <label for="paymentType">
+                        Payment Type
+                    </label>
+
+                    <select id="paymentType">
+
+                        <option value="">
+                            All Types
+                        </option>
+
+                        <option>
+                            Customer Payment
+                        </option>
+
+                        <option>
+                            Supplier Payment
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="payment-filter-field">
+
+                    <label for="paymentMethod">
+                        Payment Method
+                    </label>
+
+                    <select id="paymentMethod">
+
+                        <option value="">
+                            All Methods
+                        </option>
+
+                        <option>
+                            M-Pesa
+                        </option>
+
+                        <option>
+                            Bank Transfer
+                        </option>
+
+                        <option>
+                            Cash
+                        </option>
+
+                        <option>
+                            Cheque
+                        </option>
+
+                        <option>
+                            Card
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="payment-filter-field">
+
+                    <label for="paymentPeriod">
+                        Period
+                    </label>
+
+                    <select id="paymentPeriod">
+
+                        <option>
+                            All Time
+                        </option>
+
+                        <option>
+                            Today
+                        </option>
+
+                        <option>
+                            This Week
+                        </option>
+
+                        <option>
+                            This Month
+                        </option>
+
+                        <option>
+                            This Quarter
+                        </option>
+
+                        <option>
+                            This Year
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PAYMENT TABLE -->
+
+        <div class="financial-panel">
+
+            <div class="panel-header">
+
+                <div>
+                    <h3>Recent Payments</h3>
+
+                    <p>
+                        Latest customer and supplier transactions.
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    class="view-all-btn"
+                >
+                    View All
+                    <i class="bx bx-right-arrow-alt"></i>
+                </button>
+
+            </div>
+
+
+            <div class="financial-table-wrapper">
+
+                <table class="financial-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Date</th>
+                            <th>Reference</th>
+                            <th>Party</th>
+                            <th>Type</th>
+                            <th>Payment Method</th>
+                            <th>Amount</th>
+                            <th>Balance</th>
+                            <th>Status</th>
+                            <th>Action</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="paymentsTableBody">
+
+                        {% for payment in financial_payment_records %}
+
+                        <tr
+                            data-payment-type="{{ payment.type }}"
+                            data-payment-method="{{ payment.method }}"
+                            data-payment-date="{{ payment.date.isoformat() if payment.date else '' }}"
+                        >
+
+                            <td>
+                                {% if payment.date %}
+                                    {{ payment.date.strftime('%d %b %Y') }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {{ payment.reference }}
+                            </td>
+
+                            <td>
+                                <strong>
+                                    {{ payment.party }}
+                                </strong>
+                            </td>
+
+                            <td>
+                                {{ payment.type }}
+                            </td>
+
+                            <td>
+                                {{ payment.method }}
+                            </td>
+
+                            <td>
+                                <strong>
+                                    KES {{ "{:,.2f}".format(payment.amount) }}
+                                </strong>
+                            </td>
+                            <td>
+                                <strong>
+                                    KES {{ "{:,.2f}".format(payment.balance) }}
+                                </strong>
+                            </td>
+
+                            <td>
+
+                                <span class="payment-status paid">
+                                    {{ payment.status }}
+                                </span>
+
+                            </td>
+
+                            <td>
+
+                                {% if payment.type == "Customer Payment" %}
+
+                                    <a
+                                        href="{{ url_for(
+                                            'invoice_detail',
+                                            invoice_id=payment.invoice_id
+                                        ) }}"
+                                        class="btn"
+                                    >
+                                        View
+                                    </a>
+
+                                {% elif payment.type == "Supplier Payment" %}
+
+                                    <a
+                                        href="{{ url_for(
+                                            'supplier_bill_detail',
+                                            bill_id=payment.bill_id
+                                        ) }}"
+                                        class="btn"
+                                    >
+                                        View
+                                    </a>
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                        {% else %}
+
+                        <tr>
+
+                            <td
+                                colspan="9"
+                                style="text-align:center;"
+                            >
+
+                                <div class="empty-table-state">
+
+                                    <i class="bx bx-receipt"></i>
+
+                                    <strong>
+                                        No payment transactions found
+                                    </strong>
+
+                                    <p>
+                                        Customer and supplier payments
+                                        will appear here.
+                                    </p>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+<!-- =====================================================
+     FINANCIAL REPORTS
+     ===================================================== -->
+
+<section
+    class="financial-module-tab"
+    id="financial-reports"
+>
+
+    <div class="financial-list-panel">
+
+        <!-- HEADER -->
+
+        <div class="financial-list-header">
+
+            <div>
+                <h3>Financial Reports</h3>
+
+                <p>
+                    Generate, preview and export financial
+                    statements and management reports.
+                </p>
+            </div>
+
+            <div class="module-header-actions">
+
+                <button
+                    type="button"
+                    class="secondary-btn"
+                >
+                    <i class="bx bx-history"></i>
+                    Report History
+                </button>
+
+                <button
+                    type="button"
+                    class="primary-btn"
+                >
+                    <i class="bx bx-file"></i>
+                    Generate Report
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- REPORT PERIOD -->
+
+        <div class="financial-panel report-period-panel">
+
+            <div class="report-period-header">
+
+                <div>
+                    <h3>Reporting Period</h3>
+
+                    <p>
+                        Select the period to use when generating
+                        financial reports.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="report-period-grid">
+
+                <div class="report-period-field">
+
+                    <label for="reportStartDate">
+                        From
+                    </label>
+
+                    <input
+                        type="date"
+                        id="reportStartDate"
+                    >
+
+                </div>
+
+
+                <div class="report-period-field">
+
+                    <label for="reportEndDate">
+                        To
+                    </label>
+
+                    <input
+                        type="date"
+                        id="reportEndDate"
+                    >
+
+                </div>
+
+
+                <div class="report-period-field">
+
+                    <label for="reportBasis">
+                        Accounting Basis
+                    </label>
+
+                    <select id="reportBasis">
+
+                        <option>
+                            Accrual
+                        </option>
+
+                        <option>
+                            Cash
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="report-period-field">
+
+                    <label for="reportFormat">
+                        Format
+                    </label>
+
+                    <select id="reportFormat">
+
+                        <option>
+                            PDF
+                        </option>
+
+                        <option>
+                            Excel
+                        </option>
+
+                        <option>
+                            PDF & Excel
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- FINANCIAL STATEMENTS -->
+
+        <div class="financial-panel report-section-panel">
+
+            <div class="panel-header">
+
+                <div>
+                    <h3>Financial Statements</h3>
+
+                    <p>
+                        Core reports used to assess the financial
+                        position and performance of the business.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="report-card-grid">
+
+                <!-- PROFIT & LOSS -->
+
+                <div class="report-card">
+
+                    <div class="report-card-icon">
+                        <i class="bx bx-line-chart"></i>
+                    </div>
+
+                    <div class="report-card-content">
+
+                        <h4>
+                            Profit & Loss Statement
+                        </h4>
+
+                        <p>
+                            Revenue, expenses and net profit or
+                            loss for the selected period.
+                        </p>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="btn"
+                        id="generateProfitLossBtn"
+                        data-report-url="{{ url_for('profit_loss_report') }}"
+                    >
+                        <i class="bx bx-file"></i>
+                        Generate
+                    </button>
+
+                </div>
+
+
+                <!-- BALANCE SHEET -->
+
+                <div class="report-card">
+
+                    <div class="report-card-icon">
+                        <i class="bx bx-bar-chart-alt-2"></i>
+                    </div>
+
+                    <div class="report-card-content">
+
+                        <h4>
+                            Balance Sheet
+                        </h4>
+
+                        <p>
+                            Assets, liabilities and equity showing
+                            the financial position of the business.
+                        </p>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="btn"
+                    >
+                        Generate
+                    </button>
+
+                </div>
+
+
+                <!-- CASH FLOW -->
+
+                <div class="report-card">
+
+                    <div class="report-card-icon">
+                        <i class="bx bx-transfer"></i>
+                    </div>
+
+                    <div class="report-card-content">
+
+                        <h4>
+                            Cash Flow Statement
+                        </h4>
+
+                        <p>
+                            Cash inflows, outflows and net cash
+                            movement during the reporting period.
+                        </p>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="btn"
+                    >
+                        Generate
+                    </button>
+
+                </div>
+
+
+                <!-- TRIAL BALANCE -->
+
+                <div class="report-card">
+
+                    <div class="report-card-icon">
+                        <i class="bx bx-list-check"></i>
+                    </div>
+
+                    <div class="report-card-content">
+
+                        <h4>
+                            Trial Balance
+                        </h4>
+
+                        <p>
+                            Summary of ledger account debit and
+                            credit balances.
+                        </p>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="btn"
+                    >
+                        Generate
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- MANAGEMENT REPORTS -->
+
+        <div class="financial-panel report-section-panel">
+
+            <div class="panel-header">
+
+                <div>
+                    <h3>Management Reports</h3>
+
+                    <p>
+                        Detailed reports for monitoring operations
+                        and financial performance.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="report-card-grid">
+
+                <!-- REVENUE -->
+
+                <div class="report-card">
+
+                    <div class="report-card-icon">
+                        <i class="bx bx-money"></i>
+                    </div>
+
+                    <div class="report-card-content">
+
+                        <h4>
+                            Revenue Analysis
+                        </h4>
+
+                        <p>
+                            Analyse revenue by period, customer,
+                            service and payment status.
+                        </p>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="btn"
+                    >
+                        Generate
+                    </button>
+
+                </div>
+
+
+                <!-- EXPENSE -->
+
+                <div class="report-card">
+
+                    <div class="report-card-icon">
+                        <i class="bx bx-receipt"></i>
+                    </div>
+
+                    <div class="report-card-content">
+
+                        <h4>
+                            Expense Analysis
+                        </h4>
+
+                        <p>
+                            Review expenses by category, period
+                            and payment status.
+                        </p>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="btn"
+                    >
+                        Generate
+                    </button>
+
+                </div>
+
+
+                <!-- DEBTORS -->
+
+                <div class="report-card">
+
+                    <div class="report-card-icon">
+                        <i class="bx bx-user-check"></i>
+                    </div>
+
+                    <div class="report-card-content">
+
+                        <h4>
+                            Debtors Aging
+                        </h4>
+
+                        <p>
+                            Analyse outstanding customer balances
+                            by aging period.
+                        </p>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="btn"
+                    >
+                        Generate
+                    </button>
+
+                </div>
+
+
+                <!-- CREDITORS -->
+
+                <div class="report-card">
+
+                    <div class="report-card-icon">
+                        <i class="bx bx-user-minus"></i>
+                    </div>
+
+                    <div class="report-card-content">
+
+                        <h4>
+                            Creditors Aging
+                        </h4>
+
+                        <p>
+                            Review outstanding supplier balances
+                            and payment obligations.
+                        </p>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="btn"
+                    >
+                        Generate
+                    </button>
+
+                </div>
+
+
+                <!-- PAYMENTS -->
+
+                <div class="report-card">
+
+                    <div class="report-card-icon">
+                        <i class="bx bx-credit-card"></i>
+                    </div>
+
+                    <div class="report-card-content">
+
+                        <h4>
+                            Payment History
+                        </h4>
+
+                        <p>
+                            Detailed history of customer and
+                            supplier payments.
+                        </p>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="btn"
+                    >
+                        Generate
+                    </button>
+
+                </div>
+
+
+                <!-- TAX -->
+
+                <div class="report-card">
+
+                    <div class="report-card-icon">
+                        <i class="bx bx-file-find"></i>
+                    </div>
+
+                    <div class="report-card-content">
+
+                        <h4>
+                            Tax & VAT Report
+                        </h4>
+
+                        <p>
+                            Summarise taxable sales, purchases,
+                            VAT and related tax information.
+                        </p>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="btn"
+                    >
+                        Generate
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- REPORT PREVIEW -->
+
+        <div class="financial-panel report-preview-panel">
+
+            <div class="panel-header">
+
+                <div>
+                    <h3>Report Preview</h3>
+
+                    <p>
+                        Generated reports will appear here before
+                        downloading or exporting.
+                    </p>
+                </div>
+
+                <div class="report-preview-actions">
+
+                    <button
+                        type="button"
+                        class="secondary-btn"
+                    >
+                        <i class="bx bx-printer"></i>
+                        Print
+                    </button>
+
+                    <button
+                        type="button"
+                        class="primary-btn"
+                    >
+                        <i class="bx bx-download"></i>
+                        Download
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="report-preview-empty">
+
+                <i class="bx bx-file-blank"></i>
+
+                <h4>
+                    No report generated
+                </h4>
+
+                <p>
+                    Select a report above and choose
+                    <strong>Generate</strong> to preview it here.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+<!-- =====================================================
+     REPORT HISTORY
+     ===================================================== -->
+
+<div class="financial-panel report-history-panel">
+
+    <div class="panel-header">
+
+        <div>
+            <h3>Report History</h3>
+
+            <p>
+                Previously generated financial reports.
+            </p>
+        </div>
+
+        <button
+            type="button"
+            class="view-all-btn"
+        >
+            View All
+            <i class="bx bx-right-arrow-alt"></i>
+        </button>
+
+    </div>
+
+
+    <div class="financial-table-wrapper">
+
+        <table class="financial-table">
+
+            <thead>
+
+                <tr>
+                    <th>Report</th>
+                    <th>Period</th>
+                    <th>Generated By</th>
+                    <th>Generated On</th>
+                    <th>Format</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                <tr>
+
+                    <td>
+                        Profit &amp; Loss Statement
+                    </td>
+
+                    <td>
+                        Aug 2026
+                    </td>
+
+                    <td>
+                        Admin
+                    </td>
+
+                    <td>
+                        16 Aug 2026
+                    </td>
+
+                    <td>
+                        PDF
+                    </td>
+
+                    <td>
+                        <span class="payment-status paid">
+                            Ready
+                        </span>
+                    </td>
+
+                    <td>
+
+                        <button
+                            type="button"
+                            class="btn"
+                        >
+                            View
+                        </button>
+
+                    </td>
+
+                </tr>
+
+
+                <tr>
+
+                    <td>
+                        Balance Sheet
+                    </td>
+
+                    <td>
+                        Aug 2026
+                    </td>
+
+                    <td>
+                        Admin
+                    </td>
+
+                    <td>
+                        16 Aug 2026
+                    </td>
+
+                    <td>
+                        Excel
+                    </td>
+
+                    <td>
+                        <span class="payment-status paid">
+                            Ready
+                        </span>
+                    </td>
+
+                    <td>
+
+                        <button
+                            type="button"
+                            class="btn"
+                        >
+                            View
+                        </button>
+
+                    </td>
+
+                </tr>
+
+
+                <tr>
+
+                    <td>
+                        Debtors Aging
+                    </td>
+
+                    <td>
+                        Aug 2026
+                    </td>
+
+                    <td>
+                        Accounts
+                    </td>
+
+                    <td>
+                        15 Aug 2026
+                    </td>
+
+                    <td>
+                        PDF
+                    </td>
+
+                    <td>
+                        <span class="payment-status paid">
+                            Ready
+                        </span>
+                    </td>
+
+                    <td>
+
+                        <button
+                            type="button"
+                            class="btn"
+                        >
+                            View
+                        </button>
+
+                    </td>
+
+                </tr>
+
+
+                <tr>
+
+                    <td>
+                        Expense Analysis
+                    </td>
+
+                    <td>
+                        Jul 2026
+                    </td>
+
+                    <td>
+                        Accounts
+                    </td>
+
+                    <td>
+                        01 Aug 2026
+                    </td>
+
+                    <td>
+                        PDF
+                    </td>
+
+                    <td>
+                        <span class="payment-status paid">
+                            Ready
+                        </span>
+                    </td>
+
+                    <td>
+
+                        <button
+                            type="button"
+                            class="btn"
+                        >
+                            View
+                        </button>
+
+                    </td>
+
+                </tr>
+
+
+                <tr>
+
+                    <td>
+                        Cash Flow Statement
+                    </td>
+
+                    <td>
+                        Jul 2026
+                    </td>
+
+                    <td>
+                        Admin
+                    </td>
+
+                    <td>
+                        01 Aug 2026
+                    </td>
+
+                    <td>
+                        PDF &amp; Excel
+                    </td>
+
+                    <td>
+                        <span class="payment-status paid">
+                            Ready
+                        </span>
+                    </td>
+
+                    <td>
+
+                        <button
+                            type="button"
+                            class="btn"
+                        >
+                            View
+                        </button>
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+</section>
+<!-- =====================================================
+     VIEW EXPENSE MODAL
+===================================================== -->
+
+<div class="expense-view-modal-overlay" id="expenseViewModal">
+
+    <div class="expense-view-modal">
+
+        <div class="expense-view-header">
+
+            <div>
+                <span class="modal-eyebrow">EXPENSE DETAILS</span>
+                <h3 id="viewExpenseNumber">Expense</h3>
+            </div>
+
+            <button
+                type="button"
+                class="expense-modal-close"
+                id="closeExpenseViewModal"
+            >
+                <i class="bx bx-x"></i>
+            </button>
+
+        </div>
+
+
+        <div class="expense-view-body">
+
+            <div class="expense-detail-grid">
+
+                <div class="expense-detail-item">
+                    <span>Date</span>
+                    <strong id="viewExpenseDate">—</strong>
+                </div>
+
+                <div class="expense-detail-item">
+                    <span>Status</span>
+                    <strong id="viewExpenseStatus">—</strong>
+                </div>
+
+                <div class="expense-detail-item">
+                    <span>Category</span>
+                    <strong id="viewExpenseCategory">—</strong>
+                </div>
+
+                <div class="expense-detail-item">
+                    <span>Payment Method</span>
+                    <strong id="viewExpensePaymentMethod">—</strong>
+                </div>
+
+                <div class="expense-detail-item">
+                    <span>Reference</span>
+                    <strong id="viewExpenseReference">—</strong>
+                </div>
+
+                <div class="expense-detail-item expense-detail-amount">
+                    <span>Amount</span>
+                    <strong id="viewExpenseAmount">KES 0.00</strong>
+                </div>
+
+            </div>
+
+
+            <div class="expense-detail-section">
+
+                <span>Description</span>
+
+                <p id="viewExpenseDescription">
+                    —
+                </p>
+
+            </div>
+
+
+            <div class="expense-detail-section">
+
+                <span>Notes</span>
+
+                <p id="viewExpenseNotes">
+                    —
+                </p>
+
+            </div>
+
+
+            <div class="expense-detail-meta">
+
+                <span>
+                    Created by:
+                    <strong id="viewExpenseCreatedBy">—</strong>
+                </span>
+
+                <span>
+                    Created:
+                    <strong id="viewExpenseCreatedAt">—</strong>
+                </span>
+
+            </div>
+            <div class="expense-view-actions" id="expenseViewActions">
+
+                <button
+                    type="button"
+                    class="expense-action-btn reject"
+                    id="rejectExpenseBtn"
+                >
+                    <i class="bx bx-x-circle"></i>
+                    Reject
+                </button>
+
+                <button
+                    type="button"
+                    class="expense-action-btn approve"
+                    id="approveExpenseBtn"
+                >
+                    <i class="bx bx-check-circle"></i>
+                    Approve
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- =====================================================
+     APPROVE EXPENSE DIALOG
+     ===================================================== -->
+
+<div
+    id="approveExpenseDialog"
+    class="autovex-dialog-overlay"
+    aria-hidden="true"
+>
+    <div
+        class="autovex-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="approveExpenseDialogTitle"
+    >
+
+        <div class="autovex-dialog-header">
+
+            <div class="autovex-dialog-icon warning">
+                <i class="bx bx-check-circle"></i>
+            </div>
+
+            <div>
+                <h3 id="approveExpenseDialogTitle">
+                    Approve Expense
+                </h3>
+
+                <p>
+                    Are you sure you want to approve
+                    <strong id="approveExpenseNumber">
+                        this expense
+                    </strong>?
+                </p>
+            </div>
+
+        </div>
+
+        <div class="autovex-dialog-footer">
+
+            <button
+                type="button"
+                class="autovex-dialog-btn cancel"
+                id="cancelApproveExpense"
+            >
+                Cancel
+            </button>
+
+            <button
+                type="button"
+                class="autovex-dialog-btn approve"
+                id="confirmApproveExpense"
+            >
+                <i class="bx bx-check"></i>
+                Approve Expense
+            </button>
+
+        </div>
+
+    </div>
+</div>
+
+
+<!-- =====================================================
+     REJECT EXPENSE DIALOG
+     ===================================================== -->
+
+<div
+    id="rejectExpenseDialog"
+    class="autovex-dialog-overlay"
+    aria-hidden="true"
+>
+    <div
+        class="autovex-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="rejectExpenseDialogTitle"
+    >
+
+        <div class="autovex-dialog-header">
+
+            <div class="autovex-dialog-icon danger">
+                <i class="bx bx-x-circle"></i>
+            </div>
+
+            <div>
+                <h3 id="rejectExpenseDialogTitle">
+                    Reject Expense
+                </h3>
+
+                <p>
+                    Please provide a reason for rejecting
+                    <strong id="rejectExpenseNumber">
+                        this expense
+                    </strong>.
+                </p>
+            </div>
+
+        </div>
+
+        <div class="autovex-dialog-body">
+
+            <label for="expenseRejectionReason">
+                Rejection Reason
+            </label>
+
+            <textarea
+                id="expenseRejectionReason"
+                placeholder="Enter the reason for rejecting this expense..."
+            ></textarea>
+
+        </div>
+
+        <div class="autovex-dialog-footer">
+
+            <button
+                type="button"
+                class="autovex-dialog-btn cancel"
+                id="cancelRejectExpense"
+            >
+                Cancel
+            </button>
+
+            <button
+                type="button"
+                class="autovex-dialog-btn reject"
+                id="confirmRejectExpense"
+            >
+                <i class="bx bx-x"></i>
+                Reject Expense
+            </button>
+
+        </div>
+
+    </div>
+</div>
+<script src="{{ url_for('static', filename='js/financials.js') }}"></script>
+
+
+{% endblock %}
+

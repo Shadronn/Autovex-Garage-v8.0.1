@@ -1,0 +1,461 @@
+{% extends "base.html" %}
+
+{% block sidebar %}
+
+{% endblock %}
+{% block content %}
+
+<div class="page">
+  <div class="job-card">
+
+    <header class="card-header">
+      <h2>Job Overview</h2>
+      <div class="action-links">
+        <a href="{{ url_for('vehicle_checklist', job_id=job.id) }}">
+            <i class='bx bx-clipboard'></i> Job card
+        </a>
+        <a href="{{ url_for('vehicle_checklist', job_id=job.id) }}">
+            <i class='bx bx-clipboard'></i> Checklist
+        </a>
+        <a href="{{ url_for('edit_job', job_id=job.id) }}">
+    <i class='bx bx-edit'></i> Edit
+</a>
+        <form method="POST" action="{{ url_for('delete_job', job_id=job.id) }}">
+            <button class="btn-alert" type = "submit">
+                <i class="bx bx-trash" /></i> Delete Job 
+            </button>
+        </form>
+        <a href="/jobs">← Return to jobs </a>
+      </div>
+    </header>
+
+    <!-- CUSTOMER DETAILS -->
+    <section class="detail-section">
+      <h5 class="section-title">Customer Details</h5>
+
+      <div class="kv-grid single">
+        <div class="kv">
+          <span class="label">Customer</span>
+          <span class="value">{{ job.customer_name }}</span>
+        </div>
+
+        <div class="kv">
+          <span class="label">Owner</span>
+          <span class="value">{{ job.vehicle.owner }}</span>
+        </div>
+
+        <div class="kv">
+          <span class="label">Vehicle</span>
+          <span class="value">{{ job.vehicle }}</span>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- JOB DETAILS -->
+    <section class="detail-section">
+      <h4 class="section-title">Job Details</h4>
+
+      <div class="kv-grid double">
+        <div class="kv">
+          <span class="label">Job ID</span>
+          <span class="value">#{{ job.id }}</span>
+        </div>
+
+        <div class="kv">
+          <span class="label">Description</span>
+          <span class="value">{{ job.description }}</span>
+        </div>
+
+        <div class="kv">
+          <span class="label">Status</span>
+          <span class="value">
+            <span id="jobStatus" class="status {{ job.status.lower() }}">
+              {{ job.status }}
+            </span>
+          </span>
+        </div>
+
+        <div class="kv">
+          <span class="label">Mechanic</span>
+          <span class="value">{{ job.mechanic.username }}</span>
+        </div>
+      </div>
+    </section>
+<!-- =========================
+     JOB CARD
+========================= -->
+
+<div class="details-card job-card-summary">
+
+    <div class="card-header">
+        <div>
+            <h2>
+                <i class='bx bx-clipboard'></i>
+                Job Card
+            </h2>
+
+            {% if job_card %}
+                <span class="job-card-number">
+                    {{ job_card.job_card_number }}
+                </span>
+            {% endif %}
+        </div>
+
+        {% if job_card %}
+            <span
+                id="jobCardStatus"
+                class="status-badge
+                    {% if job_card.status == 'Open' %}
+                        status-open
+                    {% elif job_card.status == 'In Progress' %}
+                        status-progress
+                    {% elif job_card.status == 'Completed' %}
+                        status-completed
+                    {% elif job_card.status == 'Cancelled' %}
+                        status-cancelled
+                    {% endif %}
+                "
+            >
+                {{ job_card.status }}
+            </span>
+        {% endif %}
+    </div>
+
+
+    {% if job_card %}
+
+        <!-- WORK DESCRIPTION -->
+
+        {% if job_card.work_description %}
+        <div class="job-card-description">
+
+            <h3>Work Description</h3>
+
+            <p>
+                {{ job_card.work_description }}
+            </p>
+
+        </div>
+        {% endif %}
+
+
+        <!-- PARTS -->
+
+        <div class="job-card-section">
+
+            <div class="section-title">
+                <h3>
+                    <i class='bx bx-cog'></i>
+                    Parts
+                </h3>
+            </div>
+
+            {% if job_card.parts %}
+
+            <div class="table-wrapper">
+
+                <table class="details-table">
+
+                    <thead>
+                        <tr>
+                            <th>Part</th>
+                            <th>Part No.</th>
+                            <th>Qty</th>
+                            <th>Unit Price</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for part in job_card.parts %}
+
+                        <tr>
+
+                            <td>
+                                {{ part.part_name }}
+                            </td>
+
+                            <td>
+                                {{ part.part_number or "—" }}
+                            </td>
+
+                            <td>
+                                {{ part.quantity }}
+                            </td>
+
+                            <td>
+                                KES {{ "{:,.2f}".format(part.unit_price) }}
+                            </td>
+
+                            <td>
+                                <strong>
+                                    KES {{ "{:,.2f}".format(part.total) }}
+                                </strong>
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            {% else %}
+
+                <div class="empty-state">
+                    <i class='bx bx-package'></i>
+                    <p>No parts have been added.</p>
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- LABOUR -->
+
+        <div class="job-card-section">
+
+            <div class="section-title">
+                <h3>
+                    <i class='bx bx-wrench'></i>
+                    Labour
+                </h3>
+            </div>
+
+            {% if job_card.labour_items %}
+
+            <div class="table-wrapper">
+
+                <table class="details-table">
+
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Hours</th>
+                            <th>Hourly Rate</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for labour in job_card.labour_items %}
+
+                        <tr>
+
+                            <td>
+                                {{ labour.description }}
+                            </td>
+
+                            <td>
+                                {{ labour.hours }}
+                            </td>
+
+                            <td>
+                                KES {{ "{:,.2f}".format(labour.hourly_rate) }}
+                            </td>
+
+                            <td>
+                                <strong>
+                                    KES {{ "{:,.2f}".format(labour.total) }}
+                                </strong>
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            {% else %}
+
+                <div class="empty-state">
+                    <i class='bx bx-wrench'></i>
+                    <p>No labour items have been added.</p>
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- TOTALS -->
+
+       <div class="job-card-totals">
+
+            <div class="total-row">
+                <span>Parts Total</span>
+                <strong>
+                    KES {{ "{:,.2f}".format(parts_total) }}
+                </strong>
+            </div>
+
+            <div class="total-row">
+                <span>Labour Total</span>
+                <strong>
+                    KES {{ "{:,.2f}".format(labour_total) }}
+                </strong>
+            </div>
+
+            <div class="total-row grand-total">
+                <span>Job Card Total</span>
+                <strong>
+                    KES {{ "{:,.2f}".format(job_card_total) }}
+                </strong>
+            </div>
+
+        </div>
+
+        <div class="job-card-totals">
+
+            <div class="total-row">
+                <span>Parts Total</span>
+                <strong>
+                    KES {{ "{:,.2f}".format(parts_total) }}
+                </strong>
+            </div>
+
+            <div class="total-row">
+                <span>Labour Total</span>
+                <strong>
+                    KES {{ "{:,.2f}".format(labour_total) }}
+                </strong>
+            </div>
+
+            <div class="total-row grand-total">
+                <span>Job Card Total</span>
+                <strong>
+                    KES {{ "{:,.2f}".format(job_card_total) }}
+                </strong>
+            </div>
+
+        </div>
+
+
+        <!-- TECHNICIAN NOTES -->
+
+        {% if job_card.technician_notes %}
+        <section class="detail-section">
+        <div class="job-card-notes">
+
+            <h4>
+                <i class='bx bx-note'></i>
+                Technician Notes
+            </h4>
+
+            <p>
+                {{ job_card.technician_notes }}
+            </p>
+
+        </div>
+        </section>
+        {% endif %}
+
+
+
+    {% else %}
+
+        <!-- NO JOB CARD -->
+
+        <div class="job-card-empty">
+
+            <div class="empty-icon">
+                <i class='bx bx-clipboard'></i>
+            </div>
+
+            <h3>No Job Card Created</h3>
+
+            <p>
+                A job card has not yet been created for this job.
+            </p>
+
+            {% if role in ["admin", "superadmin", "accounts", "mechanic"] %}
+
+            <a
+                href="{{ url_for('create_job_card', job_id=job.id) }}"
+                class="btn btn-primary"
+            >
+                <i class='bx bx-plus'></i>
+                Create Job Card
+            </a>
+
+            {% endif %}
+
+        </div>
+
+    {% endif %}
+
+</div>
+    <!-- ACTIONS -->
+   <div class="actions">
+
+  <!-- Toggle Job Status -->
+  <button
+    id="toggleStatusBtn"
+    class="btn secondary"
+    data-job-id="{{ job.id }}"
+    data-initial-status="{{ job.status.lower() }}"
+  >
+    {% if job.status.lower() == 'open' %}
+      Complete Job
+    {% else %}
+      Reopen Job
+    {% endif %}
+  </button>
+
+  <!-- Invoice actions -->
+  {% if invoice %}
+    <a
+      href="{{ url_for('print_invoice', invoice_id=invoice.id) }}"
+      class="btn ghost"
+    >
+      View Invoice
+    </a>
+
+  {% elif job.status.lower() == 'complete' %}
+    <a
+      href="{{ url_for('create_invoice', job_id=job.id) }}"
+      class="btn primary"
+    >
+      Create Invoice
+    </a>
+  {% endif %}
+
+</div>
+
+
+
+  </div>
+</div>
+
+<div id="satisfactionModal" class="modal">
+    <div class="modal-content">
+        <h3>Job Completed</h3>
+
+        <p>
+            The job has been marked as complete.
+        </p>
+     <div class="modal-actions">
+        <button id="generateNoteBtn" class="btn primary">
+            <i class='bx bx-download'></i>
+            Generate Satisfaction Note
+        </button>
+    </div>
+</div>
+
+
+<script src="{{ url_for('static', filename='js/detailed.js') }}"></script>
+
+
+{%endblock%}

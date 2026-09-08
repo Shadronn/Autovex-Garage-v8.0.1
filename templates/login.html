@@ -1,0 +1,251 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AutoVex - Loginp</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/login.css') }}">
+
+    <!-- Boxicons -->
+    <link href="https://cdn.boxicons.com/3.0.8/fonts/basic/boxicons.min.css"
+          rel="stylesheet">
+</head>
+
+<body>
+
+<div class="auth-wrapper">
+
+    <!-- LEFT BRANDING PANEL -->
+    <section class="brand-panel">
+
+        <div class="brand-overlay"></div>
+
+        <div class="brand-content">
+
+            <div class="brand-logo">
+                <div class="logo-mark">
+                    <i class="bx bx-car"></i>
+                </div>
+
+                <div class="logo-text">
+                    Auto<span>Vex</span>
+                </div>
+            </div>
+
+            <div class="brand-message">
+                <h1>Drive your<br><span>workshop forward.</span></h1>
+
+                <p>
+                    A smarter way to manage your garage,
+                    vehicles, jobs, inspections and invoices.
+                </p>
+            </div>
+
+            <div class="features">
+
+                <div class="feature">
+                    <div class="feature-icon">
+                        <i class="bx bx-wrench"></i>
+                    </div>
+                    <div>
+                        <strong>Job Management</strong>
+                        <small>Track every job from start to completion.</small>
+                    </div>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-icon">
+                        <i class="bx bx-car"></i>
+                    </div>
+                    <div>
+                        <strong>Vehicle Management</strong>
+                        <small>Keep complete vehicle service records.</small>
+                    </div>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-icon">
+                        <i class="bx bx-receipt"></i>
+                    </div>
+                    <div>
+                        <strong>Invoices & Payments</strong>
+                        <small>Manage billing and customer payments.</small>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="brand-footer">
+            AutoVex Systems
+        </div>
+
+    </section>
+
+
+    <!-- LOGIN PANEL -->
+    <section class="login-panel">
+
+        <div class="login-container">
+
+            <div class="mobile-logo">
+                <div class="mobile-logo-mark">
+                    <i class="bx bx-car"></i>
+                </div>
+
+                <h1>Auto<span>Vex</span></h1>
+            </div>
+
+
+            <div class="login-heading">
+                <h2>Welcome back</h2>
+                <p>Sign in to continue to your dashboard.</p>
+            </div>
+
+
+            {% if error %}
+            <div class="error-message">
+                <i class="bx bx-error-circle"></i>
+                <span>{{ error }}</span>
+            </div>
+            {% endif %}
+
+
+            <form method="POST">
+
+                <!-- USERNAME -->
+                <div class="form-group">
+
+                    <label for="username">
+                        Username
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <i class="bx bx-user input-icon"></i>
+
+                        <input
+                            type="text"
+                            name="username"
+                            id="username"
+                            placeholder="Enter your username"
+                            autocomplete="username"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- PASSWORD -->
+                
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+
+                    <div class="input-wrap">
+                        <i class="bx bx-lock input-icon"></i>
+
+                        <input
+                            type="password"
+                            name="password"
+                            id="password"
+                            placeholder="Password"
+                            autocomplete="current-password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            id="toggle-password"
+                            class="password-toggle"
+                            aria-label="Show password">
+                            <i class="bx bx-eye"></i>
+                        </button>
+                    </div>
+                    </div>
+
+
+                <!-- LOGIN BUTTON -->
+                <button type="submit" class="login-btn">
+
+                    <span>Sign In</span>
+
+                    <i class="bx bx-right-arrow-alt"></i>
+
+                </button>
+
+            </form>
+
+
+            <div class="security-note">
+
+                <i class="bx bx-shield-quarter"></i>
+
+                <span>
+                    Secure access to your AutoVex account
+                </span>
+
+            </div>
+
+
+            <div class="footer-text">
+                © 2026 AutoVex Systems. All rights reserved.
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+
+
+<script>
+
+const togglePassword =
+    document.getElementById("toggle-password");
+
+const passwordField =
+    document.getElementById("password");
+
+
+togglePassword.addEventListener("click", function () {
+
+    if (passwordField.type === "password") {
+
+        passwordField.type = "text";
+
+        this.innerHTML =
+            '<i class="bx bx-eye-slash"></i>';
+
+        this.setAttribute(
+            "aria-label",
+            "Hide password"
+        );
+
+    } else {
+
+        passwordField.type = "password";
+
+        this.innerHTML =
+            '<i class="bx bx-eye"></i>';
+
+        this.setAttribute(
+            "aria-label",
+            "Show password"
+        );
+    }
+
+});
+
+</script>
+
+</body>
+</html>
+

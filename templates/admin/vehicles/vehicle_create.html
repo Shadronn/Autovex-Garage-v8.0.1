@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<form method="POST" class="form-card">
+    <h1>Customer onboarding</h1>
+    <p>Car Details</p>
+    
+    <div class="form-group">
+        <input name="registration_no" placeholder="Registration Number" required>
+    </div>
+    <div class="form-group">
+        <input name="model" placeholder="Vehicle Model" required>
+    </div>
+    <div class="form-group">
+        <input name="color" placeholder="Vehicle color" required>
+    </div>
+    <div class="form-group">
+        <input name="yom" placeholder="Vehicle Y.O.M" required>
+    </div>
+    <div class="button-group">
+        <button class="login-btn">Save</button>
+        <button class="cancel-btn" id="cancelBtn">Cancel</button>
+    </div>
+</form>
+
+
+{% endblock %}

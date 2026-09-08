@@ -1,0 +1,1331 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Dashboard | Autovex Garage MS
+{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-page">
+
+    <!-- =====================================================
+         DASHBOARD HEADER
+         ===================================================== -->
+
+    <div class="dashboard-workshop">
+
+        <div class="dashboard-workshop-left">
+
+            <div class="dashboard-workshop-logo">
+                <img
+                    src="{{ url_for('static', filename='assets/images/autovex-logo-trans.png') }}"
+                    alt="Autovex Garage MS"
+                >
+            </div>
+
+            <div class="dashboard-workshop-info">
+
+                <h1>
+                    Autovex Garage MS
+                </h1>
+
+                <p>
+                    Garage Management System
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="dashboard-workshop-meta">
+
+            <div class="dashboard-meta-item">
+
+                <i class="bx bx-user"></i>
+
+                <span>
+                    {{ user }}
+                </span>
+
+            </div>
+
+
+            <div class="dashboard-meta-item">
+
+                <i class="bx bx-shield"></i>
+
+                <span>
+                    {{ role|title }}
+                </span>
+
+            </div>
+
+
+            <div class="dashboard-meta-item">
+
+                <i class="bx bx-calendar"></i>
+
+                <span>
+                    {{ now.strftime("%d %b %Y") }}
+                </span>
+
+            </div>
+
+
+            <div class="dashboard-meta-item">
+
+                <i class="bx bx-money"></i>
+
+                <span>
+                    KES
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         PAGE INTRO
+         ===================================================== -->
+
+    <div class="dashboard-intro">
+
+        <div>
+
+            <h2>
+                Dashboard
+            </h2>
+
+            <p>
+                Overview of your garage operations and financial position.
+            </p>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =====================================================
+         QUICK ACTIONS
+         ===================================================== -->
+
+    <section class="dashboard-section">
+
+        <div class="dashboard-section-header">
+
+            <div class="dashboard-section-title">
+
+                <i class="bx bx-flash"></i>
+
+                <h3>
+                    Quick Actions
+                </h3>
+
+            </div>
+
+        </div>
+
+
+        <div class="dashboard-actions">
+
+            <!-- NEW JOB -->
+
+            <a
+                href="{{ url_for('jobs') }}"
+                class="dashboard-action"
+            >
+
+                <div class="dashboard-action-icon">
+                    <i class="bx bx-briefcase"></i>
+                </div>
+
+                <div>
+
+                    <strong>
+                        Jobs
+                    </strong>
+
+                    <span>
+                        Manage workshop jobs
+                    </span>
+
+                </div>
+
+            </a>
+
+
+            <!-- INVOICES -->
+
+            <a
+                href="{{ url_for('invoices') }}"
+                class="dashboard-action"
+            >
+
+                <div class="dashboard-action-icon">
+                    <i class="bx bx-receipt"></i>
+                </div>
+
+                <div>
+
+                    <strong>
+                        Invoices
+                    </strong>
+
+                    <span>
+                        Manage customer invoices
+                    </span>
+
+                </div>
+
+            </a>
+
+
+            <!-- CUSTOMERS -->
+
+            <a
+                href="{{ url_for('customers') }}"
+                class="dashboard-action"
+            >
+
+                <div class="dashboard-action-icon">
+                    <i class="bx bx-group"></i>
+                </div>
+
+                <div>
+
+                    <strong>
+                        Customers
+                    </strong>
+
+                    <span>
+                        Manage customers
+                    </span>
+
+                </div>
+
+            </a>
+
+
+            <!-- FINANCIALS -->
+
+            {% if role in ["admin", "accounts", "superadmin"] %}
+
+            <a
+                href="{{ url_for('financials') }}"
+                class="dashboard-action"
+            >
+
+                <div class="dashboard-action-icon">
+                    <i class="bx bx-bar-chart-alt-2"></i>
+                </div>
+
+                <div>
+
+                    <strong>
+                        Financials
+                    </strong>
+
+                    <span>
+                        Revenue, expenses and reports
+                    </span>
+
+                </div>
+
+            </a>
+
+            {% endif %}
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         OPERATIONS OVERVIEW
+         ===================================================== -->
+
+    <section class="dashboard-section">
+
+        <div class="dashboard-section-header">
+
+            <div class="dashboard-section-title">
+
+                <i class="bx bx-briefcase"></i>
+
+                <h3>
+                    Operations Overview
+                </h3>
+
+            </div>
+
+
+            <a href="{{ url_for('jobs') }}">
+                View Jobs
+                <i class="bx bx-right-arrow-alt"></i>
+            </a>
+
+        </div>
+
+
+        <div class="dashboard-overview">
+
+            <!-- TOTAL JOBS -->
+
+            <a
+                href="{{ url_for('jobs') }}"
+                class="card-link"
+            >
+
+                <div class="dashboard-stat">
+
+                    <div class="dashboard-stat-top">
+
+                        <div>
+
+                            <div class="dashboard-stat-label">
+                                Total Jobs
+                            </div>
+
+                        </div>
+
+                        <div class="dashboard-stat-icon">
+                            <i class="bx bx-briefcase"></i>
+                        </div>
+
+                    </div>
+
+
+                    <div class="dashboard-stat-value">
+                        {{ total_jobs or 0 }}
+                    </div>
+
+
+                    <div class="dashboard-stat-description">
+                        All workshop jobs
+                    </div>
+
+                </div>
+
+            </a>
+
+
+            <!-- OPEN JOBS -->
+
+            <a
+                href="{{ url_for('jobs', status='Open') }}"
+                class="card-link"
+            >
+
+                <div class="dashboard-stat">
+
+                    <div class="dashboard-stat-top">
+
+                        <div>
+
+                            <div class="dashboard-stat-label">
+                                Open Jobs
+                            </div>
+
+                        </div>
+
+                        <div class="dashboard-stat-icon">
+                            <i class="bx bx-time-five"></i>
+                        </div>
+
+                    </div>
+
+
+                    <div class="dashboard-stat-value">
+                        {{ open_jobs or 0 }}
+                    </div>
+
+
+                    <div class="dashboard-stat-description">
+                        Work currently in progress
+                    </div>
+
+                </div>
+
+            </a>
+
+
+            <!-- COMPLETED JOBS -->
+
+            <a
+                href="{{ url_for('jobs', status='Complete') }}"
+                class="card-link"
+            >
+
+                <div class="dashboard-stat">
+
+                    <div class="dashboard-stat-top">
+
+                        <div>
+
+                            <div class="dashboard-stat-label">
+                                Completed Jobs
+                            </div>
+
+                        </div>
+
+                        <div class="dashboard-stat-icon">
+                            <i class="bx bx-check-circle"></i>
+                        </div>
+
+                    </div>
+
+
+                    <div class="dashboard-stat-value">
+                        {{ completed_jobs or 0 }}
+                    </div>
+
+
+                    <div class="dashboard-stat-description">
+                        Successfully completed
+                    </div>
+
+                </div>
+
+            </a>
+
+
+            <!-- COMPLETION RATE -->
+
+            <div class="dashboard-stat">
+
+                <div class="dashboard-stat-top">
+
+                    <div>
+
+                        <div class="dashboard-stat-label">
+                            Completion Rate
+                        </div>
+
+                    </div>
+
+                    <div class="dashboard-stat-icon">
+                        <i class="bx bx-trending-up"></i>
+                    </div>
+
+                </div>
+
+
+                <div class="dashboard-stat-value">
+
+                    {% if total_jobs and total_jobs > 0 %}
+
+                        {{ "%.1f"|format((completed_jobs / total_jobs) * 100) }}%
+
+                    {% else %}
+
+                        0.0%
+
+                    {% endif %}
+
+                </div>
+
+
+                <div class="dashboard-stat-description">
+                    Jobs completed
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         FINANCIAL OVERVIEW
+         ===================================================== -->
+
+    {% if role in ["admin", "accounts", "superadmin"] %}
+
+    <section class="dashboard-section">
+
+        <div class="dashboard-section-header">
+
+            <div class="dashboard-section-title">
+
+                <i class="bx bx-bar-chart-alt-2"></i>
+
+                <h3>
+                    Financial Overview
+                </h3>
+
+            </div>
+
+
+            <a href="{{ url_for('financials') }}">
+                Open Financials
+                <i class="bx bx-right-arrow-alt"></i>
+            </a>
+
+        </div>
+
+
+        <div class="dashboard-financial-grid">
+
+            <!-- REVENUE -->
+
+            <a
+                href="{{ url_for('invoices', status='Paid') }}"
+                class="card-link"
+            >
+
+                <div class="dashboard-financial-card">
+
+                    <div class="dashboard-financial-top">
+
+                        <div class="dashboard-financial-icon">
+                            <i class="bx bx-money"></i>
+                        </div>
+
+                        <span class="dashboard-financial-label">
+                            Revenue
+                        </span>
+
+                    </div>
+
+
+                    <div class="dashboard-financial-value">
+                        KES {{ "{:,.2f}".format(revenue or 0) }}
+                    </div>
+
+
+                    <div class="dashboard-financial-description">
+                        Payments received
+                    </div>
+
+                </div>
+
+            </a>
+
+
+            <!-- OUTSTANDING -->
+
+            <a
+                href="{{ url_for('invoices', status='Unpaid') }}"
+                class="card-link"
+            >
+
+                <div class="dashboard-financial-card">
+
+                    <div class="dashboard-financial-top">
+
+                        <div class="dashboard-financial-icon">
+                            <i class="bx bx-wallet"></i>
+                        </div>
+
+                        <span class="dashboard-financial-label">
+                            Outstanding Debt
+                        </span>
+
+                    </div>
+
+
+                    <div class="dashboard-financial-value">
+                        KES {{ "{:,.2f}".format(debt or 0) }}
+                    </div>
+
+
+                    <div class="dashboard-financial-description">
+                        Outstanding invoice balances
+                    </div>
+
+                </div>
+
+            </a>
+
+
+            <!-- PENDING BILLING -->
+
+            <a
+                href="{{ url_for('jobs', status='Complete') }}"
+                class="card-link"
+            >
+
+                <div class="dashboard-financial-card">
+
+                    <div class="dashboard-financial-top">
+
+                        <div class="dashboard-financial-icon">
+                            <i class="bx bx-time-five"></i>
+                        </div>
+
+                        <span class="dashboard-financial-label">
+                            Pending Billing
+                        </span>
+
+                    </div>
+
+
+                    <div class="dashboard-financial-value">
+                        KES {{ "{:,.2f}".format(pending_amount or 0) }}
+                    </div>
+
+
+                    <div class="dashboard-financial-description">
+                        Completed jobs awaiting invoicing
+                    </div>
+
+                </div>
+
+            </a>
+
+
+            <!-- OVERDUE -->
+
+            <a
+                href="{{ url_for('invoices', status='Unpaid') }}"
+                class="card-link"
+            >
+
+                <div class="dashboard-financial-card">
+
+                    <div class="dashboard-financial-top">
+
+                        <div class="dashboard-financial-icon">
+                            <i class="bx bx-error-circle"></i>
+                        </div>
+
+                        <span class="dashboard-financial-label">
+                            Overdue
+                        </span>
+
+                    </div>
+
+
+                    <div class="dashboard-financial-value">
+                        KES {{ "{:,.2f}".format(overdue_amount or 0) }}
+                    </div>
+
+
+                    <div class="dashboard-financial-description">
+                        Outstanding for 30+ days
+                    </div>
+
+                </div>
+
+            </a>
+
+        </div>
+
+    </section>
+
+    {% endif %}
+
+
+    <!-- =====================================================
+         BUSINESS WORKSPACE
+         ===================================================== -->
+
+    <section class="dashboard-section">
+
+        <div class="dashboard-section-header">
+
+            <div class="dashboard-section-title">
+
+                <i class="bx bx-grid-alt"></i>
+
+                <h3>
+                    Management
+                </h3>
+
+            </div>
+
+        </div>
+
+
+        <div class="dashboard-panels">
+
+            <!-- OPERATIONS PANEL -->
+
+            <div class="dashboard-panel">
+
+                <div class="dashboard-panel-header">
+
+                    <div>
+
+                        <h3>
+                            Workshop Operations
+                        </h3>
+
+                        <p>
+                            Access the main workshop management areas.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="dashboard-table-wrapper">
+
+                    <table class="dashboard-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Module
+                                </th>
+
+                                <th>
+                                    Description
+                                </th>
+
+                                <th>
+                                    Action
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            <tr>
+
+                                <td>
+                                    <strong>
+                                        Jobs
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    Create and manage workshop jobs.
+                                </td>
+
+                                <td>
+                                    <a
+                                        href="{{ url_for('jobs') }}"
+                                        class="table-action-btn"
+                                    >
+                                        Open
+                                    </a>
+                                </td>
+
+                            </tr>
+
+
+                            <tr>
+
+                                <td>
+                                    <strong>
+                                        Invoices
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    Manage customer billing and payments.
+                                </td>
+
+                                <td>
+                                    <a
+                                        href="{{ url_for('invoices') }}"
+                                        class="table-action-btn"
+                                    >
+                                        Open
+                                    </a>
+                                </td>
+
+                            </tr>
+
+
+                            <tr>
+
+                                <td>
+                                    <strong>
+                                        Customers
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    Manage customer records.
+                                </td>
+
+                                <td>
+                                    <a
+                                        href="{{ url_for('customers') }}"
+                                        class="table-action-btn"
+                                    >
+                                        Open
+                                    </a>
+                                </td>
+
+                            </tr>
+
+
+                            {% if role in ["admin", "accounts", "superadmin"] %}
+
+                            <tr>
+
+                                <td>
+                                    <strong>
+                                        Financials
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    Monitor financial performance.
+                                </td>
+
+                                <td>
+                                    <a
+                                        href="{{ url_for('financials') }}"
+                                        class="table-action-btn"
+                                    >
+                                        Open
+                                    </a>
+                                </td>
+
+                            </tr>
+
+                            {% endif %}
+
+
+                            {% if role in ["admin", "accounts", "superadmin"] %}
+
+                            <tr>
+
+                                <td>
+                                    <strong>
+                                        Procurement
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    Manage suppliers and purchasing.
+                                </td>
+
+                                <td>
+                                    <a
+                                        href="{{ url_for('procurement') }}"
+                                        class="table-action-btn"
+                                    >
+                                        Open
+                                    </a>
+                                </td>
+
+                            </tr>
+
+                            {% endif %}
+
+
+                            <tr>
+
+                                <td>
+                                    <strong>
+                                        Inventory
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    Manage workshop stock and parts.
+                                </td>
+
+                                <td>
+                                    <a
+                                        href="{{ url_for('inventory') }}"
+                                        class="table-action-btn"
+                                    >
+                                        Open
+                                    </a>
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+            <!-- SYSTEM PANEL -->
+
+            <div class="dashboard-panel">
+
+                <div class="dashboard-panel-header">
+
+                    <div>
+
+                        <h3>
+                            System Information
+                        </h3>
+
+                        <p>
+                            Current session and application information.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div style="padding: 18px;">
+
+                    <div class="dashboard-info-list">
+
+                        <div class="dashboard-info-row">
+
+                            <span>
+                                Logged-in User
+                            </span>
+
+                            <strong>
+                                {{ user }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="dashboard-info-row">
+
+                            <span>
+                                Role
+                            </span>
+
+                            <strong>
+                                {{ role|title }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="dashboard-info-row">
+
+                            <span>
+                                Currency
+                            </span>
+
+                            <strong>
+                                KES
+                            </strong>
+
+                        </div>
+
+
+                        <div class="dashboard-info-row">
+
+                            <span>
+                                Date
+                            </span>
+
+                            <strong>
+                                {{ now.strftime("%d %B %Y") }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="dashboard-info-row">
+
+                            <span>
+                                Time
+                            </span>
+
+                            <strong>
+                                {{ now.strftime("%H:%M") }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         FINANCIAL HEALTH
+         ===================================================== -->
+
+    {% if role in ["admin", "accounts", "superadmin"] %}
+
+    <section class="dashboard-section">
+
+        <div class="dashboard-section-header">
+
+            <div class="dashboard-section-title">
+
+                <i class="bx bx-pulse"></i>
+
+                <h3>
+                    Financial Health
+                </h3>
+
+            </div>
+
+            <a href="{{ url_for('financials') }}">
+                View Details
+                <i class="bx bx-right-arrow-alt"></i>
+            </a>
+
+        </div>
+
+
+        <div class="dashboard-panel">
+
+            <div style="padding: 20px;">
+
+                <div class="dashboard-health-grid">
+
+                    <!-- RECEIVED -->
+
+                    <div class="dashboard-health-item">
+
+                        <div class="dashboard-health-icon">
+                            <i class="bx bx-down-arrow-circle"></i>
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Received
+                            </span>
+
+                            <strong>
+                                KES {{ "{:,.2f}".format(revenue or 0) }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- OUTSTANDING -->
+
+                    <div class="dashboard-health-item">
+
+                        <div class="dashboard-health-icon">
+                            <i class="bx bx-wallet"></i>
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Outstanding
+                            </span>
+
+                            <strong>
+                                KES {{ "{:,.2f}".format(debt or 0) }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PENDING -->
+
+                    <div class="dashboard-health-item">
+
+                        <div class="dashboard-health-icon">
+                            <i class="bx bx-time-five"></i>
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Pending Billing
+                            </span>
+
+                            <strong>
+                                KES {{ "{:,.2f}".format(pending_amount or 0) }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- OVERDUE -->
+
+                    <div class="dashboard-health-item">
+
+                        <div class="dashboard-health-icon">
+                            <i class="bx bx-error-circle"></i>
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Overdue
+                            </span>
+
+                            <strong>
+                                KES {{ "{:,.2f}".format(overdue_amount or 0) }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    {% endif %}
+
+
+</div>
+
+
+<!-- =========================================================
+     DASHBOARD-SPECIFIC STYLING
+     ========================================================= -->
+
+<style>
+
+/* =========================================================
+   DASHBOARD INFORMATION LIST
+   ========================================================= */
+
+.dashboard-info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.dashboard-info-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+
+    padding: 13px 0;
+
+    border-bottom: 1px solid #eef1f5;
+}
+
+.dashboard-info-row:first-child {
+    padding-top: 0;
+}
+
+.dashboard-info-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.dashboard-info-row span {
+    font-size: 11px;
+    color: var(--muted);
+}
+
+.dashboard-info-row strong {
+    font-size: 11px;
+    color: var(--text);
+    text-align: right;
+}
+
+
+/* =========================================================
+   FINANCIAL HEALTH
+   ========================================================= */
+
+.dashboard-health-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.dashboard-health-item {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+
+    padding: 14px;
+
+    background: #f8fafc;
+
+    border: 1px solid #eef1f5;
+    border-radius: 10px;
+}
+
+.dashboard-health-icon {
+    width: 34px;
+    height: 34px;
+
+    flex: 0 0 34px;
+
+    border-radius: 9px;
+
+    background: rgba(12, 103, 240, 0.08);
+    color: var(--primary);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 17px;
+}
+
+.dashboard-health-item span {
+    display: block;
+
+    font-size: 10px;
+    color: var(--muted);
+}
+
+.dashboard-health-item strong {
+    display: block;
+
+    margin-top: 3px;
+
+    font-size: 13px;
+    color: var(--text);
+}
+
+
+/* =========================================================
+   CARD LINKS
+   ========================================================= */
+
+.dashboard-page .card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+
+/* =========================================================
+   TABLE ACTION
+   ========================================================= */
+
+.dashboard-page .table-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 5px 9px;
+
+    border-radius: 6px;
+
+    background: rgba(12, 103, 240, 0.08);
+    color: var(--primary);
+
+    text-decoration: none;
+
+    font-size: 10px;
+    font-weight: 600;
+
+    transition: all .2s ease;
+}
+
+.dashboard-page .table-action-btn:hover {
+    background: var(--primary);
+    color: #fff;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+    .dashboard-health-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+@media (max-width: 768px) {
+
+    .dashboard-page {
+        width: 100%;
+    }
+
+    .dashboard-workshop {
+        margin-bottom: 15px;
+    }
+
+    .dashboard-intro {
+        margin: 16px 0;
+    }
+
+    .dashboard-section {
+        margin-bottom: 20px;
+    }
+
+    .dashboard-panel {
+        width: 100%;
+    }
+
+    .dashboard-health-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+@media (max-width: 480px) {
+
+    .dashboard-workshop-logo {
+        width: 44px;
+        height: 44px;
+    }
+
+    .dashboard-workshop-info h1 {
+        font-size: 16px;
+    }
+
+    .dashboard-workshop-info p {
+        font-size: 10px;
+    }
+
+    .dashboard-workshop-meta {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        width: 100%;
+    }
+
+    .dashboard-meta-item {
+        font-size: 10px;
+    }
+
+    .dashboard-intro h2 {
+        font-size: 19px;
+    }
+
+    .dashboard-info-row {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .dashboard-info-row strong {
+        text-align: left;
+    }
+
+    .dashboard-table {
+        min-width: 560px;
+    }
+
+}
+
+</style>
+
+{% endblock %}

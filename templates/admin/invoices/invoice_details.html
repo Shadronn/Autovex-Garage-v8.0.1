@@ -1,0 +1,514 @@
+{% extends "base.html" %}
+
+{% block sidebar %}
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="page">
+
+    <div class="job-card">
+
+        <!-- ========================================= -->
+        <!-- HEADER -->
+        <!-- ========================================= -->
+
+        <header class="card-header">
+
+            <div>
+                <h2>
+                    Invoice #{{ invoice.invoice_number }}
+                </h2>
+
+                <span class="invoice-id">
+                    Invoice ID: {{ invoice.id }}
+                </span>
+            </div>
+
+
+            <div class="action-links">
+
+                {% if invoice.Balance > 0 and role in ["admin", "accounts"] %}
+
+                <a
+                    href="{{ url_for('pay_invoice', id=invoice.id) }}"
+                    class="btn-success"
+                >
+                    <i class='bx bx-money'></i>
+                    Record Payment
+                </a>
+
+                {% endif %}
+
+
+                <a
+                    href="{{ url_for('print_invoice', invoice_id=invoice.id) }}"
+                    class="btn-danger"
+                >
+                    <i class='bx bx-receipt'></i>
+                    Receipt
+                </a>
+
+
+                <a href="{{ url_for('invoices') }}">
+                    ← Return to Invoices
+                </a>
+
+            </div>
+
+        </header>
+
+
+        <!-- ========================================= -->
+        <!-- CUSTOMER / JOB INFORMATION -->
+        <!-- ========================================= -->
+
+        <section class="detail-section">
+
+            <h5>Job Information</h5>
+
+            <div class="kv-grid double">
+
+                <div class="kv">
+
+                    <span class="label">
+                        Customer
+                    </span>
+
+                    <span class="value">
+                        {{ job.customer_name }}
+                    </span>
+
+                </div>
+
+
+                <div class="kv">
+
+                    <span class="label">
+                        Job ID
+                    </span>
+
+                    <span class="value">
+                        {{ invoice.job_id }}
+                    </span>
+
+                </div>
+
+
+                <div class="kv">
+
+                    <span class="label">
+                        Vehicle
+                    </span>
+
+                    <span class="value">
+                        {{ job.vehicle }}
+                    </span>
+
+                </div>
+
+
+                <div class="kv">
+
+                    <span class="label">
+                        Invoice Date
+                    </span>
+
+                    <span class="value">
+
+                        {% if invoice.issue_date %}
+                            {{ invoice.issue_date.strftime('%d %b %Y') }}
+                        {% else %}
+                            —
+                        {% endif %}
+
+                    </span>
+
+                </div>
+
+
+                <div class="kv">
+
+                    <span class="label">
+                        Due Date
+                    </span>
+
+                    <span class="value">
+
+                        {% if invoice.due_date %}
+                            {{ invoice.due_date.strftime('%d %b %Y') }}
+                        {% else %}
+                            —
+                        {% endif %}
+
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <hr class="divider">
+
+
+        <!-- ========================================= -->
+        <!-- INVOICE SUMMARY -->
+        <!-- ========================================= -->
+
+        <section class="detail-section">
+
+            <h4 class="section-title">
+                Invoice Summary
+            </h4>
+
+
+            <div class="kv-grid double">
+
+                <div class="kv">
+
+                    <span class="label">
+                        Sub-total
+                    </span>
+
+                    <span class="value">
+                        KES {{ "{:,.2f}".format(invoice.subtotal or 0) }}
+                    </span>
+
+                </div>
+
+
+                <div class="kv">
+
+                    <span class="label">
+                        Tax ({{ invoice.tax_rate }}%)
+                    </span>
+
+                    <span class="value">
+                        KES {{ "{:,.2f}".format(invoice.tax_amount or 0) }}
+                    </span>
+
+                </div>
+
+
+                <div class="kv">
+
+                    <span class="label">
+                        Invoice Total
+                    </span>
+
+                    <span class="value">
+                        <strong>
+                            KES {{ "{:,.2f}".format(invoice.total_amount or 0) }}
+                        </strong>
+                    </span>
+
+                </div>
+
+
+                <div class="kv">
+
+                    <span class="label">
+                        Amount Paid
+                    </span>
+
+                    <span class="value">
+                        KES {{ "{:,.2f}".format(invoice.amount or 0) }}
+                    </span>
+
+                </div>
+
+
+                <div class="kv">
+
+                    <span class="label">
+                        Outstanding Balance
+                    </span>
+
+                    <span class="value">
+
+                        <strong>
+                            KES {{ "{:,.2f}".format(invoice.Balance or 0) }}
+                        </strong>
+
+                    </span>
+
+                </div>
+
+
+                <div class="kv">
+
+                    <span class="label">
+                        Status
+                    </span>
+
+                    <span class="value">
+
+                        <span
+                            class="status {{ invoice.status|lower|replace(' ', '-') }}"
+                        >
+                            {{ invoice.status }}
+                        </span>
+
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <hr class="divider">
+
+
+        <!-- ========================================= -->
+        <!-- PAYMENT HISTORY -->
+        <!-- ========================================= -->
+
+        <section class="detail-section">
+
+            <div class="section-header">
+
+                <h4 class="section-title">
+                    Payment History
+                </h4>
+
+
+                {% if invoice.Balance > 0 and role in ["admin", "accounts"] %}
+
+
+
+                {% endif %}
+
+            </div>
+
+
+            {% if payments %}
+
+            <div class="table-responsive">
+
+                <table class="data-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Receipt #
+                            </th>
+
+                            <th>
+                                Date
+                            </th>
+
+                            <th>
+                                Amount
+                            </th>
+
+                            <th>
+                                Method
+                            </th>
+
+                            <th>
+                                Reference
+                            </th>
+
+                            <th>
+                                Proof
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for payment in payments %}
+
+                        <tr>
+
+                            <td>
+
+                                <strong>
+                                    {{ payment.receipt_number }}
+                                </strong>
+
+                            </td>
+
+
+                            <td>
+
+                                {% if payment.paid_at %}
+
+                                    {{ payment.paid_at.strftime(
+                                        '%d %b %Y %H:%M'
+                                    ) }}
+
+                                {% else %}
+
+                                    —
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                <strong>
+                                    KES
+                                    {{ "{:,.2f}".format(
+                                        payment.amount or 0
+                                    ) }}
+                                </strong>
+
+                            </td>
+
+
+                            <td>
+
+                                {{ payment.payment_method }}
+
+                            </td>
+
+
+                            <td>
+
+                                {% if payment.payment_reference %}
+
+                                    {{ payment.payment_reference }}
+
+                                {% else %}
+
+                                    —
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                {% if payment.payment_proof %}
+
+                                <a
+                                    href="{{ url_for(
+                                        'static',
+                                        filename='uploads/vehicles/' + payment.payment_proof
+                                    ) }}"
+                                    target="_blank"
+                                    class="btn btn-sm btn-info"
+                                >
+                                    <i class='bx bx-file'></i>
+                                    View
+                                </a>
+
+                                {% else %}
+
+                                    —
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+
+                        {% if payment.notes %}
+
+                        <tr class="payment-notes">
+
+                            <td colspan="6">
+
+                                <strong>
+                                    Notes:
+                                </strong>
+
+                                {{ payment.notes }}
+
+                            </td>
+
+                        </tr>
+
+                        {% endif %}
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            {% else %}
+
+            <div class="empty-state">
+
+                <i class='bx bx-wallet'></i>
+
+                <h4>
+                    No payments recorded
+                </h4>
+
+                <p>
+                    No payments have been recorded against this invoice yet.
+                </p>
+
+                {% if invoice.Balance > 0 and role in ["admin", "accounts"] %}
+
+                <a
+                    href="{{ url_for('pay_invoice', id=invoice.id) }}"
+                    class="btn-success"
+                >
+                    Record First Payment
+                </a>
+
+                {% endif %}
+
+            </div>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- ========================================= -->
+        <!-- NOTES -->
+        <!-- ========================================= -->
+
+        {% if invoice.notes %}
+
+        <hr class="divider">
+
+        <section class="detail-section">
+
+            <h4 class="section-title">
+                Invoice Notes
+            </h4>
+
+            <span class="invoice-notes">
+                {{ invoice.notes }}
+            </span>
+
+        </section>
+
+        {% endif %}
+
+
+    </div>
+
+</div>
+
+
+<script src="{{ url_for(
+    'static',
+    filename='js/detailed.js'
+) }}"></script>
+
+{% endblock %}

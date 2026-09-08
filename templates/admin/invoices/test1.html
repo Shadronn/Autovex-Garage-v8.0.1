@@ -1,0 +1,137 @@
+{%extends "base.html"%}
+
+{%block content%}
+
+		<div class="invoice-box" id="print-area">
+			<table cellpadding="0" cellspacing="0">
+				<tr class="top">
+					<td colspan="2">
+						<table>
+							<tr>
+								<td class="title">
+									<img src="{{ url_for('static', filename='assets/images/logo.jpg') }}" style="width: 100%; max-width: 300px" />
+								</td>
+
+								<td>
+									<p>Invoice : {{job.id}}</p>
+									<p>Created: {{ invoice.created_at.strftime('%Y-%m-%d') }}</p>
+								
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+
+				<tr class="information">
+					<td colspan="2">
+						<table>
+							<tr>
+								<td>
+									<p>Riverine Auto Limited</p>
+                                    <p>P.O Box 20200,/p>
+                                    <p>Kisii.</p>
+                                    <p>Email: info@riverineauto.co.ke</p>
+                                    <p>Mobile: +254723523109</p>
+								</td>
+
+								<td>
+									<p>{{customer.customer_name}}</p>
+									<p>{{customer.address}}</p>
+                                    <p>{{customer.email}}</p>
+                                    <p>{{customer.telno}}</p>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+
+				<tr class="heading">
+					<td>Payment Method</td>
+
+					<td>Bank Transfer</td>
+				</tr>
+
+				<tr class="details">
+					<td>Check</td>
+
+					<td>{{invoice.total_amount}}</td>
+				</tr>
+
+				<tr class="heading">
+					<td>Item</td>
+
+					<td>Price</td>
+				</tr>
+
+				<tr class="item">
+					<td>{{invoice.notes}}</td>
+
+					<td>{{invoice.subtotal}}</td>
+				</tr>
+
+				<tr class="item">
+					<td>VAT (16%)</td>
+
+					<td>{{invoice.tax_amount}}</td>
+				</tr>
+
+				<tr class="total">
+					<td>Total</td>
+
+					<td>{{invoice.total_amount}}</td>
+				</tr>
+			</table>
+			
+		</div>
+		<button onclick="window.print()" class="login-btn">Print Invoice</button>
+
+
+<style>
+@media print {
+
+    /* Hide UI */
+    header,
+    aside.sidebar,
+    .no-print {
+        display: none !important;
+    }
+
+    /* Reset layout */
+    html, body {
+        width: 100%;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .app {
+        display: block !important;
+        width: 100%;
+    }
+
+    main.content {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+    }
+
+    /* Invoice full page */
+    .invoice-box {
+        width: 100% !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 20mm !important; /* printable margin */
+        box-sizing: border-box;
+    }
+
+    /* A4 page */
+    @page {
+        size: A4;
+        margin: 0;
+    }
+}
+</style>
+
+
+
+
+{%endblock%}

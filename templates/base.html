@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+
+<meta charset="UTF-8">
+
+<title>Autovex</title>
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<!-- Main CSS -->
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/style.css') }}"
+>
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/dashboard.css') }}"
+>
+<!--Notification CSS -->
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/notifications.css') }}"
+>
+
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/tables.css') }}"
+>
+<!-- Boxicons -->
+<link
+    href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+    rel="stylesheet"
+>
+
+<!-- Google Fonts -->
+<link
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
+>
+
+<link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+>
+
+<link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+>
+
+
+</head>
+
+<body>
+
+<!-- =========================================================
+     HEADER
+     ========================================================= -->
+
+<header class="headwrap">
+
+
+<div class="head-left">
+
+    <i
+        class="bx bx-menu toggle-btn"
+        id="toggleSidebar"
+    ></i>
+
+    <span class="brand">
+        Autovex
+    </span>
+
+</div>
+
+
+<div class="head-right">
+
+    <!-- Theme Toggle -->
+
+    <button
+        type="button"
+        id="themeToggle"
+        class="theme-toggle"
+        title="Toggle theme"
+    >
+
+        <i class="bx bx-moon"></i>
+
+    </button>
+
+
+    <!-- Profile -->
+
+    <div class="profile">
+
+        <img
+            src="https://i.pravatar.cc/40"
+            alt="Profile"
+        >
+
+        <span>
+            {{ user }}
+        </span>
+
+    </div>
+
+
+    <!-- Logout -->
+
+    <form
+        action="{{ url_for('logout') }}"
+        method="POST"
+    >
+
+        <button
+            type="submit"
+            class="btn-alert"
+        >
+
+            <i class="bx bx-log-out"></i>
+
+            Logout
+
+        </button>
+
+    </form>
+
+</div>
+
+
+</header>
+
+<!-- =========================================================
+     APPLICATION
+     ========================================================= -->
+
+<div class="app">
+
+
+<!-- =====================================================
+     SIDEBAR
+     ===================================================== -->
+
+<!-- =====================================================
+     SIDEBAR
+     ===================================================== -->
+
+<aside
+    class="sidebar"
+    id="sidebar"
+>
+
+    <nav>
+
+
+        <!-- =================================================
+             MAIN
+             ================================================= -->
+
+        <p class="nav-title">
+            MAIN
+        </p>
+
+
+        <!-- DASHBOARD -->
+
+        <a
+            href="/dashboard"
+            class="{% if request.endpoint in ['dashboard', 'admin_dashboard', 'accounts_dashboard', 'superadmin_dashboard'] %}active{% endif %}"
+        >
+
+            <i class="bx bx-home"></i>
+
+            <span>
+                Dashboard
+            </span>
+
+        </a>
+
+
+
+        <!-- =================================================
+             OPERATIONS
+             ================================================= -->
+
+        <p class="nav-title">
+            OPERATIONS
+        </p>
+
+
+        {% if role in [
+            "admin",
+            "accounts",
+            "mechanic",
+            "superadmin"
+        ] %}
+
+
+        <!-- CUSTOMERS -->
+
+        <a
+            href="{{ url_for('customers') }}"
+            class="{% if request.endpoint in ['customers', 'create_customer', 'customer_details', 'edit_customer'] %}active{% endif %}"
+        >
+
+            <i class="bx bx-group"></i>
+
+            <span>
+                Customers
+            </span>
+
+        </a>
+
+
+        <!-- VEHICLES -->
+
+        <a
+            href="{{ url_for('vehicles') }}"
+            class="{% if request.endpoint in ['vehicles', 'add_vehicle', 'vehicle_details', 'edit_vehicle'] %}active{% endif %}"
+        >
+
+            <i class="bx bx-car"></i>
+
+            <span>
+                Vehicles
+            </span>
+
+        </a>
+
+
+        <!-- JOBS -->
+
+        <a
+            href="{{ url_for('jobs') }}"
+            class="{% if request.endpoint in ['jobs', 'create_job', 'job_details', 'edit_job', 'job_card', 'job_card_view', 'complete_job'] %}active{% endif %}"
+        >
+
+            <i class="bx bx-briefcase"></i>
+
+            <span>
+                Jobs
+            </span>
+
+        </a>
+
+
+        {% endif %}
+
+
+
+        <!-- =================================================
+             INVOICES
+             ================================================= -->
+
+        {% if role in [
+            "admin",
+            "accounts",
+            "mechanic",
+            "superuser",
+            "superadmin"
+        ] %}
+
+        <a
+            href="{{ url_for('invoices') }}"
+            class="{% if request.endpoint in ['invoices', 'invoice_detail', 'create_invoice', 'pay_invoice'] %}active{% endif %}"
+        >
+
+            <i class="bx bx-receipt"></i>
+
+            <span>
+                Invoices
+            </span>
+
+        </a>
+
+        {% endif %}
+
+
+
+        <!-- =================================================
+             FINANCIALS
+             ================================================= -->
+
+        {% if role in [
+            "admin",
+            "accounts",
+            "superadmin"
+        ] %}
+
+        <p class="nav-title">
+            FINANCIALS
+        </p>
+
+
+        <a
+            href="{{ url_for('financials') }}"
+            class="module-link {% if request.endpoint in [
+                'financials',
+                'profit_loss_report',
+                'profit_loss_pdf'
+            ] %}active{% endif %}"
+        >
+
+            <i class="bx bx-wallet"></i>
+
+            <span>
+                Financials
+            </span>
+
+        </a>
+
+
+        {% endif %}
+
+
+
+        <!-- =================================================
+             PROCUREMENT
+             ================================================= -->
+
+        {% if role in [
+            "admin",
+            "accounts",
+            "superadmin"
+        ] %}
+
+        <p class="nav-title">
+            PROCUREMENT
+        </p>
+
+
+        <a
+            href="{{ url_for('procurement') }}"
+            class="module-link {% if request.endpoint in [
+                'procurement'
+            ] %}active{% endif %}"
+        >
+
+            <i class="bx bx-shopping-bag"></i>
+
+            <span>
+                Procurement
+            </span>
+
+        </a>
+
+
+        {% endif %}
+
+
+
+        <!-- =================================================
+             INVENTORY
+             ================================================= -->
+
+        {% if role in [
+            "admin",
+            "accounts",
+            "mechanic",
+            "superadmin"
+        ] %}
+
+        <p class="nav-title">
+            INVENTORY
+        </p>
+
+
+        <a
+            href="{{ url_for('inventory') }}"
+            class="module-link {% if request.endpoint in [
+                'inventory'
+            ] %}active{% endif %}"
+        >
+
+            <i class="bx bx-package"></i>
+
+            <span>
+                Inventory
+            </span>
+
+        </a>
+
+        {% endif %}
+
+
+
+        <!-- =================================================
+             REPORTS
+             ================================================= -->
+
+        {% if role in [
+            "admin",
+            "accounts",
+            "superadmin"
+        ] %}
+
+        <p class="nav-title">
+            REPORTS
+        </p>
+
+
+        <a
+            href="#"
+            class="module-link {% if request.endpoint in [
+                'reports'
+            ] %}active{% endif %}"
+            data-module="reports"
+        >
+
+            <i class="bx bx-bar-chart-alt-2"></i>
+
+            <span>
+                Reports
+            </span>
+
+        </a>
+
+        {% endif %}
+
+
+
+        <!-- =================================================
+             ADMINISTRATION
+             ================================================= -->
+
+        {% if role in [
+            "admin",
+            "superadmin"
+        ] %}
+
+        <p class="nav-title">
+            ADMINISTRATION
+        </p>
+
+
+        <!-- USERS -->
+
+        <a
+            href="{{ url_for('users') }}"
+            class="{% if request.endpoint in [
+                'users',
+                'create_user',
+                'edit_user'
+            ] %}active{% endif %}"
+        >
+
+            <i class="bx bx-user"></i>
+
+            <span>
+                Users
+            </span>
+
+        </a>
+
+        {% endif %}
+
+
+    </nav>
+
+</aside>
+
+
+
+<!-- =====================================================
+     MAIN CONTENT
+     ===================================================== -->
+
+<main class="content">
+
+    {% block content %}
+
+    {% endblock %}
+
+
+    <!-- =================================================
+         FLASH MESSAGES
+         ================================================= -->
+
+    {% with messages = get_flashed_messages(
+        with_categories=true
+    ) %}
+
+        {% if messages %}
+
+            {% for category, message in messages %}
+
+            <div
+                class="alert alert-{{ category }} flash-message"
+            >
+
+                {{ message }}
+
+            </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+    {% endwith %}
+
+</main>
+
+
+</div>
+<!-- =====================================================
+     AUTOVEX GLOBAL NOTIFICATIONS
+     ===================================================== -->
+    <div
+        id="autovexNotifications"
+        class="autovex-notifications"
+        aria-live="polite"
+        aria-atomic="true"
+    ></div>
+<!-- =========================================================
+     MAIN JAVASCRIPT
+     ========================================================= -->
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+<script src="{{ url_for('static', filename='js/notifications.js') }}"></script>
+<script src="{{ url_for('static', filename='js/reports.js') }}"></script>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+
+    /* =========================================================
+       THEME TOGGLE
+       ========================================================= */
+
+    const body =
+        document.body;
+
+    const themeToggle =
+        document.getElementById("themeToggle");
+
+
+    if (themeToggle) {
+
+        const savedTheme =
+            localStorage.getItem("theme");
+
+
+        /*
+         * Restore saved theme
+         */
+
+        if (savedTheme === "dark") {
+
+            body.classList.add("dark-mode");
+
+            themeToggle.innerHTML =
+                "<i class='bx bx-sun'></i>";
+
+        }
+
+
+        /*
+         * Toggle theme
+         */
+
+        themeToggle.addEventListener(
+            "click",
+            function () {
+
+                body.classList.toggle(
+                    "dark-mode"
+                );
+
+
+                if (
+                    body.classList.contains(
+                        "dark-mode"
+                    )
+                ) {
+
+                    localStorage.setItem(
+                        "theme",
+                        "dark"
+                    );
+
+                    themeToggle.innerHTML =
+                        "<i class='bx bx-sun'></i>";
+
+                } else {
+
+                    localStorage.setItem(
+                        "theme",
+                        "light"
+                    );
+
+                    themeToggle.innerHTML =
+                        "<i class='bx bx-moon'></i>";
+
+                }
+
+            }
+        );
+
+    }
+
+
+
+    /* =========================================================
+       FLASH MESSAGE AUTO HIDE
+       ========================================================= */
+
+    setTimeout(function () {
+
+        document
+            .querySelectorAll(".flash-message")
+            .forEach(function (element) {
+
+                element.style.transition =
+                    "opacity 0.5s ease";
+
+                element.style.opacity = "0";
+
+
+                setTimeout(function () {
+
+                    element.remove();
+
+                }, 500);
+
+            });
+
+    }, 3000);
+
+
+
+    /* =========================================================
+       MODULE NAVIGATION
+       ========================================================= */
+
+    const moduleLinks =
+        document.querySelectorAll(
+            ".module-link"
+        );
+
+
+    moduleLinks.forEach(function (link) {
+
+        link.addEventListener(
+            "click",
+            function (event) {
+
+                /*
+                 * These are placeholders for now.
+                 *
+                 * We will replace the # links with
+                 * real Flask routes when we build
+                 * each module.
+                 */
+
+                if (
+                    this.getAttribute("href") === "#"
+                ) {
+
+                    event.preventDefault();
+
+                }
+
+            }
+        );
+
+    });
+
+
+});
+
+
+</script>
+
+</body>
+
+</html>

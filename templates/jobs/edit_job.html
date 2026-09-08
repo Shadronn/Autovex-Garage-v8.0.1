@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block sidebar %}
+
+{% endblock %}
+
+{% block content %}
+
+<form method="POST" class="form-card">
+
+    <h1>Edit Job</h1>
+    <h3>Update job information.</h3>
+    <vh></vh>
+
+    <div class="form-grid">
+
+        <!-- Customer -->
+        <div class="form-group">
+            <label>Customer</label>
+            <input
+                type="text"
+                value="{{ job.customer_name }}"
+                readonly>
+        </div>
+
+        <!-- Telephone -->
+        <div class="form-group">
+            <label>Telephone</label>
+            <input
+                type="text"
+                value="{{ job.telno }}"
+                readonly>
+        </div>
+
+        <!-- Vehicle -->
+        <div class="form-group">
+            <label>Vehicle</label>
+            <input
+                type="text"
+                value="{{ job.vehicle }}"
+                readonly>
+        </div>
+
+        <!-- Vehicle Model -->
+        <div class="form-group">
+            <label>Vehicle Model</label>
+            <input
+                type="text"
+                value="{{ job.vehicle_model }}"
+                readonly>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group full-width">
+            <label>Job Description</label>
+
+            <textarea
+                name="description"
+                required>{{ job.description }}</textarea>
+        </div>
+
+        <!-- Mechanic -->
+        <div class="form-group">
+            <label>Assigned Mechanic</label>
+
+            <select name="mechanic_id" required>
+
+                {% for mechanic in mechanics %}
+
+                <option
+                    value="{{ mechanic.id }}"
+                    {% if mechanic.id == job.assigned_to %}selected{% endif %}>
+
+                    {{ mechanic.username }}
+
+                </option>
+
+                {% endfor %}
+
+            </select>
+        </div>
+
+        <!-- Status -->
+        <div class="form-group">
+            <label>Status</label>
+
+            <select name="status">
+
+                <option value="Open"
+                    {% if job.status=="Open" %}selected{% endif %}>
+                    Open
+                </option>
+
+                <option value="In Progress"
+                    {% if job.status=="In Progress" %}selected{% endif %}>
+                    In Progress
+                </option>
+
+                <option value="Waiting Parts"
+                    {% if job.status=="Waiting Parts" %}selected{% endif %}>
+                    Waiting for Parts
+                </option>
+
+                <option value="Completed"
+                    {% if job.status=="Completed" %}selected{% endif %}>
+                    Completed
+                </option>
+
+            </select>
+        </div>
+
+        <!-- Deadline -->
+        <div class="form-group full-width">
+            <label>Deadline</label>
+
+            <input
+                type="datetime-local"
+                name="deadline"
+                value="{{ job.deadline.strftime('%Y-%m-%dT%H:%M') if job.deadline else '' }}">
+        </div>
+
+    </div>
+
+    <div class="button-group">
+
+        <button type="submit" class="login-btn">
+            <i class='bx bx-save'></i>
+            Save Changes
+        </button>
+
+        <button
+            type="button"
+            class="cancel-btn"
+            onclick="window.location.href='{{ url_for('job_detail', job_id=job.id) }}'">
+
+            Cancel
+
+        </button>
+
+    </div>
+
+</form>
+
+{% endblock %}

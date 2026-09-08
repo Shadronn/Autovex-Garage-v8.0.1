@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Invoice</h2>
+
+<div class="invoice-card">
+    <h3>GarageSys Invoice</h3>
+    <p><strong>Customer:</strong> {{ customer.customer_name }}</p>
+    <p><strong>Telephone:</strong> {{ customer.telno }}</p>
+    <p><strong>Address:</strong> {{ customer.address }}</p>
+
+    <p><strong>Vehicle:</strong> {{ vehicle.registration_no }}</p>
+    <p><strong>Year of Manufacture:</strong> {{ vehicle.yom }}</p>
+
+    <p><strong>Job Description:</strong> {{ job.description }}</p>
+    <p><strong>Status:</strong> {{ job.status }}</p>
+    
+    <hr>
+
+    <!-- Example: invoice details -->
+    <p><strong>Amount:</strong> KES 0.00</p>
+    <p><strong>Date:</strong> {{ job.created_at.strftime('%Y-%m-%d') }}</p>
+
+    <button onclick="window.print()" class="btn">Print Invoice</button>
+    <a href="{{ url_for('invoices') }}" class="btn">Back to Jobs</a>
+</div>
+
+<style>
+.invoice-card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 600px;
+    margin: 20px auto;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+.btn {
+    padding: 8px 15px;
+    border-radius: 5px;
+    margin-right: 5px;
+    cursor: pointer;
+    background-color: #ff338d;
+    color: #fff;
+    border: none;
+}
+</style>
+
+{% endblock %}

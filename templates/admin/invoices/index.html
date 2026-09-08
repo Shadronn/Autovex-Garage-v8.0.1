@@ -1,0 +1,748 @@
+{% extends "base.html" %}
+
+
+{% block sidebar %}
+
+{% endblock %}
+
+
+
+{% block content %}
+
+<div class="table-page">
+
+
+    <!-- =====================================================
+         PAGE HEADER
+         ===================================================== -->
+
+    <div class="module-header">
+
+        <div>
+
+            <h1>Invoices</h1>
+
+            <p>
+                Manage invoices, payments and outstanding balances.
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         INVOICE PANEL
+         ===================================================== -->
+
+    <div class="table-panel">
+
+
+        <!-- =================================================
+             TOOLBAR
+             ================================================= -->
+
+        <div class="table-toolbar">
+
+
+            <!-- Search -->
+
+            <div class="table-toolbar-left">
+
+                <div class="table-search">
+
+                    <i class='bx bx-search'></i>
+
+                    <form
+                        method="GET"
+                        action="{{ url_for('invoices') }}"
+                    >
+
+                        <input
+                            type="text"
+                            name="search"
+                            oninput="debouncedSubmit(this.form)"
+                            placeholder="Search registration..."
+                            value="{{ request.args.get('search', '') }}"
+                        >
+
+                    </form>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- Filters -->
+
+            <form
+                method="GET"
+                action="{{ url_for('invoices') }}"
+                class="table-filters"
+            >
+
+                <!-- Customer -->
+
+                <select name="customer">
+
+                    <option value="">
+                        All Customers
+                    </option>
+
+                    {% for c in customers %}
+
+                    <option
+                        value="{{ c }}"
+                        {% if request.args.get('customer') == c %}
+                        selected
+                        {% endif %}
+                    >
+                        {{ c }}
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+
+
+                <!-- Status -->
+
+                <select name="status">
+
+                    <option value="">
+                        All Status
+                    </option>
+
+                    <option
+                        value="Paid"
+                        {% if request.args.get('status') == "Paid" %}
+                        selected
+                        {% endif %}
+                    >
+                        Paid
+                    </option>
+
+                    <option
+                        value="Unpaid"
+                        {% if request.args.get('status') == "Unpaid" %}
+                        selected
+                        {% endif %}
+                    >
+                        Unpaid
+                    </option>
+
+                </select>
+
+
+
+                <!-- Filter -->
+
+                <button
+                    type="submit"
+                    class="table-filter-btn"
+                >
+
+                    <i class='bx bx-filter-alt'></i>
+
+                    Filter
+
+                </button>
+
+
+
+                <!-- Export -->
+
+                <div class="table-export">
+
+                    <button
+                        type="button"
+                        class="table-export-btn"
+                        onclick="toggleExportMenu()"
+                    >
+
+                        <i class='bx bx-export'></i>
+
+                        <span>Export</span>
+
+                        <i class='bx bx-chevron-down'></i>
+
+                    </button>
+
+
+                    <div
+                        id="exportMenu"
+                        class="table-export-menu"
+                    >
+
+                        <a
+                            href="{{ url_for(
+                                'export_invoices_excel',
+                                search=request.args.get('search', ''),
+                                customer=request.args.get('customer', ''),
+                                status=request.args.get('status', '')
+                            ) }}"
+                        >
+
+                            <i class='bx bx-spreadsheet'></i>
+
+                            <span>Export Excel</span>
+
+                        </a>
+
+
+                        <a
+                            href="{{ url_for(
+                                'export_invoices_csv',
+                                search=request.args.get('search', ''),
+                                customer=request.args.get('customer', ''),
+                                status=request.args.get('status', '')
+                            ) }}"
+                        >
+
+                            <i class='bx bx-file'></i>
+
+                            <span>Export CSV</span>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+
+        <!-- =================================================
+             TABLE
+             ================================================= -->
+
+        <div class="table-wrapper">
+
+            <table class="data-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Invoice #</th>
+
+                        <th>Customer</th>
+
+                        <th>Registration</th>
+
+                        <th>Total</th>
+
+                        <th>Status</th>
+
+                        <th>Date</th>
+
+                        <th>Payment</th>
+
+                        <th>Details</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="tableBody">
+
+
+                    {% for invoice, job in invoices.items %}
+
+                    <tr>
+
+
+                        <!-- Invoice Number -->
+
+                        <td>
+
+                            <span class="table-number">
+
+                                INV-{{ "%04d"|format(invoice.id) }}
+
+                            </span>
+
+                        </td>
+
+
+                        <!-- Customer -->
+
+                        <td>
+
+                            <span class="table-primary-text">
+
+                                {{ job.customer_name }}
+
+                            </span>
+
+                        </td>
+
+
+                        <!-- Registration -->
+
+                        <td>
+
+                            <span class="table-secondary-text">
+
+                                {{ job.vehicle }}
+
+                            </span>
+
+                        </td>
+
+
+                        <!-- Total -->
+
+                        <td>
+
+                            <span class="table-amount">
+
+                                KES {{ "%.2f"|format(invoice.total_amount) }}
+
+                            </span>
+
+                        </td>
+
+
+                        <!-- Status -->
+
+                        <td>
+
+                            {% set total_paid = invoice.payments | map(attribute='amount') | sum %}
+                            {% set invoice_total = invoice.total_amount or 0 %}
+                            {% set balance = invoice_total - total_paid %}
+
+                            {% if total_paid >= invoice_total and invoice_total > 0 %}
+
+                                <span class="table-status table-status-paid">
+
+                                    <span class="table-status-dot"></span>
+
+                                    Paid
+
+                                </span>
+
+                            {% elif total_paid > 0 and balance > 0 %}
+
+                                <span class="table-status table-status-partial">
+
+                                    <span class="table-status-dot"></span>
+
+                                    Partially Paid
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="table-status table-status-unpaid">
+
+                                    <span class="table-status-dot"></span>
+
+                                    Unpaid
+
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- Date -->
+
+                        <td>
+
+                            <span class="table-date">
+
+                                {{ invoice.issue_date.strftime(
+                                    "%d %b %Y"
+                                ) }}
+
+                            </span>
+
+                        </td>
+
+
+                        <!-- Payment -->
+
+                        <td>
+
+                            {% if invoice.status != "Paid" %}
+
+                            <a
+                                href="{{ url_for(
+                                    'pay_invoice',
+                                    id=invoice.id
+                                ) }}"
+                                class="table-action-primary"
+                            >
+
+                                <i class='bx bx-check-circle'></i>
+
+                                Mark Paid
+
+                            </a>
+
+                            {% else %}
+
+                            <span
+                                class="table-status table-status-success"
+                            >
+
+                                <span
+                                    class="table-status-dot"
+                                ></span>
+
+                                Paid
+
+                            </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- Details -->
+
+                        <td>
+
+                            <a
+                                href="{{ url_for(
+                                    'invoice_detail',
+                                    invoice_id=invoice.id
+                                ) }}"
+                                class="table-action-view"
+                            >
+
+                                View
+
+                                <i class='bx bx-chevron-right'></i>
+
+                            </a>
+
+                        </td>
+
+
+                    </tr>
+
+
+                    {% else %}
+
+
+                    <!-- Empty -->
+
+                    <tr>
+
+                        <td colspan="8">
+
+                            <div class="table-empty">
+
+                                <div class="table-empty-icon">
+
+                                    <i class='bx bx-receipt'></i>
+
+                                </div>
+
+                                <strong>
+                                    No invoices found
+                                </strong>
+
+                                <span>
+                                    Try changing your search or filter.
+                                </span>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+
+                    {% endfor %}
+
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+
+        <!-- =================================================
+             PAGINATION
+             ================================================= -->
+
+        {% if invoices.pages > 1 %}
+
+        <div class="table-pagination">
+
+
+            <!-- Previous -->
+
+            {% if invoices.has_prev %}
+
+            <a
+                href="{{ url_for(
+                    'invoices',
+                    page=invoices.prev_num,
+                    search=request.args.get('search'),
+                    customer=request.args.get('customer'),
+                    status=request.args.get('status')
+                ) }}"
+                class="table-page-btn"
+            >
+
+                <i class='bx bx-chevron-left'></i>
+
+                Previous
+
+            </a>
+
+            {% else %}
+
+            <span class="table-page-btn disabled">
+
+                <i class='bx bx-chevron-left'></i>
+
+                Previous
+
+            </span>
+
+            {% endif %}
+
+
+
+            <!-- Page Numbers -->
+
+            <div class="table-page-numbers">
+
+                {% for p in range(1, invoices.pages + 1) %}
+
+                    {% if p == invoices.page %}
+
+                    <span class="table-page-number active">
+                        {{ p }}
+                    </span>
+
+                    {% else %}
+
+                    <a
+                        href="{{ url_for(
+                            'invoices',
+                            page=p,
+                            search=request.args.get('search'),
+                            customer=request.args.get('customer'),
+                            status=request.args.get('status')
+                        ) }}"
+                        class="table-page-number"
+                    >
+                        {{ p }}
+                    </a>
+
+                    {% endif %}
+
+                {% endfor %}
+
+            </div>
+
+
+
+            <!-- Next -->
+
+            {% if invoices.has_next %}
+
+            <a
+                href="{{ url_for(
+                    'invoices',
+                    page=invoices.next_num,
+                    search=request.args.get('search'),
+                    customer=request.args.get('customer'),
+                    status=request.args.get('status')
+                ) }}"
+                class="table-page-btn"
+            >
+
+                Next
+
+                <i class='bx bx-chevron-right'></i>
+
+            </a>
+
+            {% else %}
+
+            <span class="table-page-btn disabled">
+
+                Next
+
+                <i class='bx bx-chevron-right'></i>
+
+            </span>
+
+            {% endif %}
+
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+</div>
+
+
+
+<!-- =========================================================
+     PAYMENT MODAL
+     ========================================================= -->
+
+<div id="payModal" class="modal">
+
+    <div class="modal-content">
+
+        <span class="close-modal">
+            &times;
+        </span>
+
+        <div id="payModalBody"></div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================================
+     JAVASCRIPT
+     ========================================================= -->
+
+<script>
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const modal =
+        document.getElementById("payModal");
+
+    const modalBody =
+        document.getElementById("payModalBody");
+
+
+    /*
+     * Payment modal
+     */
+
+    document
+        .querySelectorAll(".open-pay-modal")
+        .forEach(button => {
+
+            button.addEventListener("click", async () => {
+
+                const url =
+                    button.dataset.url;
+
+                const response =
+                    await fetch(url);
+
+                modalBody.innerHTML =
+                    await response.text();
+
+                modal.style.display = "block";
+
+            });
+
+        });
+
+
+    /*
+     * Close modal
+     */
+
+    document.addEventListener("click", e => {
+
+        if (
+            e.target.classList.contains("close-modal") ||
+            e.target === modal
+        ) {
+
+            modal.style.display = "none";
+
+            modalBody.innerHTML = "";
+
+        }
+
+    });
+
+});
+
+
+
+/*
+ * Search debounce
+ */
+
+let debounceTimer;
+
+function debouncedSubmit(form) {
+
+    clearTimeout(debounceTimer);
+
+    debounceTimer = setTimeout(() => {
+
+        form.submit();
+
+    }, 1000);
+
+}
+
+
+
+/*
+ * Export dropdown
+ */
+
+function toggleExportMenu() {
+
+    const menu =
+        document.getElementById("exportMenu");
+
+    menu.classList.toggle("show");
+
+}
+
+
+
+/*
+ * Close export menu
+ * when clicking outside it
+ */
+
+document.addEventListener("click", function(event) {
+
+    const exportWrapper =
+        document.querySelector(".table-export");
+
+    const menu =
+        document.getElementById("exportMenu");
+
+    if (
+        exportWrapper &&
+        menu &&
+        !exportWrapper.contains(event.target)
+    ) {
+
+        menu.classList.remove("show");
+
+    }
+
+});
+
+</script>
+
+{% endblock %}

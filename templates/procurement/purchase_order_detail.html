@@ -1,0 +1,647 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ purchase_order.lpo_number }} | Autovex
+{% endblock %}
+
+{% block page_title %}
+    LPO Details
+{% endblock %}
+
+
+{% block content %}
+
+<div class="module-page procurement-page">
+
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <div class="module-header">
+
+        <div>
+
+            <h1>
+                {{ purchase_order.lpo_number }}
+            </h1>
+
+            <p>
+                Local Purchase Order
+            </p>
+
+        </div>
+
+
+        <div class="module-header-actions">
+
+            <a
+                href="{{ url_for(
+                    'procurement',
+                    tab='procurement-lpos'
+                ) }}"
+                class="secondary-btn"
+            >
+                <i class="bx bx-arrow-back"></i>
+                Back to LPOs
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         LPO SUMMARY
+         ===================================================== -->
+
+    <div class="financial-summary">
+
+
+        <!-- Supplier -->
+
+        <div class="financial-card">
+
+            <div class="financial-card-top">
+
+                <div class="financial-icon">
+                    <i class="bx bx-group"></i>
+                </div>
+
+                <span class="financial-label">
+                    Supplier
+                </span>
+
+            </div>
+
+            <div class="financial-value">
+
+                {{ purchase_order.supplier.supplier_name }}
+
+            </div>
+
+        </div>
+
+
+        <!-- Order Date -->
+
+        <div class="financial-card">
+
+            <div class="financial-card-top">
+
+                <div class="financial-icon">
+                    <i class="bx bx-calendar"></i>
+                </div>
+
+                <span class="financial-label">
+                    Order Date
+                </span>
+
+            </div>
+
+            <div class="financial-value">
+
+                {{ purchase_order.order_date.strftime('%d %b %Y') }}
+
+            </div>
+
+        </div>
+
+
+        <!-- Expected Date -->
+
+        <div class="financial-card">
+
+            <div class="financial-card-top">
+
+                <div class="financial-icon">
+                    <i class="bx bx-calendar-check"></i>
+                </div>
+
+                <span class="financial-label">
+                    Expected Delivery
+                </span>
+
+            </div>
+
+            <div class="financial-value">
+
+                {% if purchase_order.expected_date %}
+
+                    {{ purchase_order.expected_date.strftime('%d %b %Y') }}
+
+                {% else %}
+
+                    —
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <!-- Total -->
+
+        <div class="financial-card">
+
+            <div class="financial-card-top">
+
+                <div class="financial-icon">
+                    <i class="bx bx-money"></i>
+                </div>
+
+                <span class="financial-label">
+                    LPO Total
+                </span>
+
+            </div>
+
+            <div class="financial-value">
+
+                KES {{ "{:,.2f}".format(
+                    purchase_order.total_amount or 0
+                ) }}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         LPO INFORMATION
+         ===================================================== -->
+
+    <div class="financial-list-panel">
+
+        <div class="financial-list-header">
+
+            <div>
+
+                <h3>
+                    LPO Information
+                </h3>
+
+                <p>
+                    Purchase order details and current status.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="financial-metrics">
+
+
+            <div class="metric">
+
+                <span>
+                    LPO Number
+                </span>
+
+                <strong>
+                    {{ purchase_order.lpo_number }}
+                </strong>
+
+            </div>
+
+
+            <div class="metric">
+
+                <span>
+                    Supplier
+                </span>
+
+                <strong>
+                    {{ purchase_order.supplier.supplier_name }}
+                </strong>
+
+            </div>
+
+
+            <div class="metric">
+
+                <span>
+                    Status
+                </span>
+
+                <strong>
+                    {{ purchase_order.status }}
+                </strong>
+
+            </div>
+
+
+            <div class="metric">
+
+                <span>
+                    Items
+                </span>
+
+                <strong>
+                    {{ purchase_order.items|length }}
+                </strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         ADD ITEM
+         ===================================================== -->
+
+    <div class="financial-list-panel">
+
+        <div class="financial-list-header">
+
+            <div>
+
+                <h3>
+                    Add Items
+                </h3>
+
+                <p>
+                    Add the goods or services being ordered.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <form
+            method="POST"
+            action="{{ url_for(
+                'add_purchase_order_item',
+                order_id=purchase_order.id
+            ) }}"
+            class="form-container"
+        >
+
+
+            <div class="form-group">
+
+                <label for="item_description">
+                    Item / Description
+                    <span class="required">*</span>
+                </label>
+
+                <input
+                    type="text"
+                    id="item_description"
+                    name="item_description"
+                    placeholder="e.g. Brake Pads"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="quantity">
+                    Quantity
+                    <span class="required">*</span>
+                </label>
+
+                <input
+                    type="number"
+                    id="quantity"
+                    name="quantity"
+                    min="0.01"
+                    step="0.01"
+                    placeholder="1"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="unit_price">
+                    Unit Price
+                    <span class="required">*</span>
+                </label>
+
+                <div class="input-with-prefix">
+
+                    <span class="input-prefix">
+                        KES
+                    </span>
+
+                    <input
+                        type="number"
+                        id="unit_price"
+                        name="unit_price"
+                        min="0"
+                        step="0.01"
+                        placeholder="0.00"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="notes">
+                    Notes
+                </label>
+
+                <textarea
+                    id="notes"
+                    name="notes"
+                    rows="3"
+                    placeholder="Optional item notes..."
+                ></textarea>
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <button
+                    type="submit"
+                    class="primary-btn"
+                >
+                    <i class="bx bx-plus"></i>
+                    Add Item
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- =====================================================
+         ITEMS
+         ===================================================== -->
+
+    <div class="financial-list-panel">
+
+        <div class="financial-list-header">
+
+            <div>
+
+                <h3>
+                    Ordered Items
+                </h3>
+
+                <p>
+                    Items included in this purchase order.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="financial-table-wrapper">
+
+            <table class="financial-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            #
+                        </th>
+
+                        <th>
+                            Item
+                        </th>
+
+                        <th>
+                            Quantity
+                        </th>
+
+                        <th>
+                            Unit Price
+                        </th>
+
+                        <th>
+                            Total
+                        </th>
+
+                        <th>
+                            Action
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for item in purchase_order.items %}
+
+                    <tr>
+
+                        <td>
+                            {{ loop.index }}
+                        </td>
+
+                        <td>
+
+                            <strong>
+                                {{ item.item_description }}
+                            </strong>
+
+                            {% if item.notes %}
+
+                                <br>
+
+                                <small>
+                                    {{ item.notes }}
+                                </small>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+                            {{ "{:,.2f}".format(item.quantity) }}
+                        </td>
+
+                        <td>
+                            KES {{ "{:,.2f}".format(item.unit_price) }}
+                        </td>
+
+                        <td>
+                            <strong>
+                                KES {{ "{:,.2f}".format(
+                                    item.total_price
+                                ) }}
+                            </strong>
+                        </td>
+
+                        <td>
+
+                            <form
+                                method="POST"
+                                action="{{ url_for(
+                                    'delete_purchase_order_item',
+                                    order_id=purchase_order.id,
+                                    item_id=item.id
+                                ) }}"
+                                style="display:inline;"
+                            >
+
+                                <button
+                                    type="submit"
+                                    class="btn"
+                                    title="Remove Item"
+                                    onclick="return confirm(
+                                        'Remove this item from the LPO?'
+                                    );"
+                                >
+                                    <i class="bx bx-trash"></i>
+                                </button>
+
+                            </form>
+
+                        </td>
+
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+
+                        <td
+                            colspan="6"
+                            class="empty-table-state"
+                        >
+
+                            <i class="bx bx-package"></i>
+
+                            <div>
+
+                                <strong>
+                                    No items added
+                                </strong>
+
+                                <p>
+                                    Add the first item to this LPO
+                                    using the form above.
+                                </p>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+
+                {% if purchase_order.items %}
+
+                <tfoot>
+
+                    <tr>
+
+                        <td
+                            colspan="4"
+                            style="text-align:right;"
+                        >
+
+                            <strong>
+                                LPO TOTAL
+                            </strong>
+
+                        </td>
+
+                        <td>
+
+                            <strong>
+                                KES {{ "{:,.2f}".format(
+                                    purchase_order.total_amount or 0
+                                ) }}
+                            </strong>
+
+                        </td>
+
+                        <td></td>
+
+                    </tr>
+
+                </tfoot>
+
+                {% endif %}
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         NOTES
+         ===================================================== -->
+
+    {% if purchase_order.description or purchase_order.notes %}
+
+    <div class="financial-list-panel">
+
+        <div class="financial-list-header">
+
+            <div>
+
+                <h3>
+                    Notes
+                </h3>
+
+            </div>
+
+        </div>
+
+
+        {% if purchase_order.description %}
+
+        <p>
+            <strong>
+                Description:
+            </strong>
+
+            {{ purchase_order.description }}
+        </p>
+
+        {% endif %}
+
+
+        {% if purchase_order.notes %}
+
+        <p>
+            <strong>
+                Notes:
+            </strong>
+
+            {{ purchase_order.notes }}
+        </p>
+
+        {% endif %}
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

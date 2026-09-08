@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Loading...</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f4f6f8;
+        }
+
+        .loader-container {
+            text-align: center;
+        }
+
+        /* Circle Loader */
+        .loader {
+            width: 70px;
+            height: 70px;
+            border: 6px solid #e5e7eb;
+            border-top: 6px solid red;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 6px;
+        }
+
+        p {
+            font-size: 14px;
+            color: #6b7280;
+        }
+    </style>
+
+    <script>
+        setTimeout(() => {
+            window.location.href = "/login";
+        }, 2500);
+    </script>
+</head>
+<body>
+
+    <div class="loader-container">
+        <div class="loader"></div>
+        <h2>Loading Autovex</h2>
+        <p>Please wait...</p>
+    </div>
+
+</body>
+</html>

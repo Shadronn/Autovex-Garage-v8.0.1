@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="invoice-print">
+
+    <h2>INVOICE</h2>
+
+    <p><strong>Invoice No:</strong> {{ invoice.id }}</p>
+    <p><strong>Date:</strong> {{ invoice.created_at.strftime('%Y-%m-%d') }}</p>
+
+    <hr>
+
+    <p><strong>Customer:</strong> {{ job.customer_name }}</p>
+    <p><strong>Telephone:</strong> {{ job.telno }}</p>
+    <p><strong>Vehicle:</strong> {{ job.vehicle }}</p>
+
+    <hr>
+
+    <p><strong>Description:</strong> {{ job.description }}</p>
+
+    <table>
+        <tr>
+            <th>Subtotal</th>
+            <td>KES {{ "%.2f"|format(invoice.subtotal) }}</td>
+        </tr>
+        <tr>
+            <th>VAT (16%)</th>
+            <td>KES {{ "%.2f"|format(invoice.tax_amount) }}</td>
+        </tr>
+        <tr>
+            <th>Total</th>
+            <td><strong>KES {{ "%.2f"|format(invoice.total_amount) }}</strong></td>
+        </tr>
+    </table>
+
+    <button onclick="window.print()" class="btn">Print Invoice</button>
+
+</div>
+
+{% endblock %}

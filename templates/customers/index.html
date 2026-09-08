@@ -1,0 +1,605 @@
+{% extends "base.html" %}
+
+
+{% block sidebar %}
+
+{% endblock %}
+
+
+
+{% block content %}
+
+<div class="table-page">
+
+
+    <!-- =====================================================
+         PAGE HEADER
+         ===================================================== -->
+
+    <div class="module-header">
+
+        <div>
+
+            <h1>Customers</h1>
+
+            <p>
+                Manage customers, contact information and customer classifications.
+            </p>
+
+        </div>
+
+
+        <div class="module-header-actions">
+
+            <a
+                href="{{ url_for('create_customer') }}"
+                class="table-filter-btn"
+            >
+                <i class='bx bx-plus'></i>
+                <span>Add Customer</span>
+            </a>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         TABLE PANEL
+         ===================================================== -->
+
+    <div class="table-panel">
+
+
+        <!-- =================================================
+             TOOLBAR
+             ================================================= -->
+
+        <div class="table-toolbar">
+
+
+            <!-- SEARCH -->
+
+            <div class="table-toolbar-left">
+
+                <div class="table-search">
+
+                    <i class='bx bx-search'></i>
+
+                    <form
+                        method="GET"
+                        action="{{ url_for('customers') }}"
+                    >
+
+                        <input
+                            type="text"
+                            name="search"
+                            placeholder="Search name, phone or email..."
+                            value="{{ search }}"
+                            oninput="debouncedSubmit(this.form)"
+                            autocomplete="off"
+                        >
+
+                    </form>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- FILTERS / EXPORT -->
+
+            <form
+                method="GET"
+                action="{{ url_for('customers') }}"
+                class="table-filters"
+            >
+
+
+                <!-- Preserve current search -->
+
+                <input
+                    type="hidden"
+                    name="search"
+                    value="{{ search }}"
+                >
+
+
+                <!-- =================================================
+                     CUSTOMER CLASS
+                     ================================================= -->
+
+                <select name="customer_class">
+
+                    <option value="">
+                        All Customer Classes
+                    </option>
+
+                    {% for customer_class in customer_classes %}
+
+                    <option
+                        value="{{ customer_class }}"
+                        {% if request.args.get('customer_class') == customer_class %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ customer_class }}
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+
+
+                <!-- =================================================
+                     FILTER BUTTON
+                     ================================================= -->
+
+                <button
+                    type="submit"
+                    class="table-filter-btn"
+                >
+
+                    <i class='bx bx-filter-alt'></i>
+
+                    <span>Filter</span>
+
+                </button>
+
+
+
+                <!-- =================================================
+                     EXPORT
+                     ================================================= -->
+
+                <div class="table-export">
+
+                    <button
+                        type="button"
+                        class="table-export-btn"
+                        onclick="toggleExportMenu()"
+                    >
+
+                        <i class='bx bx-export'></i>
+
+                        <span>Export</span>
+
+                        <i class='bx bx-chevron-down'></i>
+
+                    </button>
+
+
+                    <div
+                        id="exportMenu"
+                        class="table-export-menu"
+                    >
+
+
+                        <!-- EXCEL -->
+
+                        <a
+                            href="{{ url_for(
+                                'export_customers_excel',
+                                search=search,
+                                customer_class=request.args.get('customer_class', '')
+                            ) }}"
+                        >
+
+                            <i class='bx bx-spreadsheet'></i>
+
+                            <span>
+                                Export Excel
+                            </span>
+
+                        </a>
+
+
+                        <!-- CSV -->
+
+                        <a
+                            href="{{ url_for(
+                                'export_customers_csv',
+                                search=search,
+                                customer_class=request.args.get('customer_class', '')
+                            ) }}"
+                        >
+
+                            <i class='bx bx-file'></i>
+
+                            <span>
+                                Export CSV
+                            </span>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+
+        <!-- =================================================
+             TABLE
+             ================================================= -->
+
+        <div class="table-wrapper">
+
+            <table class="data-table">
+
+
+                <thead>
+
+                    <tr>
+
+                        <th>Full Name</th>
+
+                        <th>Class</th>
+
+                        <th>Phone</th>
+
+                        <th>Email</th>
+
+                        <th>Status</th>
+
+                        <th>View</th>
+
+                    </tr>
+
+                </thead>
+
+
+
+                <tbody id="tableBody">
+
+
+                    {% for customer in customers.items %}
+
+                    <tr>
+
+
+                        <!-- NAME -->
+
+                        <td>
+
+                            <span class="table-primary-text">
+                                {{ customer.customer_name }}
+                            </span>
+
+                        </td>
+
+
+
+                        <!-- CUSTOMER CLASS -->
+
+                        <td>
+
+                            <span class="table-secondary-text">
+                                {{ customer.customer_class or "-" }}
+                            </span>
+
+                        </td>
+
+
+
+                        <!-- PHONE -->
+
+                        <td>
+
+                            <span class="table-secondary-text">
+                                {{ customer.telno or "-" }}
+                            </span>
+
+                        </td>
+
+
+
+                        <!-- EMAIL -->
+
+                        <td>
+
+                            <span class="table-secondary-text">
+                                {{ customer.email or "-" }}
+                            </span>
+
+                        </td>
+
+
+
+                        <!-- STATUS -->
+
+                        <td>
+
+                            {% if customer.status == "Active" %}
+
+                            <span class="table-status table-status-paid">
+
+                                <span class="table-status-dot"></span>
+
+                                Active
+
+                            </span>
+
+                            {% elif customer.status == "Inactive" %}
+
+                            <span class="table-status table-status-unpaid">
+
+                                <span class="table-status-dot"></span>
+
+                                Inactive
+
+                            </span>
+
+                            {% else %}
+
+                            <span class="table-status table-status-pending">
+
+                                <span class="table-status-dot"></span>
+
+                                {{ customer.status or "Unknown" }}
+
+                            </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+
+                        <!-- VIEW -->
+
+                        <td>
+
+                            <a
+                                href="{{ url_for(
+                                    'customer_details',
+                                    customer_id=customer.id
+                                ) }}"
+                                class="table-action-view"
+                            >
+
+                                <span>View</span>
+
+                                <i class='bx bx-chevron-right'></i>
+
+                            </a>
+
+                        </td>
+
+
+                    </tr>
+
+
+                    {% else %}
+
+                    <tr>
+
+                        <td colspan="6">
+
+                            <div class="table-empty">
+
+                                <div class="table-empty-icon">
+
+                                    <i class='bx bx-group'></i>
+
+                                </div>
+
+                                <strong>
+                                    No customers found
+                                </strong>
+
+                                <span>
+                                    Try changing your search or customer class filter.
+                                </span>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+
+        <!-- =================================================
+             PAGINATION
+             ================================================= -->
+
+        {% if customers.pages > 1 %}
+
+        <div class="table-pagination">
+
+
+            <!-- PREVIOUS -->
+
+            {% if customers.has_prev %}
+
+            <a
+                href="{{ url_for(
+                    'customers',
+                    page=customers.prev_num,
+                    search=search,
+                    customer_class=request.args.get('customer_class', '')
+                ) }}"
+                class="table-page-btn"
+            >
+
+                <i class='bx bx-chevron-left'></i>
+
+                <span>Previous</span>
+
+            </a>
+
+            {% else %}
+
+            <span class="table-page-btn disabled">
+
+                <i class='bx bx-chevron-left'></i>
+
+                <span>Previous</span>
+
+            </span>
+
+            {% endif %}
+
+
+
+            <!-- PAGE NUMBERS -->
+
+            <div class="table-page-numbers">
+
+                {% for p in range(1, customers.pages + 1) %}
+
+                    {% if p == customers.page %}
+
+                    <span class="table-page-number active">
+                        {{ p }}
+                    </span>
+
+                    {% else %}
+
+                    <a
+                        href="{{ url_for(
+                            'customers',
+                            page=p,
+                            search=search,
+                            customer_class=request.args.get('customer_class', '')
+                        ) }}"
+                        class="table-page-number"
+                    >
+                        {{ p }}
+                    </a>
+
+                    {% endif %}
+
+                {% endfor %}
+
+            </div>
+
+
+
+            <!-- NEXT -->
+
+            {% if customers.has_next %}
+
+            <a
+                href="{{ url_for(
+                    'customers',
+                    page=customers.next_num,
+                    search=search,
+                    customer_class=request.args.get('customer_class', '')
+                ) }}"
+                class="table-page-btn"
+            >
+
+                <span>Next</span>
+
+                <i class='bx bx-chevron-right'></i>
+
+            </a>
+
+            {% else %}
+
+            <span class="table-page-btn disabled">
+
+                <span>Next</span>
+
+                <i class='bx bx-chevron-right'></i>
+
+            </span>
+
+            {% endif %}
+
+
+        </div>
+
+        {% endif %}
+
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================================
+     SEARCH DEBOUNCE
+     ========================================================= -->
+
+<script>
+
+let customerDebounceTimer;
+
+function debouncedSubmit(form) {
+
+    clearTimeout(customerDebounceTimer);
+
+    customerDebounceTimer = setTimeout(() => {
+
+        form.submit();
+
+    }, 700);
+
+}
+
+</script>
+
+
+
+<!-- =========================================================
+     EXPORT DROPDOWN
+     ========================================================= -->
+
+<script>
+
+function toggleExportMenu() {
+
+    const menu = document.getElementById("exportMenu");
+
+    if (!menu) {
+        return;
+    }
+
+    menu.classList.toggle("show");
+
+}
+
+
+document.addEventListener("click", function(event) {
+
+    const exportContainer =
+        document.querySelector(".table-export");
+
+    const menu =
+        document.getElementById("exportMenu");
+
+
+    if (
+        exportContainer &&
+        menu &&
+        !exportContainer.contains(event.target)
+    ) {
+
+        menu.classList.remove("show");
+
+    }
+
+});
+
+</script>
+
+{% endblock %}

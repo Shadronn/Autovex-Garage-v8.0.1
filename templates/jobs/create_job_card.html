@@ -1,0 +1,1425 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h4>Create Job Card</h4>
+        <p>Create a job card for Job #{{ job.id }}</p>
+    </div>
+</div>
+
+<form method="POST" class="form-card" id="jobCardForm">
+
+    <!-- ========================================= -->
+    <!-- JOB INFORMATION -->
+    <!-- ========================================= -->
+
+    <div class="section-header">
+        <h4>Job Information</h4>
+    </div>
+
+    <div class="form-grid">
+
+        <div class="form-group">
+            <label>Job Number</label>
+            <input
+                type="text"
+                value="JOB-{{ job.id }}"
+                readonly
+            >
+        </div>
+
+        <div class="form-group">
+            <label>Customer</label>
+            <input
+                type="text"
+                value="{{ job.customer_name }}"
+                readonly
+            >
+        </div>
+
+        <div class="form-group">
+            <label>Telephone</label>
+            <input
+                type="text"
+                value="{{ job.telno }}"
+                readonly
+            >
+        </div>
+
+        <div class="form-group">
+            <label>Vehicle</label>
+            <input
+                type="text"
+                value="{{ job.vehicle }}"
+                readonly
+            >
+        </div>
+
+        <div class="form-group">
+            <label>Vehicle Model</label>
+            <input
+                type="text"
+                value="{{ job.vehicle_model }}"
+                readonly
+            >
+        </div>
+
+        <div class="form-group">
+            <label>Assigned Mechanic</label>
+            <input
+                type="text"
+                value="{{ job.mechanic.username if job.mechanic else '' }}"
+                readonly
+            >
+        </div>
+
+        <div class="form-group full-width">
+            <label>Original Job Description</label>
+            <textarea readonly>{{ job.description }}</textarea>
+        </div>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- WORK DETAILS -->
+    <!-- ========================================= -->
+
+    <div class="section-header">
+        <h4>Work Details</h4>
+    </div>
+
+    <div class="form-grid">
+
+        <div class="form-group full-width">
+
+            <label for="work_description">
+                Work to be Performed
+            </label>
+
+            <textarea
+                id="work_description"
+                name="work_description"
+                required
+                placeholder="Describe the work to be carried out..."
+            ></textarea>
+
+        </div>
+
+        <div class="form-group full-width">
+
+            <label for="technician_notes">
+                Technician Notes
+            </label>
+
+            <textarea
+                id="technician_notes"
+                name="technician_notes"
+                placeholder="Additional workshop notes..."
+            ></textarea>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- PARTS -->
+    <!-- ========================================= -->
+
+    <div class="section-header job-card-section-header">
+
+        <div>
+            <h4>Parts</h4>
+
+            <p>
+                Add parts required for this job.
+            </p>
+        </div>
+
+        <button
+            type="button"
+            class="btn btn-primary"
+            id="addPartBtn"
+        >
+            <i class='bx bx-plus'></i>
+            Add Part
+        </button>
+
+    </div>
+
+
+    <div class="job-card-table-wrapper">
+
+        <table class="job-card-items-table parts-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>Part Name</th>
+
+                    <th>Part Number</th>
+
+                    <th width="80">
+                        Qty
+                    </th>
+
+                    <th width="120">
+                        Unit Cost
+                    </th>
+
+                    <th width="120">
+                        Unit Price
+                    </th>
+
+                    <th width="130">
+                        Cost
+                    </th>
+
+                    <th width="130">
+                        Total
+                    </th>
+
+                    <th width="60"></th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="partsTableBody">
+            </tbody>
+
+
+            <tfoot>
+
+                <tr>
+
+                    <td
+                        colspan="6"
+                        class="items-total-label"
+                    >
+                        Parts Total
+                    </td>
+
+                    <td class="items-total-value">
+
+                        KES
+
+                        <span id="partsTotal">
+                            0.00
+                        </span>
+
+                    </td>
+
+                    <td></td>
+
+                </tr>
+
+            </tfoot>
+
+        </table>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- LABOUR -->
+    <!-- ========================================= -->
+
+    <div class="section-header job-card-section-header">
+
+        <div>
+
+            <h4>Labour</h4>
+
+            <p>
+                Add labour operations for this job.
+            </p>
+
+        </div>
+
+        <button
+            type="button"
+            class="btn btn-primary"
+            id="addLabourBtn"
+        >
+            <i class='bx bx-plus'></i>
+            Add Labour
+        </button>
+
+    </div>
+
+
+    <div class="job-card-table-wrapper">
+
+        <table class="job-card-items-table labour-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>Labour Description</th>
+                    <th width="100">Hours</th>
+                    <th width="130">Hourly Cost</th>
+                    <th width="130">Hourly Rate</th>
+                    <th width="150">Total</th>
+                    <th width="60"></th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="labourTableBody">
+            </tbody>
+
+
+            <tfoot>
+
+                <tr>
+
+                    <td
+                        colspan="4"
+                        class="items-total-label"
+                    >
+                        Labour Total
+                    </td>
+
+                    <td class="items-total-value">
+
+                        KES
+
+                        <span id="labourTotal">
+                            0.00
+                        </span>
+
+                    </td>
+
+                    <td></td>
+
+                </tr>
+
+            </tfoot>
+
+        </table>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- JOB CARD SUMMARY -->
+    <!-- ========================================= -->
+
+    <div class="job-card-summary">
+
+        <!-- PARTS COST -->
+
+        <div class="job-card-summary-row">
+
+            <span>
+                Parts Cost
+            </span>
+
+            <strong>
+
+                KES
+
+                <span id="summaryPartsCost">
+                    0.00
+                </span>
+
+            </strong>
+
+        </div>
+
+
+        <!-- PARTS REVENUE -->
+
+        <div class="job-card-summary-row">
+
+            <span>
+                Parts Total
+            </span>
+
+            <strong>
+
+                KES
+
+                <span id="summaryPartsTotal">
+                    0.00
+                </span>
+
+            </strong>
+
+        </div>
+
+
+        <!-- LABOUR COST -->
+
+        <div class="job-card-summary-row">
+
+            <span>
+                Labour Cost
+            </span>
+
+            <strong>
+
+                KES
+
+                <span id="summaryLabourCost">
+                    0.00
+                </span>
+
+            </strong>
+
+        </div>
+
+
+        <!-- LABOUR REVENUE -->
+
+        <div class="job-card-summary-row">
+
+            <span>
+                Labour Total
+            </span>
+
+            <strong>
+
+                KES
+
+                <span id="summaryLabourTotal">
+                    0.00
+                </span>
+
+            </strong>
+
+        </div>
+
+
+        <!-- TOTAL JOB COST -->
+
+        <div class="job-card-summary-row">
+
+            <span>
+                Total Job Cost
+            </span>
+
+            <strong>
+
+                KES
+
+                <span id="totalJobCost">
+                    0.00
+                </span>
+
+            </strong>
+
+        </div>
+
+
+        <!-- JOB REVENUE -->
+
+        <div class="job-card-summary-row">
+
+            <span>
+                Job Card Total
+            </span>
+
+            <strong>
+
+                KES
+
+                <span id="grandTotal">
+                    0.00
+                </span>
+
+            </strong>
+
+        </div>
+
+
+        <!-- GROSS PROFIT -->
+
+        <div class="job-card-summary-row grand-total">
+
+            <span>
+                Gross Profit
+            </span>
+
+            <strong>
+
+                KES
+
+                <span id="grossProfit">
+                    0.00
+                </span>
+
+            </strong>
+
+        </div>
+
+
+        <!-- GROSS MARGIN -->
+
+        <div class="job-card-summary-row">
+
+            <span>
+                Gross Margin
+            </span>
+
+            <strong>
+
+                <span id="grossMargin">
+                    0.00
+                </span>%
+
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- ACTIONS -->
+    <!-- ========================================= -->
+
+    <div class="button-group">
+
+        <button
+            type="submit"
+            class="primary-btn"
+        >
+            <i class='bx bx-save'></i>
+            Create Job Card
+        </button>
+
+        <a
+            href="{{ url_for('job_detail', job_id=job.id) }}"
+            class="secondary-btn"
+        >
+            Cancel
+        </a>
+
+    </div>
+
+</form>
+
+
+<!-- ========================================= -->
+<!-- JAVASCRIPT -->
+<!-- ========================================= -->
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    /* =========================================
+       ELEMENTS
+    ========================================= */
+
+    const form =
+        document.getElementById("jobCardForm");
+
+    const partsTableBody =
+        document.getElementById("partsTableBody");
+
+    const labourTableBody =
+        document.getElementById("labourTableBody");
+
+    const addPartBtn =
+        document.getElementById("addPartBtn");
+
+    const addLabourBtn =
+        document.getElementById("addLabourBtn");
+
+
+    /* =========================================
+       PARTS
+    ========================================= */
+
+    function addPart() {
+
+        const row =
+            document.createElement("tr");
+
+        row.innerHTML = `
+
+            <td>
+
+                <input
+                    type="text"
+                    name="part_name[]"
+                    placeholder="e.g. Brake Pads"
+                    required
+                >
+
+            </td>
+
+
+            <td>
+
+                <input
+                    type="text"
+                    name="part_number[]"
+                    placeholder="Part number"
+                >
+
+            </td>
+
+
+            <td>
+
+                <input
+                    type="number"
+                    name="part_quantity[]"
+                    class="part-quantity"
+                    value="1"
+                    min="0.01"
+                    step="0.01"
+                    required
+                >
+
+            </td>
+
+
+            <td>
+
+                <input
+                    type="number"
+                    name="part_unit_cost[]"
+                    class="part-unit-cost"
+                    value="0"
+                    min="0"
+                    step="0.01"
+                    required
+                >
+
+            </td>
+
+
+            <td>
+
+                <input
+                    type="number"
+                    name="part_unit_price[]"
+                    class="part-unit-price"
+                    value="0"
+                    min="0"
+                    step="0.01"
+                    required
+                >
+
+            </td>
+
+
+            <td class="part-cost-total">
+                0.00
+            </td>
+
+
+            <td class="line-total">
+                0.00
+            </td>
+
+
+            <td>
+
+                <button
+                    type="button"
+                    class="remove-item-btn remove-part"
+                    title="Remove part"
+                >
+                    <i class='bx bx-trash'></i>
+                </button>
+
+            </td>
+
+        `;
+
+        partsTableBody.appendChild(row);
+
+        calculateParts();
+
+    }
+
+
+    /* =========================================
+       PART CALCULATION
+    ========================================= */
+
+    function calculateParts() {
+
+        let costTotal = 0;
+
+        let sellingTotal = 0;
+
+
+        const rows =
+            partsTableBody.querySelectorAll("tr");
+
+
+        rows.forEach(function (row) {
+
+            const quantity =
+                parseFloat(
+                    row.querySelector(
+                        ".part-quantity"
+                    ).value
+                ) || 0;
+
+
+            const unitCost =
+                parseFloat(
+                    row.querySelector(
+                        ".part-unit-cost"
+                    ).value
+                ) || 0;
+
+
+            const unitPrice =
+                parseFloat(
+                    row.querySelector(
+                        ".part-unit-price"
+                    ).value
+                ) || 0;
+
+
+            /* -----------------------------
+               ACTUAL PART COST
+            ----------------------------- */
+
+            const partCost =
+                quantity * unitCost;
+
+
+            /* -----------------------------
+               CUSTOMER CHARGE
+            ----------------------------- */
+
+            const sellingTotalForPart =
+                quantity * unitPrice;
+
+
+            /* -----------------------------
+               DISPLAY COST
+            ----------------------------- */
+
+            const costElement =
+                row.querySelector(
+                    ".part-cost-total"
+                );
+
+            if (costElement) {
+
+                costElement.textContent =
+                    partCost.toFixed(2);
+
+            }
+
+
+            /* -----------------------------
+               DISPLAY CUSTOMER TOTAL
+            ----------------------------- */
+
+            const sellingElement =
+                row.querySelector(
+                    ".line-total"
+                );
+
+            if (sellingElement) {
+
+                sellingElement.textContent =
+                    sellingTotalForPart.toFixed(2);
+
+            }
+
+
+            costTotal += partCost;
+
+            sellingTotal +=
+                sellingTotalForPart;
+
+        });
+
+
+        /* =================================
+           UPDATE PART TOTALS
+        ================================= */
+
+        const summaryPartsCost =
+            document.getElementById(
+                "summaryPartsCost"
+            );
+
+        if (summaryPartsCost) {
+
+            summaryPartsCost.textContent =
+                costTotal.toFixed(2);
+
+        }
+
+
+        const partsTotal =
+            document.getElementById(
+                "partsTotal"
+            );
+
+        if (partsTotal) {
+
+            partsTotal.textContent =
+                sellingTotal.toFixed(2);
+
+        }
+
+
+        const summaryPartsTotal =
+            document.getElementById(
+                "summaryPartsTotal"
+            );
+
+        if (summaryPartsTotal) {
+
+            summaryPartsTotal.textContent =
+                sellingTotal.toFixed(2);
+
+        }
+
+
+        calculateSummary();
+
+    }
+
+
+    /* =========================================
+       LABOUR
+    ========================================= */
+
+    function addLabour() {
+
+        const row =
+            document.createElement("tr");
+
+
+        row.innerHTML = `
+
+            <td>
+
+                <input
+                    type="text"
+                    name="labour_description[]"
+                    placeholder="e.g. Brake pad replacement"
+                    required
+                >
+
+            </td>
+
+
+            <td>
+
+                <input
+                    type="number"
+                    name="labour_hours[]"
+                    class="labour-hours"
+                    value="1"
+                    min="0.01"
+                    step="0.01"
+                    required
+                >
+
+            </td>
+
+
+            <td>
+
+                <input
+                    type="number"
+                    name="labour_hourly_cost[]"
+                    class="labour-cost"
+                    value="0"
+                    min="0"
+                    step="0.01"
+                    required
+                >
+
+            </td>
+
+
+            <td>
+
+                <input
+                    type="number"
+                    name="labour_hourly_rate[]"
+                    class="labour-rate"
+                    value="0"
+                    min="0"
+                    step="0.01"
+                    required
+                >
+
+            </td>
+
+
+            <td class="labour-cost-total">
+                0.00
+            </td>
+
+
+            <td class="labour-line-total">
+                0.00
+            </td>
+
+
+            <td>
+
+                <button
+                    type="button"
+                    class="remove-item-btn remove-labour"
+                    title="Remove labour"
+                >
+                    <i class='bx bx-trash'></i>
+                </button>
+
+            </td>
+
+        `;
+
+
+        labourTableBody.appendChild(row);
+
+        calculateLabour();
+
+    }
+
+
+    /* =========================================
+       LABOUR CALCULATION
+    ========================================= */
+
+    function calculateLabour() {
+
+        let costTotal = 0;
+
+        let sellingTotal = 0;
+
+
+        const rows =
+            labourTableBody.querySelectorAll("tr");
+
+
+        rows.forEach(function (row) {
+
+            const hours =
+                parseFloat(
+                    row.querySelector(
+                        ".labour-hours"
+                    ).value
+                ) || 0;
+
+
+            const hourlyCost =
+                parseFloat(
+                    row.querySelector(
+                        ".labour-cost"
+                    ).value
+                ) || 0;
+
+
+            const hourlyRate =
+                parseFloat(
+                    row.querySelector(
+                        ".labour-rate"
+                    ).value
+                ) || 0;
+
+
+            /* -----------------------------
+               ACTUAL LABOUR COST
+            ----------------------------- */
+
+            const labourCost =
+                hours * hourlyCost;
+
+
+            /* -----------------------------
+               CUSTOMER LABOUR CHARGE
+            ----------------------------- */
+
+            const labourCharge =
+                hours * hourlyRate;
+
+
+            /* -----------------------------
+               DISPLAY COST
+            ----------------------------- */
+
+            const costElement =
+                row.querySelector(
+                    ".labour-cost-total"
+                );
+
+            if (costElement) {
+
+                costElement.textContent =
+                    labourCost.toFixed(2);
+
+            }
+
+
+            /* -----------------------------
+               DISPLAY CUSTOMER TOTAL
+            ----------------------------- */
+
+            const sellingElement =
+                row.querySelector(
+                    ".labour-line-total"
+                );
+
+            if (sellingElement) {
+
+                sellingElement.textContent =
+                    labourCharge.toFixed(2);
+
+            }
+
+
+            costTotal += labourCost;
+
+            sellingTotal += labourCharge;
+
+        });
+
+
+        /* =================================
+           UPDATE LABOUR TOTALS
+        ================================= */
+
+        const summaryLabourCost =
+            document.getElementById(
+                "summaryLabourCost"
+            );
+
+        if (summaryLabourCost) {
+
+            summaryLabourCost.textContent =
+                costTotal.toFixed(2);
+
+        }
+
+
+        const labourTotal =
+            document.getElementById(
+                "labourTotal"
+            );
+
+        if (labourTotal) {
+
+            labourTotal.textContent =
+                sellingTotal.toFixed(2);
+
+        }
+
+
+        const summaryLabourTotal =
+            document.getElementById(
+                "summaryLabourTotal"
+            );
+
+        if (summaryLabourTotal) {
+
+            summaryLabourTotal.textContent =
+                sellingTotal.toFixed(2);
+
+        }
+
+
+        calculateSummary();
+
+    }
+
+
+    /* =========================================
+       JOB SUMMARY
+    ========================================= */
+
+    function calculateSummary() {
+
+        const partsCost =
+            parseFloat(
+                (
+                    document.getElementById(
+                        "summaryPartsCost"
+                    )?.textContent || "0"
+                )
+            ) || 0;
+
+
+        const partsRevenue =
+            parseFloat(
+                (
+                    document.getElementById(
+                        "summaryPartsTotal"
+                    )?.textContent || "0"
+                )
+            ) || 0;
+
+
+        const labourCost =
+            parseFloat(
+                (
+                    document.getElementById(
+                        "summaryLabourCost"
+                    )?.textContent || "0"
+                )
+            ) || 0;
+
+
+        const labourRevenue =
+            parseFloat(
+                (
+                    document.getElementById(
+                        "summaryLabourTotal"
+                    )?.textContent || "0"
+                )
+            ) || 0;
+
+
+        /* =================================
+           DIRECT JOB COST
+        ================================= */
+
+        const totalJobCost =
+            partsCost +
+            labourCost;
+
+
+        /* =================================
+           JOB REVENUE
+        ================================= */
+
+        const jobRevenue =
+            partsRevenue +
+            labourRevenue;
+
+
+        /* =================================
+           GROSS PROFIT
+        ================================= */
+
+        const grossProfit =
+            jobRevenue -
+            totalJobCost;
+
+
+        /* =================================
+           GROSS MARGIN
+        ================================= */
+
+        let grossMargin = 0;
+
+
+        if (jobRevenue > 0) {
+
+            grossMargin =
+                (grossProfit / jobRevenue) * 100;
+
+        }
+
+
+        /* =================================
+           UPDATE SUMMARY
+        ================================= */
+
+        const totalJobCostElement =
+            document.getElementById(
+                "totalJobCost"
+            );
+
+        if (totalJobCostElement) {
+
+            totalJobCostElement.textContent =
+                totalJobCost.toFixed(2);
+
+        }
+
+
+        const grandTotalElement =
+            document.getElementById(
+                "grandTotal"
+            );
+
+        if (grandTotalElement) {
+
+            grandTotalElement.textContent =
+                jobRevenue.toFixed(2);
+
+        }
+
+
+        const grossProfitElement =
+            document.getElementById(
+                "grossProfit"
+            );
+
+        if (grossProfitElement) {
+
+            grossProfitElement.textContent =
+                grossProfit.toFixed(2);
+
+        }
+
+
+        const grossMarginElement =
+            document.getElementById(
+                "grossMargin"
+            );
+
+        if (grossMarginElement) {
+
+            grossMarginElement.textContent =
+                grossMargin.toFixed(2);
+
+        }
+
+    }
+
+
+    /* =========================================
+       ADD BUTTONS
+    ========================================= */
+
+    if (addPartBtn) {
+
+        addPartBtn.addEventListener(
+            "click",
+            addPart
+        );
+
+    }
+
+
+    if (addLabourBtn) {
+
+        addLabourBtn.addEventListener(
+            "click",
+            addLabour
+        );
+
+    }
+
+
+    /* =========================================
+       PART INPUT EVENTS
+    ========================================= */
+
+    partsTableBody.addEventListener(
+        "input",
+        function (event) {
+
+            if (
+
+                event.target.classList.contains(
+                    "part-quantity"
+                ) ||
+
+                event.target.classList.contains(
+                    "part-unit-cost"
+                ) ||
+
+                event.target.classList.contains(
+                    "part-unit-price"
+                )
+
+            ) {
+
+                calculateParts();
+
+            }
+
+        }
+    );
+
+
+    /* =========================================
+       LABOUR INPUT EVENTS
+    ========================================= */
+
+    labourTableBody.addEventListener(
+        "input",
+        function (event) {
+
+            if (
+
+                event.target.classList.contains(
+                    "labour-hours"
+                ) ||
+
+                event.target.classList.contains(
+                    "labour-cost"
+                ) ||
+
+                event.target.classList.contains(
+                    "labour-rate"
+                )
+
+            ) {
+
+                calculateLabour();
+
+            }
+
+        }
+    );
+
+
+    /* =========================================
+       REMOVE PART
+    ========================================= */
+
+    partsTableBody.addEventListener(
+        "click",
+        function (event) {
+
+            const button =
+                event.target.closest(
+                    ".remove-part"
+                );
+
+
+            if (!button) {
+                return;
+            }
+
+
+            const row =
+                button.closest("tr");
+
+
+            if (row) {
+
+                row.remove();
+
+            }
+
+
+            calculateParts();
+
+        }
+    );
+
+
+    /* =========================================
+       REMOVE LABOUR
+    ========================================= */
+
+    labourTableBody.addEventListener(
+        "click",
+        function (event) {
+
+            const button =
+                event.target.closest(
+                    ".remove-labour"
+                );
+
+
+            if (!button) {
+                return;
+            }
+
+
+            const row =
+                button.closest("tr");
+
+
+            if (row) {
+
+                row.remove();
+
+            }
+
+
+            calculateLabour();
+
+        }
+    );
+
+
+    /* =========================================
+       FORM SUBMISSION DEBUG
+    ========================================= */
+
+    form.addEventListener(
+        "submit",
+        function () {
+
+            const data =
+                new FormData(form);
+
+
+            console.log(
+                "PARTS:",
+                data.getAll(
+                    "part_name[]"
+                )
+            );
+
+
+            console.log(
+                "PART COSTS:",
+                data.getAll(
+                    "part_unit_cost[]"
+                )
+            );
+
+
+            console.log(
+                "PART PRICES:",
+                data.getAll(
+                    "part_unit_price[]"
+                )
+            );
+
+
+            console.log(
+                "LABOUR:",
+                data.getAll(
+                    "labour_description[]"
+                )
+            );
+
+
+            console.log(
+                "LABOUR COSTS:",
+                data.getAll(
+                    "labour_hourly_cost[]"
+                )
+            );
+
+
+            console.log(
+                "LABOUR RATES:",
+                data.getAll(
+                    "labour_hourly_rate[]"
+                )
+            );
+
+        }
+    );
+
+
+    /* =========================================
+       INITIAL CALCULATION
+    ========================================= */
+
+    calculateParts();
+
+    calculateLabour();
+
+});
+
+</script>
+{% endblock %}

@@ -1,0 +1,1611 @@
+/* =========================================================
+   AUTOVEX GARAGE MS
+   TABLES.CSS
+   Shargb(38, 167, 222) application table system
+   ========================================================= */
+
+
+/* =========================================================
+   TABLE PAGE
+   ========================================================= */
+
+.table-page {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   PAGE HEADER
+   ========================================================= */
+
+.table-page .module-header {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.table-page .module-header h1 {
+    margin: 0;
+
+    color: #172033;
+
+    font-size: 24px;
+    line-height: 1.25;
+    font-weight: 700;
+}
+
+.table-page .module-header p {
+    margin: 6px 0 0;
+
+    color: #718096;
+
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   TABLE PANEL
+   ========================================================= */
+
+.table-page .table-panel {
+    width: 100%;
+    max-width: 100%;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e9f0;
+    border-radius: 14px;
+
+    overflow: hidden;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   TABLE TOOLBAR
+   ========================================================= */
+
+.table-page .table-toolbar {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 16px;
+
+    padding: 18px 20px;
+
+    background: #ffffff;
+
+    border-bottom: 1px solid #eef1f5;
+
+    min-width: 0;
+
+    box-sizing: border-box;
+}
+
+.table-page .table-toolbar-left {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    min-width: 0;
+
+    flex: 1 1 auto;
+}
+
+.table-page .table-toolbar-right {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    min-width: 0;
+}
+
+
+/* =========================================================
+   TABLE TITLE
+   ========================================================= */
+
+.table-page .table-title {
+    margin: 0;
+
+    color: #172033;
+
+    font-size: 15px;
+
+    line-height: 1.4;
+
+    font-weight: 700;
+}
+
+.table-page .table-subtitle {
+    margin: 3px 0 0;
+
+    color: #718096;
+
+    font-size: 12px;
+
+    line-height: 1.4;
+}
+
+
+/* =========================================================
+   SEARCH
+   ========================================================= */
+
+.table-page .table-search {
+    display: flex;
+
+    align-items: center;
+
+    width: 260px;
+
+    max-width: 100%;
+
+    height: 38px;
+
+    padding: 0 12px;
+
+    background: #f8fafc;
+
+    border: 1px solid #e5e9f0;
+
+    border-radius: 8px;
+
+    box-sizing: border-box;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.table-page .table-search:focus-within {
+    border-color: rgb(38, 167, 222);
+
+    box-shadow:
+        0 0 0 3px rgba(12, 103, 240, 0.08);
+}
+
+.table-page .table-search > i {
+    color: #718096;
+
+    font-size: 17px;
+
+    flex-shrink: 0;
+}
+
+.table-page .table-search form {
+    width: 100%;
+
+    margin: 0;
+
+    padding: 0;
+}
+
+.table-page .table-search input {
+    width: 100%;
+
+    height: 36px;
+
+    padding: 0 0 0 9px;
+
+    border: 0;
+
+    outline: none;
+
+    background: transparent;
+
+    color: #172033;
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    box-sizing: border-box;
+}
+
+.table-page .table-search input::placeholder {
+    color: #9aa5b5;
+}
+
+
+/* =========================================================
+   FILTERS
+   ========================================================= */
+
+.table-page .table-filters {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    gap: 8px;
+
+    margin: 0;
+
+    min-width: 0;
+
+    flex-wrap: nowrap;
+}
+
+.table-page .table-filters select {
+    height: 38px;
+
+    min-width: 140px;
+
+    max-width: 180px;
+
+    padding: 0 30px 0 11px;
+
+    border: 1px solid #e5e9f0;
+
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    color: #172033;
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    outline: none;
+
+    cursor: pointer;
+
+    box-sizing: border-box;
+}
+
+.table-page .table-filters select:focus {
+    border-color: rgb(38, 167, 222);
+
+    box-shadow:
+        0 0 0 3px rgba(12, 103, 240, 0.08);
+}
+
+
+/* =========================================================
+   FILTER BUTTON
+   ========================================================= */
+
+.table-page .table-filter-btn {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 6px;
+
+    height: 38px;
+
+    padding: 0 14px;
+
+    border: 0;
+
+    border-radius: 8px;
+
+    background: #3B3B3B;
+
+    color: #ffffff;
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+
+    box-sizing: border-box;
+
+    transition: all 0.2s ease;
+}
+.table-page a {
+    text-decoration: none;
+
+}
+.table-page .table-filter-btn:hover {
+    background: #082552;
+
+    transform: translateY(-1px);
+}
+
+.table-page .table-filter-btn i {
+    font-size: 16px;
+}
+
+
+/* =========================================================
+   DATA TABLE WRAPPER
+   ========================================================= */
+
+.table-page .table-wrapper {
+    width: 100%;
+
+    max-width: 100%;
+
+    /*
+       Horizontal scrolling is intentional.
+       The table is allowed to remain at its
+       natural content width.
+    */
+
+    overflow-x: auto;
+
+    overflow-y: hidden;
+
+    -webkit-overflow-scrolling: touch;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   DATA TABLE
+   ========================================================= */
+
+.table-page table.data-table {
+    /*
+       max-content allows columns to size naturally
+       according to their content.
+    */
+
+    width: max-content;
+
+    /*
+       Still fill the panel when the content is small.
+    */
+
+    min-width: 100%;
+
+    margin: 0;
+
+    border-collapse: collapse;
+
+    border-spacing: 0;
+
+    background: #ffffff;
+
+    table-layout: auto;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   TABLE HEADER
+   ========================================================= */
+
+.table-page table.data-table thead {
+    background: #f8fafc;
+}
+
+.table-page table.data-table thead tr {
+    background: #f8fafc;
+}
+
+.table-page table.data-table thead th {
+    height: auto;
+
+    padding: 12px 14px;
+
+    background: #f8fafc !important;
+
+    border: 0;
+
+    border-bottom: 1px solid #e5e9f0;
+
+    color: #718096 !important;
+
+    text-align: left;
+
+    vertical-align: middle;
+
+    font-family: inherit;
+
+    font-size: 11px !important;
+
+    font-weight: 700 !important;
+
+    line-height: 1.4;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.45px;
+
+    white-space: nowrap;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   TABLE BODY
+   ========================================================= */
+
+.table-page table.data-table tbody tr {
+    height: auto;
+
+    background: #ffffff;
+
+    transition: background 0.15s ease;
+}
+
+.table-page table.data-table tbody tr:hover {
+    background: #fbfcfe;
+}
+
+.table-page table.data-table tbody td {
+    height: auto;
+
+    padding: 13px 14px;
+
+    background: transparent;
+
+    border: 0;
+
+    border-bottom: 1px solid #eef1f5;
+
+    color: #172033;
+
+    text-align: left;
+
+    vertical-align: middle;
+
+    font-family: inherit;
+
+    font-size: 13px !important;
+
+    line-height: 1.4;
+
+    white-space: nowrap;
+
+    box-sizing: border-box;
+}
+
+.table-page table.data-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+
+/* =========================================================
+   TABLE TEXT
+   ========================================================= */
+
+.table-page .table-primary-text {
+    display: block;
+
+    width: 100%;
+
+    max-width: 100%;
+
+    color: #172033;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+.table-page .table-secondary-text {
+    display: block;
+
+    width: 100%;
+
+    max-width: 100%;
+
+    color: #718096;
+
+    font-size: 13px;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+.table-page .table-muted-text {
+    color: #9aa5b5;
+
+    font-size: 12px;
+}
+
+.table-page .table-description {
+    display: block;
+
+    /*
+       Give descriptions reasonable room,
+       but don't allow one description to
+       make the table uncontrollably wide.
+    */
+
+    width: 240px;
+
+    max-width: 240px;
+
+    color: #172033;
+
+    font-size: 13px;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+.table-page .table-date {
+    color: #718096;
+
+    font-size: 12px;
+
+    white-space: nowrap;
+}
+
+.table-page .table-number {
+    color: rgb(38, 167, 222);
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+.table-page .table-amount {
+    color: #172033;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   ASSIGNED USER
+   ========================================================= */
+
+.table-page .table-assigned {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    max-width: 100%;
+
+    color: #172033;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+.table-page .table-avatar {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 27px;
+
+    height: 27px;
+
+    flex: 0 0 27px;
+
+    border-radius: 50%;
+
+    background: #eef4ff;
+
+    color: rgb(38, 167, 222);
+
+    font-size: 11px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+.table-page .table-status {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    padding: 5px 9px;
+
+    border-radius: 999px;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    line-height: 1;
+
+    white-space: nowrap;
+}
+
+.table-page .table-status-dot {
+    width: 6px;
+
+    height: 6px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+}
+
+
+/* =========================================================
+   OPEN
+   ========================================================= */
+
+.table-page .table-status-open {
+    background: #eef4ff;
+
+    color: rgb(38, 167, 222);
+}
+
+.table-page .table-status-open .table-status-dot {
+    background: rgb(38, 167, 222);
+}
+
+
+/* =========================================================
+   PAID / SUCCESS
+   ========================================================= */
+
+.table-page .table-status-paid,
+.table-page .table-status-success {
+    background: #ecfdf3;
+
+    color: #16794c;
+}
+
+.table-page .table-status-paid .table-status-dot,
+.table-page .table-status-success .table-status-dot {
+    background: #22a06b;
+}
+
+
+/* =========================================================
+   UNPAID
+   ========================================================= */
+
+.table-page .table-status-unpaid {
+    background: #fff5f5;
+
+    color: #c53030;
+}
+
+.table-page .table-status-unpaid .table-status-dot {
+    background: #e53e3e;
+}
+
+
+/* =========================================================
+   PARTIALLY PAID
+   ========================================================= */
+
+.table-page .table-status-partial {
+    background: #fff7ed;
+
+    color: #c2410c;
+
+    border: 1px solid #fed7aa;
+}
+
+.table-page .table-status-partial .table-status-dot {
+    background: #f97316;
+}
+
+
+/* =========================================================
+   DANGER
+   ========================================================= */
+
+.table-page .table-status-danger {
+    background: #fff5f5;
+
+    color: #c53030;
+}
+
+.table-page .table-status-danger .table-status-dot {
+    background: #e53e3e;
+}
+
+
+/* =========================================================
+   PENDING
+   ========================================================= */
+
+.table-page .table-status-pending {
+    background: #fff7ed;
+
+    color: #c05621;
+}
+
+.table-page .table-status-pending .table-status-dot {
+    background: #ed8936;
+}
+
+
+/* =========================================================
+   TABLE ACTIONS
+   ========================================================= */
+
+.table-page .table-actions {
+    display: flex !important;
+
+    align-items: center;
+
+    gap: 7px;
+
+    margin: 0;
+
+    white-space: nowrap;
+}
+
+.table-page .table-actions form {
+    display: inline-flex !important;
+
+    align-items: center;
+
+    margin: 0;
+
+    padding: 0;
+}
+
+
+/* =========================================================
+   VIEW / EDIT ACTION
+   ========================================================= */
+
+.table-page .table-action-view {
+    display: inline-flex !important;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 5px;
+
+    height: 32px;
+
+    padding: 0 10px;
+
+    border: 1px solid #e5e9f0;
+
+    border-radius: 7px;
+
+    background: #ffffff;
+
+    color: #172033 !important;
+
+    text-decoration: none !important;
+
+    font-family: inherit;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    line-height: 1;
+
+    white-space: nowrap;
+
+    box-sizing: border-box;
+
+    transition: all 0.2s ease;
+}
+
+.table-page .table-action-view:hover {
+    background: #f8fafc;
+
+    border-color: #cbd8ed;
+
+    color: rgb(38, 167, 222) !important;
+}
+
+.table-page .table-action-view i {
+    font-size: 15px;
+}
+
+
+/* =========================================================
+   PRIMARY ACTION
+   ========================================================= */
+
+.table-page .table-action-primary {
+    display: inline-flex !important;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 5px;
+
+    height: 32px;
+
+    padding: 0 11px;
+
+    border: 0;
+
+    border-radius: 7px;
+
+    background: #242424;
+
+    color: #ffffff !important;
+
+    text-decoration: none !important;
+
+    font-family: inherit;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    line-height: 1;
+
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    box-sizing: border-box;
+
+    transition: all 0.2s ease;
+}
+
+.table-page .table-action-primary:hover {
+    background: #082552;
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   DANGER ACTION
+   ========================================================= */
+
+.table-page .table-action-danger {
+    display: inline-flex !important;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 5px;
+
+    height: 32px;
+
+    padding: 0 11px;
+
+    border: 1px solid #fed7d7;
+
+    border-radius: 7px;
+
+    background: #fff5f5;
+
+    color: #c53030 !important;
+
+    font-family: inherit;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    line-height: 1;
+
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    box-sizing: border-box;
+
+    transition: all 0.2s ease;
+}
+
+.table-page .table-action-danger:hover {
+    background: #fff0f0;
+
+    border-color: #feb2b2;
+
+    color: #9b2c2c !important;
+}
+
+.table-page .table-action-danger i {
+    font-size: 15px;
+}
+
+
+/* =========================================================
+   DEADLINE
+   ========================================================= */
+
+.table-page .table-deadline {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 6px;
+
+    padding: 5px 9px;
+
+    border-radius: 7px;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    line-height: 1.2;
+
+    white-space: nowrap;
+
+    border: 1px solid transparent;
+
+    box-sizing: border-box;
+}
+
+.table-page .table-deadline i {
+    font-size: 14px;
+
+    flex-shrink: 0;
+}
+
+
+/* =========================================================
+   DEADLINE — OVERDUE
+   ========================================================= */
+
+.table-page .table-deadline.overdue {
+    background: #fef2f2;
+
+    color: #b91c1c;
+
+    border-color: #fecaca;
+}
+
+.table-page .table-deadline.overdue i {
+    color: #dc2626;
+}
+
+
+/* =========================================================
+   DEADLINE — URGENT
+   ========================================================= */
+
+.table-page .table-deadline.urgent {
+    background: #fff7ed;
+
+    color: #c2410c;
+
+    border-color: #fed7aa;
+}
+
+.table-page .table-deadline.urgent i {
+    color: #f97316;
+}
+
+
+/* =========================================================
+   DEADLINE — NORMAL
+   ========================================================= */
+
+.table-page .table-deadline.normal {
+    background: #f1f5f9;
+
+    color: #475569;
+
+    border-color: #e2e8f0;
+}
+
+.table-page .table-deadline.normal i {
+    color: #64748b;
+}
+
+
+/* =========================================================
+   DEADLINE — NO DEADLINE
+   ========================================================= */
+
+.table-page .table-deadline.no-deadline {
+    background: #f8fafc;
+
+    color: #94a3b8;
+
+    border-color: #e2e8f0;
+
+    font-weight: 500;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.table-page .table-empty {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 190px;
+
+    gap: 5px;
+
+    color: #718096;
+}
+
+.table-page .table-empty-icon {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 46px;
+
+    height: 46px;
+
+    margin-bottom: 7px;
+
+    border-radius: 12px;
+
+    background: #f5f7fb;
+
+    color: #718096;
+
+    font-size: 22px;
+}
+
+.table-page .table-empty strong {
+    color: #172033;
+
+    font-size: 14px;
+}
+
+.table-page .table-empty span {
+    color: #718096;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   PAGINATION
+   ========================================================= */
+
+.table-page .table-pagination {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    padding: 16px 20px;
+
+    border-top: 1px solid #eef1f5;
+
+    flex-wrap: wrap;
+}
+
+.table-page .table-page-numbers {
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    flex-wrap: wrap;
+}
+
+.table-page .table-page-btn,
+.table-page .table-page-number {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-width: 34px;
+
+    height: 34px;
+
+    padding: 0 10px;
+
+    border: 1px solid #e5e9f0;
+
+    border-radius: 7px;
+
+    background: #ffffff;
+
+    color: #172033;
+
+    text-decoration: none;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    box-sizing: border-box;
+
+    transition: all 0.2s ease;
+}
+
+.table-page .table-page-btn:hover,
+.table-page .table-page-number:hover {
+    background: #f8fafc;
+
+    border-color: #cbd8ed;
+
+    color: rgb(38, 167, 222);
+}
+
+.table-page .table-page-number.active {
+    background: rgb(38, 167, 222);
+
+    border-color: rgb(38, 167, 222);
+
+    color: #ffffff;
+}
+
+.table-page .table-page-btn.disabled {
+    opacity: 0.45;
+
+    cursor: not-allowed;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   TABLE EXPORT
+   ========================================================= */
+
+.table-page .table-export {
+    position: relative;
+
+    flex-shrink: 0;
+}
+
+.table-page .table-export-btn {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 6px;
+
+    height: 38px;
+
+    padding: 0 13px;
+
+    border: 1px solid #e5e9f0;
+
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    color: #172033;
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+
+    box-sizing: border-box;
+
+    transition: all 0.2s ease;
+}
+
+.table-page .table-export-btn:hover {
+    background: #f8fafc;
+
+    border-color: #cbd8ed;
+
+    color: rgb(38, 167, 222);
+}
+
+.table-page .table-export-btn > i:first-child {
+    font-size: 17px;
+}
+
+.table-page .table-export-btn .bx-chevron-down {
+    font-size: 15px;
+
+    margin-left: 2px;
+}
+
+
+/* =========================================================
+   EXPORT DROPDOWN
+   ========================================================= */
+
+.table-page .table-export-menu {
+    display: none;
+
+    position: absolute;
+
+    top: calc(100% + 7px);
+
+    right: 0;
+
+    z-index: 1000;
+
+    min-width: 180px;
+
+    padding: 6px;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e9f0;
+
+    border-radius: 10px;
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.10);
+
+    box-sizing: border-box;
+}
+
+.table-page .table-export-menu.show {
+    display: block;
+}
+
+.table-page .table-export-menu a {
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    width: 100%;
+
+    padding: 9px 10px;
+
+    border-radius: 7px;
+
+    color: #172033 !important;
+
+    text-decoration: none !important;
+
+    font-size: 13px;
+
+    font-weight: 500;
+
+    box-sizing: border-box;
+
+    transition: background 0.2s ease;
+}
+
+.table-page .table-export-menu a:hover {
+    background: #f5f7fb;
+
+    color: rgb(38, 167, 222) !important;
+}
+
+.table-page .table-export-menu a i {
+    width: 17px;
+
+    color: #718096;
+
+    font-size: 16px;
+
+    text-align: center;
+}
+
+.table-page .table-export-menu a:hover i {
+    color: rgb(38, 167, 222);
+}
+
+
+/* =========================================================
+   FILTER SELECT COMPATIBILITY
+   ========================================================= */
+
+.table-page .table-filter-select {
+    height: 38px;
+
+    padding: 0 32px 0 11px;
+
+    border: 1px solid #e5e9f0;
+
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    color: #172033;
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    cursor: pointer;
+
+    outline: none;
+
+    box-sizing: border-box;
+}
+
+.table-page .table-filter-select:focus {
+    border-color: rgb(38, 167, 222);
+
+    box-shadow:
+        0 0 0 3px rgba(12, 103, 240, 0.08);
+}
+
+
+/* =========================================================
+   TABLE LINKS
+   ========================================================= */
+
+.table-page table.data-table a {
+    max-width: 100%;
+}
+
+
+/* =========================================================
+   TABLET / MEDIUM SCREENS
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+    .table-page .table-toolbar {
+        gap: 12px;
+    }
+
+    .table-page .table-search {
+        width: 220px;
+    }
+
+    .table-page .table-filters select {
+        min-width: 120px;
+    }
+
+    .table-page .table-filter-btn {
+        padding-left: 11px;
+        
+        padding-right: 11px;
+    }
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .table-page .table-toolbar {
+        flex-direction: column;
+
+        align-items: stretch;
+
+        gap: 12px;
+    }
+
+    .table-page .table-toolbar-left {
+        width: 100%;
+
+        flex: none;
+    }
+
+    .table-page .table-search {
+        width: 100%;
+    }
+
+    .table-page .table-filters {
+        width: 100%;
+
+        justify-content: flex-start;
+
+        flex-wrap: wrap;
+    }
+
+    .table-page .table-filters select {
+        flex: 1 1 150px;
+
+        max-width: none;
+    }
+
+    .table-page .table-filter-btn {
+        flex: 0 0 auto;
+    }
+
+    .table-page .table-export {
+        flex-shrink: 0;
+    }
+}
+
+
+/* =========================================================
+   SMALL TABLET / LARGE PHONE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .table-page .module-header {
+        gap: 12px;
+    }
+
+    .table-page .module-header h1 {
+        font-size: 21px;
+    }
+
+    .table-page .module-header p {
+        font-size: 12px;
+    }
+
+    .table-page .table-toolbar {
+        padding: 14px;
+    }
+
+    .table-page .table-filters {
+        display: grid;
+
+        grid-template-columns: 1fr 1fr;
+
+        gap: 8px;
+    }
+
+    .table-page .table-filters select {
+        width: 100%;
+
+        min-width: 0;
+    }
+
+    .table-page .table-filter-btn {
+        width: 100%;
+    }
+
+    .table-page .table-export {
+        width: 100%;
+    }
+
+    .table-page .table-export-btn {
+        width: 100%;
+    }
+
+    .table-page .table-export-menu {
+        left: 0;
+
+        right: auto;
+
+        width: 100%;
+
+        min-width: 0;
+    }
+
+    /*
+       Keep the table at its natural content width.
+       Horizontal scrolling is intentional.
+    */
+
+    .table-page .table-wrapper {
+        overflow-x: auto;
+
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .table-page table.data-table {
+        width: max-content;
+
+        min-width: 100%;
+
+        table-layout: auto;
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .table-page .table-toolbar {
+        padding: 14px;
+    }
+
+    .table-page .table-filters {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .table-page .table-filter-btn {
+        grid-column: 1 / -1;
+    }
+
+    .table-page .table-export {
+        grid-column: 1 / -1;
+    }
+
+    .table-page .table-pagination {
+        flex-wrap: wrap;
+
+        padding: 14px;
+    }
+
+    .table-page .table-page-btn {
+        min-width: 32px;
+
+        height: 32px;
+    }
+
+    .table-page .table-page-number {
+        min-width: 32px;
+
+        height: 32px;
+    }
+}
+
+
+/* =========================================================
+   VERY SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 400px) {
+
+    .table-page .table-filters {
+        grid-template-columns: 1fr;
+    }
+
+    .table-page .table-filter-btn {
+        grid-column: auto;
+    }
+
+    .table-page .table-export {
+        grid-column: auto;
+    }
+
+    .table-page .table-pagination {
+        gap: 5px;
+    }
+}

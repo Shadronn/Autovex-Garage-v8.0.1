@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Setup 2FA</title>
+</head>
+<body>
+    <h2>Setup Two-Factor Authentication</h2>
+    <p>Scan this QR code in your Authenticator app:</p>
+    <img src="{{ url_for('setup_2fa') }}" alt="Scan to setup Authenticator">
+    <p>Then enter the 6-digit code from your app to verify:</p>
+    <form method="POST">
+        <input type="text" name="otp" placeholder="6-digit code" required>
+        <button type="submit">Verify</button>
+    </form>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul>
+          {% for category, message in messages %}
+            <li class="{{ category }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+</body>
+</html>

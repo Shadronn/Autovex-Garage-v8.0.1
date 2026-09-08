@@ -1,0 +1,500 @@
+{% extends "base.html" %}
+
+{% block sidebar %}
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+        <h4>Create Invoice</h4>
+        <p>
+            Invoice for Job #{{ job.id }}
+        </p>
+    </div>
+
+</div>
+
+
+<div class="form-card">
+
+    <!-- ========================================= -->
+    <!-- JOB INFORMATION -->
+    <!-- ========================================= -->
+
+    <div class="section-header">
+        <h4>Job Information</h4>
+    </div>
+
+    <div class="form-grid">
+
+        <div class="form-group">
+
+            <label>Job Number</label>
+
+            <input
+                type="text"
+                value="JOB-{{ job.id }}"
+                readonly
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>Customer</label>
+
+            <input
+                type="text"
+                value="{{ job.customer_name }}"
+                readonly
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>Telephone</label>
+
+            <input
+                type="text"
+                value="{{ job.telno }}"
+                readonly
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>Vehicle</label>
+
+            <input
+                type="text"
+                value="{{ job.vehicle }}"
+                readonly
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>Vehicle Model</label>
+
+            <input
+                type="text"
+                value="{{ job.vehicle_model }}"
+                readonly
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>Job Status</label>
+
+            <input
+                type="text"
+                value="{{ job.status }}"
+                readonly
+            >
+
+        </div>
+
+
+        <div class="form-group full-width">
+
+            <label>Job Description</label>
+
+            <textarea readonly>{{ job.description }}</textarea>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- JOB CARD -->
+    <!-- ========================================= -->
+
+    <div class="section-header">
+
+        <div>
+            <h4>Job Card Items</h4>
+
+            <p>
+                These amounts are taken directly from the Job Card.
+            </p>
+        </div>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- PARTS -->
+    <!-- ========================================= -->
+
+    <div class="section-header job-card-section-header">
+
+        <div>
+            <h4>Parts</h4>
+        </div>
+
+    </div>
+
+
+    <div class="job-card-table-wrapper">
+
+        <table class="job-card-items-table parts-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>Part Name</th>
+
+                    <th>Part Number</th>
+
+                    <th>Qty</th>
+
+                    <th>Unit Price</th>
+
+                    <th>Total</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% if parts %}
+
+                    {% for part in parts %}
+
+                    <tr>
+
+                        <td>
+                            {{ part.part_name }}
+                        </td>
+
+                        <td>
+                            {{ part.part_number or '-' }}
+                        </td>
+
+                        <td>
+                            {{ "%.2f"|format(part.quantity or 0) }}
+                        </td>
+
+                        <td>
+                            KES {{ "%.2f"|format(part.unit_price or 0) }}
+                        </td>
+
+                        <td>
+                            <strong>
+                                KES {{ "%.2f"|format(
+                                    (part.quantity or 0) *
+                                    (part.unit_price or 0)
+                                ) }}
+                            </strong>
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                {% else %}
+
+                    <tr>
+
+                        <td
+                            colspan="5"
+                            style="text-align:center;"
+                        >
+                            No parts were added to this Job Card.
+                        </td>
+
+                    </tr>
+
+                {% endif %}
+
+            </tbody>
+
+
+            <tfoot>
+
+                <tr>
+
+                    <td
+                        colspan="4"
+                        class="items-total-label"
+                    >
+                        Parts Total
+                    </td>
+
+                    <td class="items-total-value">
+
+                        <strong>
+                            KES {{ "%.2f"|format(parts_total) }}
+                        </strong>
+
+                    </td>
+
+                </tr>
+
+            </tfoot>
+
+        </table>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- LABOUR -->
+    <!-- ========================================= -->
+
+    <div class="section-header job-card-section-header">
+
+        <div>
+            <h4>Labour</h4>
+        </div>
+
+    </div>
+
+
+    <div class="job-card-table-wrapper">
+
+        <table class="job-card-items-table labour-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>Description</th>
+
+                    <th>Hours</th>
+
+                    <th>Hourly Rate</th>
+
+                    <th>Total</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% if labour_items %}
+
+                    {% for labour in labour_items %}
+
+                    <tr>
+
+                        <td>
+                            {{ labour.description }}
+                        </td>
+
+                        <td>
+                            {{ "%.2f"|format(labour.hours or 0) }}
+                        </td>
+
+                        <td>
+                            KES {{ "%.2f"|format(
+                                labour.hourly_rate or 0
+                            ) }}
+                        </td>
+
+                        <td>
+
+                            <strong>
+                                KES {{ "%.2f"|format(
+                                    (labour.hours or 0) *
+                                    (labour.hourly_rate or 0)
+                                ) }}
+                            </strong>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                {% else %}
+
+                    <tr>
+
+                        <td
+                            colspan="4"
+                            style="text-align:center;"
+                        >
+                            No labour was added to this Job Card.
+                        </td>
+
+                    </tr>
+
+                {% endif %}
+
+            </tbody>
+
+
+            <tfoot>
+
+                <tr>
+
+                    <td
+                        colspan="3"
+                        class="items-total-label"
+                    >
+                        Labour Total
+                    </td>
+
+                    <td class="items-total-value">
+
+                        <strong>
+                            KES {{ "%.2f"|format(labour_total) }}
+                        </strong>
+
+                    </td>
+
+                </tr>
+
+            </tfoot>
+
+        </table>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- INVOICE SUMMARY -->
+    <!-- ========================================= -->
+
+    <div class="job-card-summary">
+
+        <div class="job-card-summary-row">
+
+            <span>
+                Parts Total
+            </span>
+
+            <strong>
+                KES {{ "%.2f"|format(parts_total) }}
+            </strong>
+
+        </div>
+
+
+        <div class="job-card-summary-row">
+
+            <span>
+                Labour Total
+            </span>
+
+            <strong>
+                KES {{ "%.2f"|format(labour_total) }}
+            </strong>
+
+        </div>
+
+
+        <div class="job-card-summary-row">
+
+            <span>
+                Subtotal
+            </span>
+
+            <strong>
+                KES {{ "%.2f"|format(subtotal) }}
+            </strong>
+
+        </div>
+
+
+        <div class="job-card-summary-row">
+
+            <span>
+                VAT ({{ "%.0f"|format(tax_rate) }}%)
+            </span>
+
+            <strong>
+                KES {{ "%.2f"|format(tax_amount) }}
+            </strong>
+
+        </div>
+
+
+        <div class="job-card-summary-row grand-total">
+
+            <span>
+                Invoice Total
+            </span>
+
+            <strong>
+                KES {{ "%.2f"|format(total_amount) }}
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- NOTES -->
+    <!-- ========================================= -->
+
+    <form method="POST">
+
+        <div class="form-group">
+
+            <label for="notes">
+                Invoice Notes
+            </label>
+
+            <textarea
+                name="notes"
+                id="notes"
+                rows="5"
+                placeholder="Additional invoice notes..."
+            >Vehicle: {{ job.vehicle }}
+Work Description: {{ job.description }}</textarea>
+
+        </div>
+
+
+        <!-- ========================================= -->
+        <!-- ACTIONS -->
+        <!-- ========================================= -->
+
+        <div class="button-group">
+
+            <button
+                type="submit"
+                class="login-btn"
+            >
+                <i class='bx bx-receipt'></i>
+                Create Invoice
+            </button>
+
+
+            <a
+                href="{{ url_for('job_detail', job_id=job.id) }}"
+                class="cancel-btn"
+            >
+                Cancel
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

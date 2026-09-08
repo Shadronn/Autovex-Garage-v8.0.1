@@ -1,0 +1,158 @@
+
+{%extends "base.html"%}
+
+{%block sidebar%}
+<nav>
+            <p class="nav-title">MAIN</p>
+             {% if role == "admin" %}
+            <a href="/dashboard">
+            <i class='bx bx-home'></i><span>Admin Dashboard</span>
+            </a>
+             {% endif %}
+           
+            <p class="nav-title">OPERATIONS</p>
+            {% if role in ["admin", "mechanic"] %}
+            <a href="/jobs">
+                <i class='bx bx-briefcase'></i><span>Jobs</span>
+            </a>
+            <a href="/customers">
+                <i class='bx  bx-group'></i> <span>Customers</span>
+            </a>
+            <a href="/users">
+                <i class='bx bx-user'></i><span>Users</span>
+            </a>
+            <a href="{{ url_for('vehicles') }}">
+                <i class='bx bx-car'></i>
+                <span>Vehicles</span>
+            </a>
+            <a href="{{ url_for('vehicles') }}" class="active"><i class='bx bx-receipt'></i><span>Invoices</span></a>
+
+            <p class="nav-title">INVENTORY</p>
+            <a><i class='bx bx-box'></i><span>Products</span></a>
+            <a><i class='bx bx-wrench'></i><span>Services</span></a>
+            {%endif%}
+
+        </nav>
+
+{%endblock%}
+
+{%block content%}
+
+<div class="table">
+    <div class="table-head">
+        <div class="table-head-left">
+                    <h4>Invoices</h4>
+        </div>
+
+        <form method="get" class="filters">
+            <select name="customer">
+                <option value="">All Customers</option>
+                {% for c in customers %}
+                    <option value="{{ c }}"
+                        {% if request.args.get('customer') == c %}selected{% endif %}>
+                        {{ c }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <select name="status">
+                <option value="">All Status</option>
+                <option value="Paid" {% if request.args.get('status') == "Paid" %}selected{% endif %}>Paid</option>
+                <option value="Unpaid" {% if request.args.get('status') == "Unpaid" %}selected{% endif %}>Unpaid</option>
+            </select>
+
+            <button class="btn btn-sm">Filter</button>
+        </form>
+
+    </div>
+
+        </div>
+
+            <div class="table-section">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Invoice #</th>
+                                <th>Customer</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Action</th>
+
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+
+                            {% for invoice, job in invoices %}
+                                <tr>
+                                    <td>{{ invoice.id }}</td>
+                                    <td>{{ job.customer_name }}</td>
+                                    <td>{{ "%.2f"|format(invoice.total_amount) }}</td>
+
+                                    <td>
+                                        <span class="badge {{ invoice.status|lower }}">
+                                            {{ invoice.status }}
+                                        </span>
+                                    </td>
+
+                                    <td>{{ invoice.created_at.strftime("%Y-%m-%d") }}</td>
+
+                                    <td>
+                                    {% if invoice.status != "Paid" %}
+                                        <button
+                                            type="button"
+                                            class="btn btn-sm btn-primary open-pay-modal"
+                                            data-url="{{ url_for('pay_invoice', invoice_id=invoice.id) }}">
+                                            Mark as Paid
+                                        </button>
+                                    {% else %}
+                                        <span class="badge success">Paid</span>
+                                    {% endif %}
+
+                                        <a href="{{ url_for('print_invoice', invoice_id=invoice.id) }}"
+                                        class="btn btn-sm">
+                                            View
+                                        </a>
+                                </td>
+
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="6">No invoices found</td>
+                                </tr>
+                            {% endfor %}
+                        
+                        </tbody>
+                    </table>
+                    <div id="payModal" class="modal">
+  <div class="modal-content">
+    <span class="close-modal">&times;</span>
+    <div id="payModalBody"></div>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const modal = document.getElementById("payModal");
+    const modalBody = document.getElementById("payModalBody");
+
+    document.querySelectorAll(".open-pay-modal").forEach(button => {
+        button.addEventListener("click", async () => {
+            const url = button.dataset.url;
+            const response = await fetch(url);
+            modalBody.innerHTML = await response.text();
+            modal.style.display = "block";
+        });
+    });
+
+    document.addEventListener("click", e => {
+        if (e.target.classList.contains("close-modal") || e.target === modal) {
+            modal.style.display = "none";
+            modalBody.innerHTML = "";
+        }
+    });
+});
+</script>
+
+{%endblock%}

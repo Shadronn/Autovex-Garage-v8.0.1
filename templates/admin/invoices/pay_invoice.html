@@ -1,0 +1,325 @@
+{% extends "base.html" %}
+
+{% block sidebar %}
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="form-card">
+
+    <!-- HEADER -->
+    <div class="page-header">
+        <div>
+            <h3>Record Payment</h3>
+            <p>
+                Invoice #{{ invoice.invoice_number }}
+            </p>
+        </div>
+
+        <div>
+            <span class="invoice-status {{ invoice.status|lower|replace(' ', '-') }}">
+                {{ invoice.status }}
+            </span>
+        </div>
+    </div>
+
+
+    <!-- INVOICE SUMMARY -->
+    <div class="payment-summary">
+
+        <div class="summary-item">
+           
+                <strong>Invoice Issued</strong>
+                <span>
+                    {{ invoice.issue_date.strftime("%Y-%m-%d") }}
+                </span>
+
+        </div>
+
+        <div class="summary-item">
+                <strong>Amount Paid</strong>
+                <span>
+                    KES {{ "{:,.2f}".format(invoice.amount or 0) }}
+                </span>   
+        </div>
+
+        <div class="summary-item balance">
+            <small>
+                <strong>Outstanding</strong>
+                <span>
+                    KES {{ "{:,.2f}".format(invoice.Balance or 0) }}
+                </span>
+            </small>
+        </div>
+
+    </div>
+
+
+    <hr>
+
+
+    {% if invoice.Balance and invoice.Balance > 0 %}
+
+    <h3>Payment Details</h3>
+
+    <form
+        method="POST"
+        enctype="multipart/form-data"
+        id="paymentForm"
+    >
+
+        <!-- PAYMENT AMOUNT -->
+        <div class="form-group">
+
+            <label for="amount">
+                Payment Amount
+            </label>
+
+            <input
+                type="number"
+                id="amount"
+                name="amount"
+                class="form-control"
+                min="0.01"
+                max="{{ invoice.Balance }}"
+                step="0.01"
+                value="{{ invoice.Balance }}"
+                required
+            >
+
+            <small>
+                Maximum payment:
+                <strong>
+                    KES {{ "{:,.2f}".format(invoice.Balance or 0) }}
+                </strong>
+            </small>
+
+        </div>
+
+
+        <!-- PAYMENT METHOD -->
+        <div class="form-group">
+
+            <label for="payment_method">
+                Payment Method
+            </label>
+
+            <select
+                name="payment_method"
+                id="payment_method"
+                class="form-control"
+                required
+            >
+
+                <option value="">
+                    Select payment method
+                </option>
+
+                <option value="M-Pesa">
+                    M-Pesa
+                </option>
+
+                <option value="Cash">
+                    Cash
+                </option>
+
+                <option value="Bank Transfer">
+                    Bank Transfer
+                </option>
+
+                <option value="Cheque">
+                    Cheque
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- PAYMENT REFERENCE -->
+        <div class="form-group">
+
+            <label for="payment_reference">
+                Payment Reference Number
+            </label>
+
+            <input
+                type="text"
+                id="payment_reference"
+                name="payment_reference"
+                class="form-control"
+                placeholder="e.g. M-Pesa transaction code"
+            >
+
+        </div>
+
+
+        <!-- PAYMENT PROOF -->
+        <div class="form-group">
+
+            <label for="payment_proof">
+                Payment Confirmation
+            </label>
+
+            <input
+                type="file"
+                id="payment_proof"
+                name="payment_proof"
+                class="form-control"
+                accept=".jpg,.jpeg,.png,.webp,.pdf"
+            >
+
+            <small>
+                Optional. Upload a payment receipt or confirmation.
+            </small>
+
+        </div>
+
+
+        <!-- NOTES -->
+        <div class="form-group">
+
+            <label for="notes">
+                Notes
+            </label>
+
+            <textarea
+                id="notes"
+                name="notes"
+                class="form-control"
+                rows="3"
+                placeholder="Optional payment notes"
+            ></textarea>
+
+        </div>
+
+
+        <!-- PAYMENT PREVIEW -->
+        <div class="payment-preview">
+
+            <div>
+                <span>Payment</span>
+                <strong id="paymentPreview">
+                    KES {{ "{:,.2f}".format(invoice.Balance or 0) }}
+                </strong>
+            </div>
+
+            <div>
+                <span>Balance After Payment</span>
+                <strong id="balancePreview">
+                    KES 0.00
+                </strong>
+            </div>
+
+        </div>
+
+
+        <!-- BUTTONS -->
+        <div class="button-group">
+            <button type="button" class="cancel-btn" onclick="window.location.href='{{ url_for('invoice_detail', invoice_id=invoice.id) }}'"><i class='bx bx-x'></i> Cancel</button>
+
+            <button
+                type="submit"
+                class="login-btn"
+            >
+                <i class='bx bx-check'></i>
+                Confirm Payment
+            </button>
+
+        </div>
+
+    </form>
+
+    {% else %}
+
+    <!-- FULLY PAID -->
+    <div class="payment-complete">
+
+        <i class='bx bx-check-circle'></i>
+
+        <h3>Invoice Fully Paid</h3>
+
+        <p>
+            This invoice has no outstanding balance.
+        </p>
+
+        <a
+            href="{{ url_for('invoice_detail', invoice_id=invoice.id) }}"
+            class="login-btn"
+        >
+            View Invoice
+        </a>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const amountInput = document.getElementById("amount");
+    const paymentPreview = document.getElementById("paymentPreview");
+    const balancePreview = document.getElementById("balancePreview");
+
+    if (!amountInput) {
+        return;
+    }
+
+    const outstandingBalance =
+        parseFloat("{{ invoice.Balance or 0 }}") || 0;
+
+
+    function updatePaymentPreview() {
+
+        let payment =
+            parseFloat(amountInput.value) || 0;
+
+        if (payment < 0) {
+            payment = 0;
+        }
+
+        if (payment > outstandingBalance) {
+            payment = outstandingBalance;
+            amountInput.value = outstandingBalance.toFixed(2);
+        }
+
+        const remaining =
+            Math.max(outstandingBalance - payment, 0);
+
+
+        paymentPreview.textContent =
+            "KES " +
+            payment.toLocaleString("en-KE", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+
+
+        balancePreview.textContent =
+            "KES " +
+            remaining.toLocaleString("en-KE", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+
+    }
+
+
+    amountInput.addEventListener(
+        "input",
+        updatePaymentPreview
+    );
+
+    updatePaymentPreview();
+
+});
+
+</script>
+
+{% endblock %}

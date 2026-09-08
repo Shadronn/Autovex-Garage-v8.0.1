@@ -1,0 +1,715 @@
+/* =========================================================
+   AUTOVEX DASHBOARD — MODERN APPLICATION STYLE
+   ========================================================= */
+
+/* ---------- DASHBOARD CONTAINER ---------- */
+
+.dashboard-page {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+
+/* ---------- WORKSHOP HEADER ---------- */
+
+.dashboard-workshop {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 18px;
+}
+
+.dashboard-workshop-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.dashboard-workshop-logo {
+    width: 52px;
+    height: 52px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.dashboard-workshop-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.dashboard-workshop-info h1 {
+    margin: 0;
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.dashboard-workshop-info p {
+    margin: 4px 0 0;
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.dashboard-workshop-meta {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+}
+
+.dashboard-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--muted);
+}
+
+.dashboard-meta-item i {
+    color: var(--primary);
+    font-size: 16px;
+}
+
+
+/* ---------- PAGE INTRO ---------- */
+
+.dashboard-intro {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.dashboard-intro h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.dashboard-intro p {
+    margin: 5px 0 0;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.dashboard-intro-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+
+/* ---------- QUICK ACTIONS ---------- */
+
+.dashboard-actions {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.dashboard-action {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+
+    padding: 13px 15px;
+
+    text-decoration: none;
+    color: var(--text);
+
+    transition: all .2s ease;
+}
+
+.dashboard-action:hover {
+    border-color: #cbd8ed;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(23, 32, 51, 0.06);
+}
+
+.dashboard-action-icon {
+    width: 36px;
+    height: 36px;
+    flex: 0 0 36px;
+
+    border-radius: 9px;
+
+    background: rgba(12, 103, 240, 0.08);
+    color: var(--primary);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 18px;
+}
+
+.dashboard-action strong {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.dashboard-action span {
+    display: block;
+    margin-top: 2px;
+    font-size: 10px;
+    color: var(--muted);
+}
+
+
+/* ---------- SECTION HEADER ---------- */
+
+.dashboard-section {
+    margin-bottom: 24px;
+}
+
+.dashboard-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 12px;
+}
+
+.dashboard-section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dashboard-section-title i {
+    color: var(--primary);
+    font-size: 18px;
+}
+
+.dashboard-section-title h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.dashboard-section-header a {
+    font-size: 11px;
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.dashboard-section-header a:hover {
+    color: var(--primary-dark);
+}
+
+
+/* ---------- OVERVIEW CARDS ---------- */
+
+.dashboard-overview {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.dashboard-stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 17px;
+
+    min-width: 0;
+
+    transition: all .2s ease;
+}
+
+.dashboard-stat:hover {
+    transform: translateY(-2px);
+    border-color: #cbd8ed;
+    box-shadow: 0 8px 24px rgba(23, 32, 51, 0.06);
+}
+
+.dashboard-stat-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.dashboard-stat-icon {
+    width: 38px;
+    height: 38px;
+
+    border-radius: 10px;
+
+    background: rgba(12, 103, 240, 0.08);
+    color: var(--primary);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 19px;
+}
+
+.dashboard-stat-label {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 500;
+}
+
+.dashboard-stat-value {
+    margin-top: 15px;
+    font-size: 22px;
+    line-height: 1.1;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.dashboard-stat-description {
+    margin-top: 7px;
+    font-size: 10px;
+    color: var(--muted);
+}
+
+
+/* ---------- FINANCIAL CARDS ---------- */
+
+.dashboard-financial-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.dashboard-financial-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px;
+    cursor: pointer;
+
+    transition: all .2s ease;
+}
+
+.dashboard-financial-card:hover {
+    transform: translateY(-2px);
+    border-color: #cbd8ed;
+    box-shadow: 0 8px 24px rgba(23, 32, 51, 0.06);
+}
+
+.dashboard-financial-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dashboard-financial-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
+
+    background: rgba(12, 103, 240, 0.08);
+    color: var(--primary);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 17px;
+}
+
+.dashboard-financial-label {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 600;
+}
+
+.dashboard-financial-value {
+    margin-top: 14px;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.dashboard-financial-description {
+    margin-top: 5px;
+    font-size: 10px;
+    color: var(--muted);
+}
+
+
+/* ---------- MAIN DASHBOARD PANELS ---------- */
+
+.dashboard-panels {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(300px, 1fr);
+    gap: 18px;
+}
+
+.dashboard-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.dashboard-panel-header {
+    padding: 16px 18px;
+    border-bottom: 1px solid #edf0f5;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.dashboard-panel-header h3 {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.dashboard-panel-header p {
+    margin: 4px 0 0;
+    font-size: 10px;
+    color: var(--muted);
+}
+
+.dashboard-panel-header a {
+    font-size: 10px;
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+
+/* ---------- DASHBOARD TABLE ---------- */
+
+.dashboard-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.dashboard-table {
+    width: 100%;
+    min-width: 600px;
+    border-collapse: collapse;
+}
+
+.dashboard-table th {
+    background: #f8fafc;
+    color: #718096;
+
+    padding: 11px 15px;
+
+    text-align: left;
+
+    font-size: 10px;
+    font-weight: 600;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.dashboard-table td {
+    padding: 12px 15px;
+
+    border-bottom: 1px solid #eef1f5;
+
+    color: var(--text);
+    font-size: 11px;
+}
+
+.dashboard-table tbody tr:hover {
+    background: #fafcff;
+}
+
+.dashboard-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+
+/* ---------- EMPTY STATE ---------- */
+
+.dashboard-empty {
+    padding: 35px 20px;
+    text-align: center;
+    color: var(--muted);
+}
+
+.dashboard-empty i {
+    display: block;
+    font-size: 30px;
+    margin-bottom: 8px;
+    color: #cbd5e1;
+}
+
+.dashboard-empty strong {
+    display: block;
+    font-size: 12px;
+    color: var(--text);
+}
+
+.dashboard-empty span {
+    display: block;
+    margin-top: 4px;
+    font-size: 10px;
+}
+
+
+/* ---------- STATUS ---------- */
+
+.dashboard-status {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 999px;
+
+    font-size: 9px;
+    font-weight: 600;
+}
+
+.dashboard-status.open {
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.dashboard-status.completed {
+    background: #ecfdf5;
+    color: #047857;
+}
+
+.dashboard-status.pending {
+    background: #fff7ed;
+    color: #c2410c;
+}
+
+.dashboard-status.overdue {
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+
+/* ---------- EXISTING DASHBOARD TABS ---------- */
+
+.dashboard-tabs {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    background: #ffffff;
+
+    border: 1px solid var(--border);
+    border-radius: 10px;
+
+    padding: 4px;
+
+    margin: 18px 0;
+
+    overflow-x: auto;
+}
+
+.dashboard-tab {
+    border: none;
+    outline: none;
+
+    background: transparent;
+    color: var(--muted);
+
+    padding: 9px 15px;
+
+    border-radius: 7px;
+
+    font-size: 11px;
+    font-weight: 600;
+
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+
+    box-shadow: none;
+}
+
+.dashboard-tab i {
+    font-size: 15px;
+}
+
+.dashboard-tab:hover {
+    background: #f5f7fb;
+    color: var(--text);
+}
+
+.dashboard-tab.active {
+    background: var(--primary);
+    color: #ffffff;
+}
+
+
+/* ---------- OLD CARD COMPATIBILITY ---------- */
+
+.dashboard-page .cards {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 0;
+}
+
+.dashboard-page .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 17px;
+    box-shadow: none;
+    transition: all .2s ease;
+}
+
+.dashboard-page .card:hover {
+    transform: translateY(-2px);
+    border-color: #cbd8ed;
+    box-shadow: 0 8px 24px rgba(23, 32, 51, 0.06);
+}
+
+.dashboard-page .card-icon {
+    width: 38px;
+    height: 38px;
+    padding: 0;
+
+    border-radius: 10px;
+
+    background: rgba(12, 103, 240, 0.08);
+    color: var(--primary);
+
+    font-size: 18px;
+}
+
+.dashboard-page .card-info h3 {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.dashboard-page .card-info p {
+    font-size: 10px;
+    color: var(--muted);
+}
+
+.dashboard-page .card-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+
+/* =========================================================
+   DASHBOARD RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+    .dashboard-overview,
+    .dashboard-financial-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .dashboard-actions {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .dashboard-panels {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-page .cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+
+@media (max-width: 768px) {
+
+    .dashboard-workshop {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 15px;
+    }
+
+    .dashboard-workshop-meta {
+        width: 100%;
+        gap: 10px;
+    }
+
+    .dashboard-intro {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .dashboard-intro-actions {
+        width: 100%;
+    }
+
+    .dashboard-overview,
+    .dashboard-financial-grid,
+    .dashboard-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-page .cards {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-panel-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .dashboard-tabs {
+        margin: 12px 0;
+    }
+
+}
+
+
+@media (max-width: 480px) {
+
+    .dashboard-workshop-info h1 {
+        font-size: 16px;
+    }
+
+    .dashboard-intro h2 {
+        font-size: 19px;
+    }
+
+    .dashboard-stat,
+    .dashboard-financial-card {
+        padding: 15px;
+    }
+
+    .dashboard-stat-value {
+        font-size: 20px;
+    }
+
+    .dashboard-financial-value {
+        font-size: 18px;
+    }
+
+}

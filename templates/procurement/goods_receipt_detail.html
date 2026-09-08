@@ -1,0 +1,435 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ goods_receipt.grn_number }} | Autovex
+{% endblock %}
+
+{% block page_title %}
+    Goods Received
+{% endblock %}
+
+{% block content %}
+
+<div class="module-page procurement-page">
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <div class="module-header">
+
+        <div>
+
+            <h1>
+                {{ goods_receipt.grn_number }}
+            </h1>
+
+            <p>
+                Goods Received Note
+            </p>
+
+        </div>
+
+        <div class="module-header-actions">
+
+            <a
+                href="{{ url_for(
+                    'procurement',
+                    tab='procurement-received'
+                ) }}"
+                class="secondary-btn"
+            >
+                <i class="bx bx-arrow-back"></i>
+                Back to Goods Received
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         SUMMARY
+         ===================================================== -->
+
+    <div class="financial-summary">
+
+        <div class="financial-card">
+
+            <div class="financial-card-top">
+
+                <div class="financial-icon">
+                    <i class="bx bx-receipt"></i>
+                </div>
+
+                <span class="financial-label">
+                    GRN Number
+                </span>
+
+            </div>
+
+            <div class="financial-value">
+                {{ goods_receipt.grn_number }}
+            </div>
+
+        </div>
+
+
+        <div class="financial-card">
+
+            <div class="financial-card-top">
+
+                <div class="financial-icon">
+                    <i class="bx bx-cart"></i>
+                </div>
+
+                <span class="financial-label">
+                    LPO
+                </span>
+
+            </div>
+
+            <div class="financial-value">
+                {{ goods_receipt.purchase_order.lpo_number }}
+            </div>
+
+        </div>
+
+
+        <div class="financial-card">
+
+            <div class="financial-card-top">
+
+                <div class="financial-icon">
+                    <i class="bx bx-group"></i>
+                </div>
+
+                <span class="financial-label">
+                    Supplier
+                </span>
+
+            </div>
+
+            <div class="financial-value">
+                {{ goods_receipt.purchase_order.supplier.supplier_name }}
+            </div>
+
+        </div>
+
+
+        <div class="financial-card">
+
+            <div class="financial-card-top">
+
+                <div class="financial-icon">
+                    <i class="bx bx-calendar"></i>
+                </div>
+
+                <span class="financial-label">
+                    Received Date
+                </span>
+
+            </div>
+
+            <div class="financial-value">
+
+                {{ goods_receipt.received_date.strftime(
+                    '%d %b %Y'
+                ) }}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         RECEIPT INFORMATION
+         ===================================================== -->
+
+    <div class="financial-list-panel">
+
+        <div class="financial-list-header">
+
+            <div>
+
+                <h3>
+                    Receipt Information
+                </h3>
+
+                <p>
+                    Details of the goods received against this LPO.
+                </p>
+
+            </div>
+
+            <div>
+
+                {% if goods_receipt.status == "Received" %}
+
+                    <span class="payment-status paid">
+                        Received
+                    </span>
+
+                {% else %}
+
+                    <span class="payment-status partial">
+                        {{ goods_receipt.status }}
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <div class="financial-metrics">
+
+            <div class="metric">
+
+                <span>
+                    GRN Number
+                </span>
+
+                <strong>
+                    {{ goods_receipt.grn_number }}
+                </strong>
+
+            </div>
+
+
+            <div class="metric">
+
+                <span>
+                    LPO Number
+                </span>
+
+                <strong>
+                    {{ goods_receipt.purchase_order.lpo_number }}
+                </strong>
+
+            </div>
+
+
+            <div class="metric">
+
+                <span>
+                    Supplier
+                </span>
+
+                <strong>
+                    {{ goods_receipt.purchase_order.supplier.supplier_name }}
+                </strong>
+
+            </div>
+
+
+            <div class="metric">
+
+                <span>
+                    Received By
+                </span>
+
+                <strong>
+
+                    {% if goods_receipt.received_by_user %}
+
+                        {{ goods_receipt.received_by_user.username }}
+
+                    {% else %}
+
+                        —
+
+                    {% endif %}
+
+                </strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         RECEIVED ITEMS
+         ===================================================== -->
+
+    <div class="financial-list-panel">
+
+        <div class="financial-list-header">
+
+            <div>
+
+                <h3>
+                    Received Items
+                </h3>
+
+                <p>
+                    Items included in this goods receipt.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="financial-table-wrapper">
+
+            <table class="financial-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            #
+                        </th>
+
+                        <th>
+                            Item
+                        </th>
+
+                        <th>
+                            Ordered
+                        </th>
+
+                        <th>
+                            Received Now
+                        </th>
+
+                        <th>
+                            Unit Price
+                        </th>
+
+                        <th>
+                            Value
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for item in goods_receipt.items %}
+
+                    <tr>
+
+                        <td>
+                            {{ loop.index }}
+                        </td>
+
+                        <td>
+
+                            <strong>
+                                {{ item.purchase_order_item.item_description }}
+                            </strong>
+
+                        </td>
+
+                        <td>
+
+                            {{ "{:,.2f}".format(
+                                item.purchase_order_item.quantity
+                            ) }}
+
+                        </td>
+
+                        <td>
+
+                            <strong>
+                                {{ "{:,.2f}".format(
+                                    item.quantity_received
+                                ) }}
+                            </strong>
+
+                        </td>
+
+                        <td>
+
+                            KES {{ "{:,.2f}".format(
+                                item.purchase_order_item.unit_price
+                            ) }}
+
+                        </td>
+
+                        <td>
+
+                            KES {{ "{:,.2f}".format(
+                                item.quantity_received
+                                * item.purchase_order_item.unit_price
+                            ) }}
+
+                        </td>
+
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+
+                        <td
+                            colspan="6"
+                            class="empty-table-state"
+                        >
+
+                            <i class="bx bx-package"></i>
+
+                            <div>
+
+                                <strong>
+                                    No items recorded
+                                </strong>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         NOTES
+         ===================================================== -->
+
+    {% if goods_receipt.notes %}
+
+    <div class="financial-list-panel">
+
+        <div class="financial-list-header">
+
+            <div>
+
+                <h3>
+                    Notes
+                </h3>
+
+            </div>
+
+        </div>
+
+        <p>
+            {{ goods_receipt.notes }}
+        </p>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

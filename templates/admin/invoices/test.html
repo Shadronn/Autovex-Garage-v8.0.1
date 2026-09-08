@@ -1,0 +1,1460 @@
+{% extends "base.html" %}
+
+{% block sidebar %}
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="invoice-actions no-print">
+
+    <a
+        href="{{ url_for('invoices') }}"
+        class="btn"
+    >
+        Close
+    </a>
+
+    <a
+        href="{{ url_for('invoice_pdf', invoice_id=invoice.id) }}"
+        class="btn primary"
+    >
+        <i class="bx bx-download"></i>
+        Download PDF
+    </a>
+</div>
+
+
+<div class="invoice-page">
+
+    <div class="invoice-sheet">
+
+        {% if invoice.status == "Paid" %}
+            <div class="paid-stamp">
+                PAID
+            </div>
+        {% endif %}
+
+
+        <!-- ========================================= -->
+        <!-- HEADER -->
+        <!-- ========================================= -->
+
+       <header class="top invoice-header">
+
+            <div class="brand">
+
+                <img
+                    src="{{ url_for(
+                        'static',
+                        filename='assets/images/logo.png'
+                    ) }}"
+                    alt="Logo"
+                >
+
+            </div>
+
+            <h2>INVOICE</h2>
+
+        </header>
+
+
+        <!-- ========================================= -->
+        <!-- CUSTOMER / INVOICE INFORMATION -->
+        <!-- ========================================= -->
+
+        <section class="intro">
+
+            <div class="bill-to">
+
+                <strong>
+                    {{ customer.customer_name if customer else job.customer_name }}
+                </strong>
+
+                {% if customer and customer.address %}
+                    <span>{{ customer.address }}</span>
+                {% endif %}
+
+                {% if customer and customer.email %}
+                    <span>{{ customer.email }}</span>
+                {% endif %}
+
+                {% if job.telno %}
+                    <span>{{ job.telno }}</span>
+                {% endif %}
+
+            </div>
+
+
+            <div class="invoice-info">
+
+                <div class="invoice-info-row">
+                    <span>Invoice number:</span>
+                    <strong>{{ invoice.invoice_number }}</strong>
+                </div>
+
+                <div class="invoice-info-row">
+                    <span>Invoice date:</span>
+                    <strong>
+                        {{ invoice.issue_date.strftime("%d/%m/%Y") }}
+                    </strong>
+                </div>
+
+                <div class="invoice-info-row">
+                    <span>Payment terms:</span>
+                    <strong>Due on receipt</strong>
+                </div>
+
+                <div class="invoice-info-row">
+                    <span>Status:</span>
+                    <strong>{{ invoice.status }}</strong>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ========================================= -->
+        <!-- VEHICLE INFORMATION -->
+        <!-- ========================================= -->
+
+        <section class="vehicle-info">
+
+            <div>
+                <strong>Vehicle</strong>
+                <span>{{ job.vehicle }}</span>
+            </div>
+
+            <div>
+                <strong>Model</strong>
+                <span>{{ job.vehicle_model }}</span>
+            </div>
+
+            <div>
+                <strong>Mechanic</strong>
+                <span>
+                    {{ job.mechanic.username if job.mechanic else "-" }}
+                </span>
+            </div>
+
+        </section>
+
+
+        <p class="thanks">
+            Thank you for your business!
+        </p>
+
+
+        <!-- ========================================= -->
+        <!-- PARTS -->
+        <!-- ========================================= -->
+
+        {% if parts %}
+
+        <h3 class="section-title">
+            Parts
+        </h3>
+
+        <table class="items parts-items">
+
+            <thead>
+
+                <tr>
+
+                    <th>Description</th>
+                    <th>Part Number</th>
+                    <th>Qty</th>
+                    <th>Unit Price</th>
+                    <th>Total</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for part in parts %}
+
+                <tr>
+
+                    <td>
+                        <strong>
+                            {{ part.part_name }}
+                        </strong>
+
+                        {% if part.notes %}
+                            <span>
+                                {{ part.notes }}
+                            </span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {{ part.part_number or "-" }}
+                    </td>
+
+                    <td>
+                        {{ "%.2f"|format(part.quantity or 0) }}
+                    </td>
+
+                    <td>
+                        {{ "{:,.2f}".format(
+                            part.unit_price or 0
+                        ) }}
+                    </td>
+
+                    <td>
+                        <strong>
+                            {{ "{:,.2f}".format(
+                                (part.quantity or 0) *
+                                (part.unit_price or 0)
+                            ) }}
+                        </strong>
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+
+        <div class="section-subtotal">
+
+            <span>
+                Parts Total
+            </span>
+
+            <strong>
+                {{ "{:,.2f}".format(parts_total) }} KES
+            </strong>
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- ========================================= -->
+        <!-- LABOUR -->
+        <!-- ========================================= -->
+
+        {% if labour_items %}
+
+        <h3 class="section-title">
+            Labour
+        </h3>
+
+        <table class="items labour-items">
+
+            <thead>
+
+                <tr>
+
+                    <th>Description</th>
+                    <th>Hours</th>
+                    <th>Hourly Rate</th>
+                    <th>Total</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for labour in labour_items %}
+
+                <tr>
+
+                    <td>
+
+                        <strong>
+                            {{ labour.description }}
+                        </strong>
+
+                        {% if labour.notes %}
+                            <span>
+                                {{ labour.notes }}
+                            </span>
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+                        {{ "%.2f"|format(
+                            labour.hours or 0
+                        ) }}
+                    </td>
+
+                    <td>
+                        {{ "{:,.2f}".format(
+                            labour.hourly_rate or 0
+                        ) }}
+                    </td>
+
+                    <td>
+
+                        <strong>
+                            {{ "{:,.2f}".format(
+                                (labour.hours or 0) *
+                                (labour.hourly_rate or 0)
+                            ) }}
+                        </strong>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+
+        <div class="section-subtotal">
+
+            <span>
+                Labour Total
+            </span>
+
+            <strong>
+                {{ "{:,.2f}".format(labour_total) }} KES
+            </strong>
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- ========================================= -->
+        <!-- JOB DESCRIPTION -->
+        <!-- ========================================= -->
+
+        {% if job.description %}
+
+        <div class="work-description">
+
+            <strong>
+                Job Description
+            </strong>
+
+            <span>
+                {{ job.description }}
+            </span>
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- ========================================= -->
+        <!-- TOTALS -->
+        <!-- ========================================= -->
+
+        <section class="totals">
+
+            <div>
+
+                <span>
+                    Parts Total
+                </span>
+
+                <strong>
+                    {{ "{:,.2f}".format(parts_total) }} KES
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    Labour Total
+                </span>
+
+                <strong>
+                    {{ "{:,.2f}".format(labour_total) }} KES
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    Total excl. VAT
+                </span>
+
+                <strong>
+                    {{ "{:,.2f}".format(
+                        invoice.subtotal
+                    ) }} KES
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    VAT {{ "%.1f"|format(invoice.tax_rate) }}%
+                </span>
+
+                <strong>
+                    {{ "{:,.2f}".format(
+                        invoice.tax_amount
+                    ) }} KES
+                </strong>
+
+            </div>
+
+
+            <div class="amount-due">
+
+                <span>
+                    Total amount due
+                </span>
+
+                <strong>
+                    {{ "{:,.2f}".format(
+                        invoice.total_amount
+                    ) }} KES
+                </strong>
+
+            </div>
+
+        </section>
+
+<!-- ========================================= -->
+<!-- eTIMS / CU INFORMATION -->
+<!-- ========================================= -->
+
+<section class="etims-area">
+
+    <div class="etims-placeholder">
+
+        <div class="etims-qr">
+            <img
+                src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fkabraham.pythonanywhere.com%2F"
+                alt="eTIMS QR Code"
+                width="110"
+                height="110"
+            >
+        </div>
+
+        <div class="etims-details">
+
+            <strong>eTIMS INFORMATION</strong>
+
+            <span>
+                CU Number:
+                <b>CU123456789</b>
+            </span>
+
+            <span>
+                Invoice verification information
+            </span>
+
+        </div>
+
+    </div>
+
+</section>
+        <!-- ========================================= -->
+        <!-- FOOTER -->
+        <!-- ========================================= -->
+
+        <footer>
+
+            <div>
+
+                <strong>
+                    Riverine Auto Center Limited
+                </strong>
+
+                <span>
+                    Professional Vehicle Service Centre
+                </span>
+
+                <span>
+                    KRA PIN: P052219534F
+                </span>
+
+            </div>
+
+
+            <div>
+
+                <strong>
+                    Contact information
+                </strong>
+
+                <span>
+                    +254700706641
+                </span>
+
+                <span>
+                    info@riverineauto.com
+                </span>
+
+            </div>
+
+
+            <div>
+
+                <strong>
+                    Payment details
+                </strong>
+
+                <span>
+                    Bank: NCBA Bank Limited
+                </span>
+                <span>
+                    Account Name: Riverine Autocenter Limited
+                </span>
+
+                <span>
+                    Account: 6366490015
+
+                </span>
+
+                <span>
+                    Currency: KES
+                </span>
+
+            </div>
+
+        </footer>
+
+    </div>
+
+</div>
+
+
+<style>
+
+* {
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    margin: 0;
+    background: #f4f4f4;
+    color: #3b3b3b;
+}
+
+
+/* =========================================
+   ACTIONS
+========================================= */
+
+.invoice-actions {
+    width: 820px;
+    margin: 24px auto 12px;
+
+    display: flex;
+    justify-content: space-between;
+}
+
+.btn {
+    background: #333;
+    color: #fff;
+
+    border: 0;
+    border-radius: 4px;
+
+    padding: 9px 14px;
+
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn.primary {
+    background: #1854f2;
+}
+
+
+/* =========================================
+   PAGE
+========================================= */
+
+.invoice-page {
+    padding: 32px 0 60px;
+}
+
+
+/* =========================================
+   INVOICE SHEET
+========================================= */
+
+.invoice-sheet {
+    position: relative;
+
+    width: 820px;
+
+    margin: auto;
+
+    background: #fff;
+
+    padding: 28px 42px 25px;
+
+    box-shadow:
+        0 12px 30px rgba(15, 23, 42, 0.16);
+}
+
+
+/* =========================================
+   HEADER
+========================================= */
+
+.invoice-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: flex-start;
+
+    padding-bottom: 12px;
+
+    border-bottom: 2px solid red;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+}
+
+.brand img {
+    width: 115px;
+    height: 115px;
+
+    object-fit: contain;
+
+    display: block;
+}
+
+.invoice-header h2 {
+    margin: 4px 0 0;
+
+    font-size: 28px;
+
+    font-weight: 700;
+
+    letter-spacing: 2px;
+
+    color: #222;
+}
+
+
+/* =========================================
+   INTRO
+========================================= */
+
+.intro {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    margin-top: 22px;
+    align-items: start;
+}
+
+.bill-to {
+    display: flex;
+
+    flex-direction: column;
+
+    line-height: 1.45;
+
+    font-size: 14px;
+}
+
+.bill-to strong {
+    margin-bottom: 2px;
+}
+
+.invoice-info {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: flex-end;
+
+    width: 100%;
+
+    font-size: 13px;
+}
+
+.invoice-info-row {
+    display: grid;
+
+    grid-template-columns: auto auto;
+
+    column-gap: 14px;
+
+    width: 100%;
+
+    justify-content: end;
+
+    margin: 4px 0;
+
+    text-align: right;
+}
+
+.invoice-info-row span {
+    color: #666;
+
+    white-space: nowrap;
+}
+
+.invoice-info-row strong {
+    color: #222;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================
+   VEHICLE
+========================================= */
+
+.vehicle-info {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr 1fr;
+
+    gap: 15px;
+
+    margin-top: 14px;
+
+    padding: 8px 0;
+}
+
+.vehicle-info div {
+    display: flex;
+
+    flex-direction: column;
+
+    font-size: 11px;
+}
+
+.vehicle-info strong {
+    margin-bottom: 4px;
+}
+
+
+/* =========================================
+   THANKS
+========================================= */
+
+.thanks {
+    margin: 16px 0 10px;
+
+    font-size: 12px;
+}
+
+
+/* =========================================
+   SECTION TITLE
+========================================= */
+
+.section-title {
+    margin: 12px 0 5px;
+
+    font-size: 13px;
+
+    color: #333;
+}
+
+
+/* =========================================
+   TABLES
+========================================= */
+
+.items {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    table-layout: fixed;
+
+    font-size: 12px;
+}
+
+.items th {
+    background:#525252;
+
+    padding: 6px 6px;
+
+    text-align: left;
+
+    color: #fff;
+}
+
+.items td {
+    padding: 5px 6px;
+
+    border-bottom: 1px solid #d4d4d4;
+
+    vertical-align: top;
+}
+
+.items th:nth-child(n+2),
+.items td:nth-child(n+2) {
+    text-align: right;
+
+    white-space: nowrap;
+}
+
+.items td span {
+    display: block;
+
+    margin-top: 2px;
+
+    color: #6f6f6f;
+    line-height: 1.2;
+}
+
+
+/* =========================================
+   PARTS COLUMN WIDTHS
+========================================= */
+
+.parts-items th:nth-child(1),
+.parts-items td:nth-child(1) {
+    width: 35%;
+}
+
+.parts-items th:nth-child(2),
+.parts-items td:nth-child(2) {
+    width: 20%;
+}
+
+.parts-items th:nth-child(3),
+.parts-items td:nth-child(3) {
+    width: 10%;
+}
+
+.parts-items th:nth-child(4),
+.parts-items td:nth-child(4) {
+    width: 17%;
+}
+
+.parts-items th:nth-child(5),
+.parts-items td:nth-child(5) {
+    width: 18%;
+}
+
+
+/* =========================================
+   LABOUR COLUMN WIDTHS
+========================================= */
+
+.labour-items th:nth-child(1),
+.labour-items td:nth-child(1) {
+    width: 45%;
+}
+
+.labour-items th:nth-child(2),
+.labour-items td:nth-child(2) {
+    width: 15%;
+}
+
+.labour-items th:nth-child(3),
+.labour-items td:nth-child(3) {
+    width: 20%;
+}
+
+.labour-items th:nth-child(4),
+.labour-items td:nth-child(4) {
+    width: 20%;
+}
+
+
+/* =========================================
+   SECTION SUBTOTAL
+========================================= */
+
+.section-subtotal {
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 30px;
+
+    padding: 4px 0 7px;
+
+    font-size: 11px;
+}
+
+
+/* =========================================
+   DESCRIPTION
+========================================= */
+
+.work-description {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+
+    margin-top: 10px;
+
+    padding: 7px 9px;
+
+    border: 1px solid #ddd;
+
+    font-size: 10px;
+}
+
+
+/* =========================================
+   TOTALS
+========================================= */
+
+.totals {
+    width: 330px;
+
+    margin-left: auto;
+
+    margin-top: 12px;
+
+    font-size: 13px;
+}
+
+.totals div {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 3px 0;
+}
+
+.totals div span {
+    color: #555;
+}
+
+.totals div strong {
+    color: #222;
+}
+
+.amount-due {
+    margin-top: 5px;
+
+    padding: 7px 0 0 !important;
+
+    border-top: 2px solid #333;
+
+    font-size: 18px;
+}
+
+.amount-due span,
+.amount-due strong {
+    color: #111 !important;
+}
+
+
+/* =========================================
+   eTIMS AREA
+========================================= */
+
+.etims-area {
+    width: 100%;
+
+    margin-top: 25px;
+    padding-top: 15px;
+
+    border-top: 1px solid #d9d9d9;
+
+    display: block;
+
+    text-align: center;
+
+    overflow: visible !important;
+}
+
+.etims-placeholder {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-height: 110px;
+
+    padding: 5px 15px;
+
+    text-align: left;
+
+    overflow: visible !important;
+}
+
+.etims-qr {
+    width: 100px;
+    height: 100px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+}
+
+.etims-qr img {
+    display: block !important;
+
+    width: 100px !important;
+    height: 100px !important;
+
+    max-width: none !important;
+
+    visibility: visible !important;
+
+    opacity: 1 !important;
+}
+
+.etims-details {
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    margin-left: 16px;
+
+    font-size: 11px;
+
+    line-height: 1.5;
+
+    text-align: left;
+
+    visibility: visible !important;
+
+    opacity: 1 !important;
+}
+
+.etims-details strong {
+    font-size: 12px;
+
+    color: #222;
+
+    margin-bottom: 4px;
+}
+
+.etims-details span {
+    color: #555;
+}
+
+.etims-details b {
+    color: #222;
+}
+
+/* =========================================
+   FOOTER
+========================================= */
+
+footer {
+    position: static !important;
+
+    display: grid !important;
+
+    width: 100%;
+
+    margin-top: 25px;
+
+    padding-top: 14px;
+
+    border-top: 1px solid #d1d1d1;
+
+    grid-template-columns: 1.2fr 1fr 1fr;
+
+    gap: 35px;
+
+    font-size: 11px;
+
+    visibility: visible !important;
+
+    opacity: 1 !important;
+}
+
+footer div {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 3px;
+}
+
+/* =========================================
+   PAID STAMP
+========================================= */
+
+.paid-stamp {
+    position: absolute;
+
+    top: 110px;
+
+    right: 70px;
+
+    transform: rotate(-14deg);
+
+    border: 5px solid #16a34a;
+
+    color: #16a34a;
+
+    font-size: 40px;
+
+    font-weight: 900;
+
+    letter-spacing: 5px;
+
+    padding: 12px 28px;
+
+    opacity: 0.18;
+}
+
+
+@media print {
+
+    @page {
+        size: A4;
+        margin: 8mm;
+    }
+
+    html,
+    body {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #ffffff !important;
+    }
+
+    .no-print,
+    aside.sidebar {
+        display: none !important;
+    }
+
+    .invoice-page {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .invoice-sheet {
+        position: relative !important;
+
+        /*
+         * A4 printable width.
+         * Do NOT use 210mm here because @page already
+         * provides the page width and margins.
+         */
+        width: 100% !important;
+
+        margin: 0 !important;
+
+        /*
+         * Let the invoice grow naturally.
+         */
+        min-height: 0 !important;
+        height: auto !important;
+
+        padding: 8mm 4mm 10mm !important;
+
+        box-shadow: none !important;
+
+        overflow: visible !important;
+    }
+
+
+    /* ================================
+       HEADER
+    ================================= */
+
+   .invoice-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    width: 100%;
+
+    padding: 0 0 10px;
+
+    margin: 0;
+
+    border-bottom: 2px solid #1a88dc;
+}
+
+.brand {
+    display: flex;
+
+    align-items: center;
+}
+
+.brand img {
+    width: 72px;
+    height: 72px;
+
+    object-fit: contain;
+
+    display: block;
+}
+
+.invoice-header h2 {
+    margin: 0;
+
+    font-size: 30px;
+
+    font-weight: 700;
+
+    letter-spacing: 2px;
+
+    color: #222;
+
+    line-height: 1;
+}
+
+    /* ================================
+       CUSTOMER / INVOICE DETAILS
+    ================================= */
+
+    .intro {
+        width: 100% !important;
+
+        display: grid !important;
+
+        grid-template-columns: 1fr 1fr !important;
+
+        gap: 30px !important;
+
+        margin-top: 30px !important;
+    }
+
+
+    /* ================================
+       VEHICLE
+    ================================= */
+
+    .vehicle-info {
+        width: 100% !important;
+
+        display: grid !important;
+
+        grid-template-columns: 1fr 1fr 1fr !important;
+    }
+
+
+    /* ================================
+       TABLES
+    ================================= */
+
+    .items {
+        display: table !important;
+
+        width: 100% !important;
+
+        max-width: 100% !important;
+
+        table-layout: fixed !important;
+
+        border-collapse: collapse !important;
+    }
+
+    .items thead {
+        display: table-header-group !important;
+    }
+
+    .items tbody {
+        display: table-row-group !important;
+    }
+
+    .items tr {
+        display: table-row !important;
+
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+
+    .items th,
+    .items td {
+        display: table-cell !important;
+    }
+
+
+    /* ================================
+       TOTALS
+    ================================= */
+
+    .totals {
+        width: 330px !important;
+
+        max-width: 100% !important;
+
+        margin-left: auto !important;
+
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+
+
+    /* ================================
+       eTIMS
+    ================================= */
+
+    /* =================================
+   eTIMS — PRINT
+================================= */
+
+.etims-area {
+    display: block !important;
+
+    width: 100% !important;
+
+    height: auto !important;
+
+    min-height: 125px !important;
+
+    margin-top: 25px !important;
+
+    padding-top: 15px !important;
+
+    border-top: 1px solid #d9d9d9 !important;
+
+    overflow: visible !important;
+
+    visibility: visible !important;
+
+    opacity: 1 !important;
+
+    page-break-inside: auto !important;
+
+    break-inside: auto !important;
+}
+
+.etims-placeholder {
+    display: inline-flex !important;
+
+    width: auto !important;
+
+    height: 110px !important;
+
+    min-height: 110px !important;
+
+    align-items: center !important;
+
+    justify-content: center !important;
+
+    visibility: visible !important;
+
+    overflow: visible !important;
+}
+
+.etims-qr {
+    display: flex !important;
+
+    width: 100px !important;
+
+    height: 100px !important;
+
+    visibility: visible !important;
+}
+
+.etims-qr img {
+    display: block !important;
+
+    visibility: visible !important;
+
+    opacity: 1 !important;
+
+    width: 100px !important;
+
+    height: 100px !important;
+}
+
+.etims-details {
+    display: flex !important;
+
+    visibility: visible !important;
+
+    opacity: 1 !important;
+}
+
+
+/* =================================
+   FOOTER — PRINT
+================================= */
+
+footer {
+    position: static !important;
+
+    display: grid !important;
+
+    width: 100% !important;
+
+    height: auto !important;
+
+    min-height: 55px !important;
+
+    margin-top: 25px !important;
+
+    padding-top: 12px !important;
+
+    border-top: 1px solid #d1d1d1 !important;
+
+    grid-template-columns: 1.2fr 1fr 1fr !important;
+
+    gap: 25px !important;
+
+    visibility: visible !important;
+
+    opacity: 1 !important;
+
+    overflow: visible !important;
+
+    page-break-inside: avoid !important;
+
+    break-inside: avoid !important;
+}
+
+footer div {
+    display: flex !important;
+
+    flex-direction: column !important;
+
+    visibility: visible !important;
+}
+
+
+    /* ================================
+       GENERAL PAGE BREAK BEHAVIOUR
+    ================================= */
+
+    .section-title {
+        page-break-after: avoid;
+        break-after: avoid;
+    }
+
+    .section-subtotal {
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+
+    .work-description {
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+
+}
+
+</style>
+
+{% endblock %}

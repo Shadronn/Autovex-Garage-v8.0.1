@@ -1,0 +1,42 @@
+    {% extends "base.html" %}
+    {% block content %}
+
+    <div class="create-container">
+        <p>New customer </p>
+
+        <form method="post">
+            <div class="form-group">
+                <label for="Full_name">Client name</label>
+                <input name="full_name" type="text" id="full_name" placeholder="e.g John Doe">
+            </div>
+
+            <div class="form-group">
+                <label for="Telephone">Telephone Number</label>
+                <input name="phone" type="text" id="phone" placeholder="e.g 0700000000">
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" name="email" id="email" placeholder="e.g john@doe.com">
+            </div>
+
+            <div class="form-group">
+                <label for="vehicle">Vehicle</label>
+                <input name="vehicle" type="text" id="vehicle" placeholder="e.g KAA122B">
+            </div>
+            <div class="form-group">
+                <label for="description">Make</label>
+                <input name="model" type="text" id="model" placeholder="Mercedes Benz">
+            </div>
+
+            <div class="form-group">
+                <label for="status">Status</label>
+                <select name="status" id="">
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                </select>
+            </div>
+
+            <button type="submit" class="login-btn">Create</button>
+        </form>
+
+        {%endblock%}

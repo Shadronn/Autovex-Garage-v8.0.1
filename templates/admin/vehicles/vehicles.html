@@ -1,0 +1,559 @@
+{% extends "base.html" %}
+
+
+{% block sidebar %}
+
+
+{% endblock %}
+
+
+
+{% block content %}
+
+<div class="table-page">
+
+
+    <!-- =====================================================
+         PAGE HEADER
+         ===================================================== -->
+
+    <div class="module-header">
+
+        <div>
+
+            <h1>Vehicles</h1>
+
+            <p>
+                Manage customer vehicles, registrations and vehicle information.
+            </p>
+
+        </div>
+
+
+        <div class="module-header-actions">
+
+            <a
+                href="{{ url_for('add_vehicle') }}"
+                class="table-filter-btn"
+            >
+                <i class='bx bx-plus'></i>
+                <span>Add Vehicle</span>
+            </a>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         TABLE PANEL
+         ===================================================== -->
+
+    <div class="table-panel">
+
+
+        <!-- =================================================
+             TOOLBAR
+             ================================================= -->
+
+        <div class="table-toolbar">
+
+
+            <!-- SEARCH -->
+
+            <div class="table-toolbar-left">
+
+                <div class="table-search">
+
+                    <i class='bx bx-search'></i>
+
+                    <form
+                        method="GET"
+                        action="{{ url_for('vehicles') }}"
+                    >
+
+                        <input
+                            type="text"
+                            name="search"
+                            oninput="debouncedSubmit(this.form)"
+                            placeholder="Search registration..."
+                            value="{{ request.args.get('search', '') }}"
+                            autocomplete="off"
+                        >
+
+                    </form>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- FILTERS / EXPORT -->
+
+            <form
+                method="GET"
+                action="{{ url_for('vehicles') }}"
+                class="table-filters"
+            >
+
+                <!-- Preserve search when using filters -->
+
+                <input
+                    type="hidden"
+                    name="search"
+                    value="{{ request.args.get('search', '') }}"
+                >
+
+
+                <!-- Filter button -->
+
+                <button
+                    type="submit"
+                    class="table-filter-btn"
+                >
+                    <i class='bx bx-filter-alt'></i>
+                    <span>Filter</span>
+                </button>
+
+
+
+                <!-- =================================================
+                     EXPORT
+                     ================================================= -->
+
+                <div class="table-export">
+
+                    <button
+                        type="button"
+                        class="table-export-btn"
+                        onclick="toggleExportMenu()"
+                    >
+
+                        <i class='bx bx-export'></i>
+
+                        <span>Export</span>
+
+                        <i class='bx bx-chevron-down'></i>
+
+                    </button>
+
+
+                    <div
+                        id="exportMenu"
+                        class="table-export-menu"
+                    >
+
+                        <a
+                            href="{{ url_for(
+                                'export_vehicles_excel',
+                                search=request.args.get('search', '')
+                            ) }}"
+                        >
+
+                            <i class='bx bx-spreadsheet'></i>
+
+                            <span>
+                                Export Excel
+                            </span>
+
+                        </a>
+
+
+                        <a
+                            href="{{ url_for(
+                                'export_vehicles_csv',
+                                search=request.args.get('search', '')
+                            ) }}"
+                        >
+
+                            <i class='bx bx-file'></i>
+
+                            <span>
+                                Export CSV
+                            </span>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+
+        <!-- =================================================
+             TABLE
+             ================================================= -->
+
+        <div class="table-wrapper">
+
+            <table class="data-table">
+
+
+                <thead>
+
+                    <tr>
+
+                        <th>ID #</th>
+
+                        <th>Registration</th>
+
+                        <th>Model</th>
+
+                        <th>YOM</th>
+
+                        <th>Color</th>
+
+                        <th>Customer</th>
+
+                        <th>Action</th>
+
+                    </tr>
+
+                </thead>
+
+
+
+                <tbody id="tableBody">
+
+
+                    {% for vehicle in vehicles.items %}
+
+                    <tr>
+
+
+                        <!-- ID -->
+
+                        <td>
+
+                            <span class="table-number">
+                                #{{ vehicle.id }}
+                            </span>
+
+                        </td>
+
+
+
+                        <!-- REGISTRATION -->
+
+                        <td>
+
+                            <span class="table-primary-text">
+                                {{ vehicle.registration_no }}
+                            </span>
+
+                        </td>
+
+
+
+                        <!-- MODEL -->
+
+                        <td>
+
+                            <span class="table-secondary-text">
+                                {{ vehicle.model or "-" }}
+                            </span>
+
+                        </td>
+
+
+
+                        <!-- YEAR -->
+
+                        <td>
+
+                            <span class="table-date">
+                                {{ vehicle.yom or "-" }}
+                            </span>
+
+                        </td>
+
+
+
+                        <!-- COLOR -->
+
+                        <td>
+
+                            <span class="table-secondary-text">
+                                {{ vehicle.color or "-" }}
+                            </span>
+
+                        </td>
+
+
+
+                        <!-- CUSTOMER -->
+
+                        <td>
+
+                            {% if vehicle.customer %}
+
+                            <span class="table-primary-text">
+                                {{ vehicle.customer.customer_name }}
+                            </span>
+
+                            {% else %}
+
+                            <span class="table-muted-text">
+                                No customer
+                            </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+
+                        <!-- ACTION -->
+
+                        <td>
+
+                            <a
+                                href="{{ url_for(
+                                    'vehicle_details',
+                                    vehicle_id=vehicle.id
+                                ) }}"
+                                class="table-action-view"
+                            >
+
+                                <span>View</span>
+
+                                <i class='bx bx-chevron-right'></i>
+
+                            </a>
+
+                        </td>
+
+
+                    </tr>
+
+
+                    {% else %}
+
+                    <tr>
+
+                        <td colspan="7">
+
+                            <div class="table-empty">
+
+                                <div class="table-empty-icon">
+
+                                    <i class='bx bx-car'></i>
+
+                                </div>
+
+                                <strong>
+                                    No vehicles found
+                                </strong>
+
+                                <span>
+                                    Try changing your search.
+                                </span>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+
+        <!-- =================================================
+             PAGINATION
+             ================================================= -->
+
+        {% if vehicles.pages > 1 %}
+
+        <div class="table-pagination">
+
+
+            <!-- PREVIOUS -->
+
+            {% if vehicles.has_prev %}
+
+            <a
+                href="{{ url_for(
+                    'vehicles',
+                    page=vehicles.prev_num,
+                    search=request.args.get('search')
+                ) }}"
+                class="table-page-btn"
+            >
+
+                <i class='bx bx-chevron-left'></i>
+
+                <span>Previous</span>
+
+            </a>
+
+            {% else %}
+
+            <span class="table-page-btn disabled">
+
+                <i class='bx bx-chevron-left'></i>
+
+                <span>Previous</span>
+
+            </span>
+
+            {% endif %}
+
+
+
+            <!-- PAGE NUMBERS -->
+
+            <div class="table-page-numbers">
+
+                {% for p in range(1, vehicles.pages + 1) %}
+
+                    {% if p == vehicles.page %}
+
+                    <span class="table-page-number active">
+                        {{ p }}
+                    </span>
+
+                    {% else %}
+
+                    <a
+                        href="{{ url_for(
+                            'vehicles',
+                            page=p,
+                            search=request.args.get('search')
+                        ) }}"
+                        class="table-page-number"
+                    >
+                        {{ p }}
+                    </a>
+
+                    {% endif %}
+
+                {% endfor %}
+
+            </div>
+
+
+
+            <!-- NEXT -->
+
+            {% if vehicles.has_next %}
+
+            <a
+                href="{{ url_for(
+                    'vehicles',
+                    page=vehicles.next_num,
+                    search=request.args.get('search')
+                ) }}"
+                class="table-page-btn"
+            >
+
+                <span>Next</span>
+
+                <i class='bx bx-chevron-right'></i>
+
+            </a>
+
+            {% else %}
+
+            <span class="table-page-btn disabled">
+
+                <span>Next</span>
+
+                <i class='bx bx-chevron-right'></i>
+
+            </span>
+
+            {% endif %}
+
+
+        </div>
+
+        {% endif %}
+
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================================
+     SEARCH DEBOUNCE
+     ========================================================= -->
+
+<script>
+
+let vehicleDebounceTimer;
+
+function debouncedSubmit(form) {
+
+    clearTimeout(vehicleDebounceTimer);
+
+    vehicleDebounceTimer = setTimeout(() => {
+
+        form.submit();
+
+    }, 700);
+
+}
+
+</script>
+
+
+
+<!-- =========================================================
+     EXPORT DROPDOWN
+     ========================================================= -->
+
+<script>
+
+function toggleExportMenu() {
+
+    const menu = document.getElementById("exportMenu");
+
+    if (!menu) {
+        return;
+    }
+
+    menu.classList.toggle("show");
+
+}
+
+
+document.addEventListener("click", function(event) {
+
+    const exportContainer =
+        document.querySelector(".table-export");
+
+    const menu =
+        document.getElementById("exportMenu");
+
+
+    if (
+        exportContainer &&
+        menu &&
+        !exportContainer.contains(event.target)
+    ) {
+
+        menu.classList.remove("show");
+
+    }
+
+});
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,556 @@
+/* =========================================================
+   AUTOVEX GLOBAL NOTIFICATION SYSTEM
+   ========================================================= */
+
+.autovex-notifications {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 99999;
+
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    width: min(380px, calc(100vw - 32px));
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   NOTIFICATION
+   ========================================================= */
+
+.autovex-notification {
+    position: relative;
+
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+
+    padding: 15px 16px;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+
+    box-shadow:
+        0 10px 30px rgba(15, 23, 42, 0.12),
+        0 2px 8px rgba(15, 23, 42, 0.06);
+
+    overflow: hidden;
+
+    pointer-events: auto;
+
+    opacity: 0;
+
+    transform: translateX(30px);
+
+    animation:
+        autovexNotificationIn 0.28s ease forwards;
+}
+
+
+/* =========================================================
+   ICON
+   ========================================================= */
+
+.autovex-notification-icon {
+    flex: 0 0 38px;
+
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    font-size: 20px;
+}
+
+
+/* =========================================================
+   CONTENT
+   ========================================================= */
+
+.autovex-notification-content {
+    flex: 1;
+    min-width: 0;
+
+    padding-right: 18px;
+}
+
+.autovex-notification-title {
+    margin: 0 0 3px;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    color: #172033;
+}
+
+.autovex-notification-message {
+    margin: 0;
+
+    font-size: 13px;
+    line-height: 1.5;
+
+    color: #64748b;
+}
+
+
+/* =========================================================
+   CLOSE BUTTON
+   ========================================================= */
+
+.autovex-notification-close {
+    position: absolute;
+
+    top: 10px;
+    right: 10px;
+
+    width: 26px;
+    height: 26px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 0;
+    border-radius: 6px;
+
+    background: transparent;
+
+    color: #94a3b8;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+.autovex-notification-close:hover {
+    background: #f1f5f9;
+    color: #334155;
+}
+
+
+/* =========================================================
+   PROGRESS BAR
+   ========================================================= */
+
+.autovex-notification-progress {
+    position: absolute;
+
+    left: 0;
+    bottom: 0;
+
+    width: 100%;
+    height: 3px;
+
+    transform-origin: left;
+
+    animation-name: autovexNotificationProgress;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+}
+
+
+/* =========================================================
+   SUCCESS
+   ========================================================= */
+
+.autovex-notification-success .autovex-notification-icon {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.autovex-notification-success .autovex-notification-progress {
+    background: #22c55e;
+}
+
+
+/* =========================================================
+   ERROR
+   ========================================================= */
+
+.autovex-notification-error .autovex-notification-icon {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.autovex-notification-error .autovex-notification-progress {
+    background: #ef4444;
+}
+
+
+/* =========================================================
+   WARNING
+   ========================================================= */
+
+.autovex-notification-warning .autovex-notification-icon {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.autovex-notification-warning .autovex-notification-progress {
+    background: #f59e0b;
+}
+
+
+/* =========================================================
+   INFO
+   ========================================================= */
+
+.autovex-notification-info .autovex-notification-icon {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+.autovex-notification-info .autovex-notification-progress {
+    background: #3b82f6;
+}
+
+
+/* =========================================================
+   EXIT ANIMATION
+   ========================================================= */
+
+.autovex-notification.removing {
+    animation:
+        autovexNotificationOut 0.25s ease forwards;
+}
+
+
+/* =========================================================
+   ANIMATIONS
+   ========================================================= */
+
+@keyframes autovexNotificationIn {
+
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+}
+
+
+@keyframes autovexNotificationOut {
+
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+
+}
+
+
+@keyframes autovexNotificationProgress {
+
+    from {
+        transform: scaleX(1);
+    }
+
+    to {
+        transform: scaleX(0);
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .autovex-notifications {
+        top: 16px;
+        right: 16px;
+        left: 16px;
+
+        width: auto;
+    }
+
+    .autovex-notification {
+        padding: 14px;
+    }
+
+}
+/* =========================================================
+   AUTOVEX FINANCIAL DIALOGS
+   ========================================================= */
+
+.autovex-dialog-overlay {
+    position: fixed;
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(4px);
+
+    z-index: 99990;
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition:
+        opacity 0.2s ease,
+        visibility 0.2s ease;
+}
+
+.autovex-dialog-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.autovex-dialog {
+    width: min(440px, 100%);
+
+    background: #ffffff;
+    border-radius: 16px;
+
+    box-shadow:
+        0 25px 60px rgba(15, 23, 42, 0.20);
+
+    transform: translateY(15px) scale(0.97);
+
+    transition:
+        transform 0.22s ease;
+}
+
+.autovex-dialog-overlay.active .autovex-dialog {
+    transform: translateY(0) scale(1);
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.autovex-dialog-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+
+    padding: 22px 22px 10px;
+}
+
+.autovex-dialog-icon {
+    flex: 0 0 44px;
+
+    width: 44px;
+    height: 44px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    font-size: 22px;
+}
+
+.autovex-dialog-icon.warning {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.autovex-dialog-icon.danger {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.autovex-dialog-header h3 {
+    margin: 2px 0 4px;
+
+    font-size: 17px;
+    font-weight: 700;
+
+    color: #172033;
+}
+
+.autovex-dialog-header p {
+    margin: 0;
+
+    font-size: 13px;
+    line-height: 1.5;
+
+    color: #64748b;
+}
+
+
+/* =========================================================
+   BODY
+   ========================================================= */
+
+.autovex-dialog-body {
+    padding: 10px 22px 20px;
+}
+
+.autovex-dialog-body label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    color: #334155;
+}
+
+.autovex-dialog-body textarea {
+    width: 100%;
+    min-height: 110px;
+
+    padding: 12px 13px;
+
+    resize: vertical;
+
+    border: 1px solid #dbe1e8;
+    border-radius: 10px;
+
+    background: #ffffff;
+
+    color: #172033;
+
+    font-family: inherit;
+    font-size: 13px;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.autovex-dialog-body textarea:focus {
+    border-color: #0c67f0;
+
+    box-shadow:
+        0 0 0 3px rgba(12, 103, 240, 0.10);
+}
+
+.autovex-dialog-body textarea.error {
+    border-color: #dc2626;
+
+    box-shadow:
+        0 0 0 3px rgba(220, 38, 38, 0.08);
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.autovex-dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+
+    padding: 16px 22px 20px;
+
+    border-top: 1px solid #eef1f5;
+}
+
+.autovex-dialog-btn {
+    min-height: 40px;
+
+    padding: 0 17px;
+
+    border-radius: 9px;
+
+    border: 1px solid transparent;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.1s ease;
+}
+
+.autovex-dialog-btn:active {
+    transform: translateY(1px);
+}
+
+.autovex-dialog-btn.cancel {
+    background: #ffffff;
+
+    border-color: #dbe1e8;
+
+    color: #475569;
+}
+
+.autovex-dialog-btn.cancel:hover {
+    background: #f8fafc;
+}
+
+.autovex-dialog-btn.approve {
+    background: #16a34a;
+    color: #ffffff;
+}
+
+.autovex-dialog-btn.approve:hover {
+    background: #15803d;
+}
+
+.autovex-dialog-btn.reject {
+    background: #dc2626;
+    color: #ffffff;
+}
+
+.autovex-dialog-btn.reject:hover {
+    background: #b91c1c;
+}
+
+.autovex-dialog-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .autovex-dialog-overlay {
+        padding: 14px;
+    }
+
+    .autovex-dialog-footer {
+        flex-direction: column-reverse;
+    }
+
+    .autovex-dialog-btn {
+        width: 100%;
+    }
+
+}

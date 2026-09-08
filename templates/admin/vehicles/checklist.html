@@ -1,0 +1,231 @@
+{% extends "base.html" %}
+
+{% block sidebar %}
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="page">
+
+    <div class="job-card">
+
+        <header class="card-header">
+
+            <div>
+                <h2>Vehicle Check-In Checklist</h2>
+                <p>{{ job.customer_name }} | {{ job.vehicle }}</p>
+            </div>
+
+            <div class="action-links">
+
+                <a href="{{ url_for('job_detail', job_id=job.id) }}">
+                    <i class='bx bx-arrow-back'></i>
+                    Back
+                </a>
+
+               <a href="{{ url_for('download_inspection', inspection_id=inspection.id) }}"
+                class="btn-green">
+                    Download PDF
+                </a>
+
+            </div>
+
+        </header>
+
+
+        <!-- OUTSIDE -->
+
+        <section class="detail-section">
+
+            <h3 class="section-title">
+                <i class='bx bx-car'></i>
+                Outside Vehicle
+            </h3>
+
+            <table class="inspection-table">
+
+                <tr>
+                    <th>Item</th>
+                    <th>Condition</th>
+                </tr>
+
+                <tr><td>Front Bumper</td><td>{{ inspection.front_bumper }}</td></tr>
+                <tr><td>Rear Bumper</td><td>{{ inspection.rear_bumper }}</td></tr>
+                <tr><td>Bonnet</td><td>{{ inspection.bonnet }}</td></tr>
+                <tr><td>Roof</td><td>{{ inspection.roof }}</td></tr>
+                <tr><td>Boot</td><td>{{ inspection.boot }}</td></tr>
+
+                <tr><td>Left Front Door</td><td>{{ inspection.left_front_door }}</td></tr>
+                <tr><td>Right Front Door</td><td>{{ inspection.right_front_door }}</td></tr>
+                <tr><td>Left Rear Door</td><td>{{ inspection.left_rear_door }}</td></tr>
+                <tr><td>Right Rear Door</td><td>{{ inspection.right_rear_door }}</td></tr>
+
+                <tr><td>Windscreen</td><td>{{ inspection.windscreen }}</td></tr>
+                <tr><td>Rear Screen</td><td>{{ inspection.rear_screen }}</td></tr>
+
+                <tr><td>Mirrors</td><td>{{ inspection.mirrors }}</td></tr>
+
+                <tr><td>Headlights</td><td>{{ inspection.headlights }}</td></tr>
+                <tr><td>Tail Lights</td><td>{{ inspection.tail_lights }}</td></tr>
+
+                <tr><td>Tyres</td><td>{{ inspection.tyres }}</td></tr>
+                <tr><td>Spare Wheel</td><td>{{ inspection.spare_wheel }}</td></tr>
+
+            </table>
+
+            {% if inspection.outside_comments %}
+            <div class="comments-box">
+                <strong>Comments</strong>
+                <p>{{ inspection.outside_comments }}</p>
+            </div>
+            {% endif %}
+
+        </section>
+
+        <hr class="divider">
+
+        <!-- ENGINE -->
+
+        <section class="detail-section">
+
+            <h3 class="section-title">
+                <i class='bx bx-cog'></i>
+                Engine Bay
+            </h3>
+
+            <table class="inspection-table">
+
+                <tr>
+                    <th>Item</th>
+                    <th>Condition</th>
+                </tr>
+
+                <tr><td>Engine Oil</td><td>{{ inspection.engine_oil }}</td></tr>
+                <tr><td>Coolant</td><td>{{ inspection.coolant }}</td></tr>
+                <tr><td>Brake Fluid</td><td>{{ inspection.brake_fluid }}</td></tr>
+                <tr><td>Power Steering Fluid</td><td>{{ inspection.steering_fluid }}</td></tr>
+
+                <tr><td>Battery</td><td>{{ inspection.battery }}</td></tr>
+                <tr><td>Belts</td><td>{{ inspection.belts }}</td></tr>
+
+                <tr><td>Oil Leaks</td><td>{{ inspection.oil_leaks }}</td></tr>
+                <tr><td>Coolant Leaks</td><td>{{ inspection.coolant_leaks }}</td></tr>
+
+            </table>
+
+            {% if inspection.engine_comments %}
+            <div class="comments-box">
+                <strong>Comments</strong>
+                <p>{{ inspection.engine_comments }}</p>
+            </div>
+            {% endif %}
+
+        </section>
+
+        <hr class="divider">
+
+        <!-- INTERIOR -->
+
+        <section class="detail-section">
+
+            <h3 class="section-title">
+                <i class='bx bx-chair'></i>
+                Interior
+            </h3>
+
+            <table class="inspection-table">
+
+                <tr>
+                    <th>Item</th>
+                    <th>Condition</th>
+                </tr>
+
+                <tr><td>Seats</td><td>{{ inspection.seats }}</td></tr>
+                <tr><td>Steering Wheel</td><td>{{ inspection.steering_wheel }}</td></tr>
+                <tr><td>Dashboard</td><td>{{ inspection.dashboard }}</td></tr>
+                <tr><td>Radio</td><td>{{ inspection.radio }}</td></tr>
+                <tr><td>Infotainment</td><td>{{ inspection.infotainment }}</td></tr>
+                <tr><td>Air Conditioning</td><td>{{ inspection.aircon }}</td></tr>
+                <tr><td>Horn</td><td>{{ inspection.horn }}</td></tr>
+                <tr><td>Interior Lights</td><td>{{ inspection.interior_lights }}</td></tr>
+
+                <tr>
+                    <td>Fuel Level</td>
+                    <td>{{ inspection.fuel_level }}</td>
+                </tr>
+
+            </table>
+
+            {% if inspection.interior_comments %}
+            <div class="comments-box">
+                <strong>Comments</strong>
+                <p>{{ inspection.interior_comments }}</p>
+            </div>
+            {% endif %}
+
+        </section>
+
+        <!-- ACCESSORIES -->
+
+        <section class="detail-section">
+
+            <h3 class="section-title">
+                <i class='bx bx-package'></i>
+                Accessories
+            </h3>
+
+            <div class="kv-grid double">
+
+                <div class="kv">
+                    <span class="label">Jack</span>
+                    <span class="value">
+                        {{ "Present" if inspection.jack else "Missing" }}
+                    </span>
+                </div>
+
+                <div class="kv">
+                    <span class="label">Wheel Spanner</span>
+                    <span class="value">
+                        {{ "Present" if inspection.wheel_spanner else "Missing" }}
+                    </span>
+                </div>
+
+                <div class="kv">
+                    <span class="label">Warning Triangle</span>
+                    <span class="value">
+                        {{ "Present" if inspection.warning_triangle else "Missing" }}
+                    </span>
+                </div>
+
+                <div class="kv">
+                    <span class="label">First Aid Kit</span>
+                    <span class="value">
+                        {{ "Present" if inspection.first_aid_kit else "Missing" }}
+                    </span>
+                </div>
+
+                <div class="kv">
+                    <span class="label">Fire Extinguisher</span>
+                    <span class="value">
+                        {{ "Present" if inspection.fire_extinguisher else "Missing" }}
+                    </span>
+                </div>
+
+                <div class="kv">
+                    <span class="label">Toolkit</span>
+                    <span class="value">
+                        {{ "Present" if inspection.toolkit else "Missing" }}
+                    </span>
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
+
+</div>
+
+{% endblock %}

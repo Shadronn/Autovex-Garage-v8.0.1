@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+<title>Sidebar Dropdown</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:"Poppins",sans-serif;
+}
+
+body{
+    background:#f4f6f8;
+}
+
+/* ================= SIDEBAR ================= */
+
+.sidebar{
+    width:240px;
+    height:100vh;
+    background:#fff;
+    border-right:1px solid #e5e7eb;
+    padding:20px;
+    overflow-y:auto;
+}
+
+.nav-title{
+    font-size:12px;
+    color:#999;
+    margin:20px 0 10px;
+}
+
+/* NORMAL LINKS */
+
+.sidebar a{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:12px;
+    border-radius:8px;
+    text-decoration:none;
+    color:#333;
+    margin-bottom:5px;
+    transition:0.2s ease;
+}
+
+.sidebar a i{
+    color:rgb(38,167,222);
+    font-size:18px;
+}
+
+.sidebar a:hover{
+    background:rgb(38,167,222);
+    color:#fff;
+}
+
+.sidebar a:hover i{
+    color:#fff;
+}
+
+/* ================= DROPDOWN ================= */
+
+.dropdown{
+    margin-bottom:5px;
+}
+
+.dropdown-btn{
+    width:100%;
+    background:none;
+    border:none;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:12px;
+    border-radius:8px;
+    cursor:pointer;
+    transition:0.2s ease;
+}
+
+.dropdown-btn:hover{
+    background:rgb(38,167,222);
+}
+
+.dropdown-btn:hover span,
+.dropdown-btn:hover i{
+    color:#fff;
+}
+
+.dropdown-left{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.dropdown-left i{
+    color:rgb(38,167,222);
+    font-size:18px;
+}
+
+.dropdown-left span{
+    color:#333;
+    font-size:14px;
+}
+
+/* DROPDOWN CONTENT */
+
+.dropdown-content{
+    display:none;
+    padding-left:20px;
+    margin-top:5px;
+}
+
+.dropdown-content a{
+    font-size:13px;
+    color:#666;
+}
+
+.dropdown-content a:hover{
+    background:rgba(38,167,222,0.12);
+    color:rgb(38,167,222);
+}
+/* SHOW DROPDOWN ON HOVER */
+
+.dropdown:hover .dropdown-content{
+    display:block;
+}
+
+/* ROTATE ARROW ON HOVER */
+
+.dropdown:hover .arrow{
+    transform:rotate(180deg);
+}
+/* KEEP MAIN MENU ACTIVE WHEN DROPDOWN IS OPEN */
+
+.dropdown:hover .dropdown-btn{
+    background: rgb(38, 167, 222);
+    color: #fff;
+}
+
+.dropdown:hover .dropdown-btn i,
+.dropdown:hover .dropdown-btn span,
+.dropdown:hover .arrow{
+    color: #fff;
+}
+
+/* ACTIVE */
+
+.dropdown.active .dropdown-content{
+    display:block;
+}
+
+.arrow{
+    color:#777;
+    transition:0.3s ease;
+}
+
+.dropdown.active .arrow{
+    transform:rotate(180deg);
+}
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+
+    <p class="nav-title">MAIN</p>
+
+    <a href="#">
+        <i class='bx bx-home'></i>
+        <span>Dashboard</span>
+    </a>
+
+    <p class="nav-title">OPERATIONS</p>
+
+    <!-- JOBS -->
+    <div class="dropdown">
+
+        <button class="dropdown-btn">
+
+            <div class="dropdown-left">
+                <i class='bx bx-briefcase'></i>
+                <span>Jobs</span>
+            </div>
+
+            <i class='bx bx-chevron-down arrow'></i>
+
+        </button>
+
+        <div class="dropdown-content">
+            <a href="#">All Jobs</a>
+            <a href="#">Create Job</a>
+            <a href="#">Completed Jobs</a>
+        </div>
+
+    </div>
+
+    <!-- CUSTOMERS -->
+    <div class="dropdown">
+
+        <button class="dropdown-btn">
+
+            <div class="dropdown-left">
+                <i class='bx bx-group'></i>
+                <span>Customers</span>
+            </div>
+
+            <i class='bx bx-chevron-down arrow'></i>
+
+        </button>
+
+        <div class="dropdown-content">
+            <a href="#">All Customers</a>
+            <a href="#">Add Customer</a>
+        </div>
+
+    </div>
+
+    <!-- VEHICLES -->
+    <div class="dropdown">
+
+        <button class="dropdown-btn">
+
+            <div class="dropdown-left">
+                <i class='bx bx-car'></i>
+                <span>Vehicles</span>
+            </div>
+
+            <i class='bx bx-chevron-down arrow'></i>
+
+        </button>
+
+        <div class="dropdown-content">
+            <a href="#">All Vehicles</a>
+            <a href="#">Add Vehicle</a>
+        </div>
+
+    </div>
+
+    <!-- INVOICES -->
+    <div class="dropdown">
+
+        <button class="dropdown-btn">
+
+            <div class="dropdown-left">
+                <i class='bx bx-receipt'></i>
+                <span>Invoices</span>
+            </div>
+
+            <i class='bx bx-chevron-down arrow'></i>
+
+        </button>
+
+        <div class="dropdown-content">
+            <a href="#">All Invoices</a>
+            <a href="#">Create Invoice</a>
+            <a href="#">Paid Invoices</a>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+const dropdowns = document.querySelectorAll(".dropdown");
+
+dropdowns.forEach(dropdown => {
+
+    const button = dropdown.querySelector(".dropdown-btn");
+
+    button.addEventListener("click", () => {
+
+        dropdowns.forEach(item => {
+
+            if(item !== dropdown){
+                item.classList.remove("active");
+            }
+
+        });
+
+        dropdown.classList.toggle("active");
+
+    });
+
+});
+
+</script>
+</body>
+</html>

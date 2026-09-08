@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+    {%block sidebar%}
+    <nav>
+            <p class="nav-title">MAIN</p>
+             {% if role in["admin"],"accounts" %}
+            <a href="/dashboard" class="active">
+            <i class='bx bx-home'></i> <span> Admin Dashboard</span>
+            </a>
+             {% endif %}
+           
+            <p class="nav-title">OPERATIONS</p>
+            {% if role in ["admin", "mechanic","accounts"] %}
+            <a href="/jobs">
+                <i class='bx bx-briefcase'> </i><span> Jobs</span>
+            </a>
+            <a href="/customers">
+                <i class='bx  bx-group'></i>  <span> Customers</span>
+            </a>
+            <a href="{{ url_for('users') }}">
+                <i class='bx bx-user'></i>
+                   <span>Users</span>
+            </a>
+
+            <a href="{{ url_for('vehicles') }}">
+                <i class='bx bx-car'></i>
+                  <span>Vehicles</span>
+            </a>
+            <a href="{{ url_for('invoices') }}"><i class='bx bx-receipt'></i>  <span>Invoices</span></a>
+
+            <p class="nav-title">INVENTORY</p>
+            <a><i class='bx bx-box'></i><span>Products</span></a>
+            <a><i class='bx bx-wrench'></i> <span>Services</span></a>
+            {%endif%}
+
+        </nav>
+    {%endblock%}
+{% block content %}
+<div class="page-header">
+    <h1>Reports</h1>
+    <p class="muted">System and financial reports</p>
+</div>
+
+<div class="reports-grid">
+
+    <!-- ACCOUNTS REPORTS -->
+    <div class="report-card">
+        <div class="card-header">
+            <i class='bx bx-wallet'></i>
+            <h3>Accounts Reports</h3>
+        </div>
+
+        <ul class="report-list">
+            <li>
+                <a href="{{ url_for('statements') }}">
+                    <i class='bx bx-receipt'></i>
+                    Invoices Report
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class='bx bx-money'></i>
+                    Payments Report
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class='bx bx-line-chart'></i>
+                    Revenue Summary
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- OPERATIONS REPORTS -->
+    <div class="report-card">
+        <div class="card-header">
+            <i class='bx bx-cog'></i>
+            <h3>Operations Reports</h3>
+        </div>
+
+        <ul class="report-list">
+            <li>
+                <a href="{{ url_for('jobs') }}">
+                    <i class='bx bx-briefcase'></i>
+                    Jobs Report
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('customers') }}">
+                    <i class='bx bx-group'></i>
+                    Customers Report
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('vehicles') }}">
+                    <i class='bx bx-car'></i>
+                    Vehicles Report
+                </a>
+            </li>
+        </ul>
+    </div>
+
+</div>
+
+<style>
+    .page-header {
+    margin-bottom: 20px;
+}
+
+.page-header h1 {
+    margin: 0;
+}
+
+.muted {
+    color: #777;
+    font-size: 14px;
+}
+
+.reports-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.report-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.card-header i {
+    font-size: 22px;
+    color: #4f46e5;
+}
+
+.report-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.report-list li {
+    margin-bottom: 10px;
+}
+
+.report-list a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 6px;
+    color: #333;
+    text-decoration: none;
+}
+
+.report-list a:hover {
+    background: #f4f6fa;
+}
+<style>
+
+@media print {
+
+    nav,
+    aside,
+    header,
+    footer,
+    .reports-btn,
+    .btn,
+    .table-head-right{
+        display:none !important;
+    }
+
+    body{
+        margin:0;
+        padding:20px;
+        background:white;
+    }
+
+    .table{
+        box-shadow:none;
+        border:none;
+    }
+
+    table{
+        width:100%;
+        border-collapse:collapse;
+    }
+
+    th,td{
+        border:1px solid #000;
+        padding:8px;
+    }
+
+}
+
+</style>
+
+</style>
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block sidebar %}
+{% endblock %}
+{% block content %}
+
+<div class="page">
+  <div class="job-card">
+
+    <header class="card-header">
+      <h2>Vehicle Details</h2>
+      <div class="action-links">
+        <a href="{{ url_for('edit_vehicle', vehicle_id=vehicle.id) }}">
+    <i class='bx bx-edit'></i> Edit
+</a>
+        <form
+          action="{{ url_for('delete_vehicle', vehicle_id=vehicle.id) }}"
+          method="POST"
+        >
+            <button type="submit" class="btn-alert">
+              <i class="bx bx-trash" /></i>Delete  |
+            </button>
+        </form>
+        <a href="/vehicles">← Return to vehicles</a>
+        <a href="/jobs/create">+ Add job</a>
+      </div>
+    </header>
+
+    <!-- CUSTOMER DETAILS -->
+    <section class="detail-section">
+      <h5 class="section-title">Vehicle Details</h5>
+
+      <div class="kv-grid double">
+        <div class="kv">
+          <span class="label">Vehicle</span>
+          <span class="value">{{ vehicle.registration_no }}</span>
+        </div>
+
+        <div class="kv">
+          <span class="label">Model</span>
+          <span class="value">{{ vehicle.model or "—" }}</span>
+        </div>
+
+        <div class="kv">
+          <span class="label">YOM</span>
+          <span class="value">{{ vehicle.yom or "—" }}</span>
+        </div>
+
+        <div class="kv">
+          <span class="label">Color</span>
+          <span class="value">{{ vehicle.color }}</span>
+        </div>
+        <div class="kv">
+          <span class="label">Customer</span>
+          <span class="value">{{ customer.customer_name or "—" }}</span>
+        </div>
+        <div class="kv">
+          <span class="label">Owner</span>
+          <span class="value">{{ vehicle.owner or "—" }}</span>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+          <h4>Vehicle Photos</h4>
+
+              {% if vehicle.photos %}
+              <div class="photo-grid">
+                  {% for photo in vehicle.photos %}
+                      <img src="{{ url_for('static', filename='uploads/vehicles/' + photo.filename) }}" class="vehicle-photo">
+                  {% endfor %}
+              </div>
+              {% else %}
+              <p>No photos uploaded.</p>
+              {% endif %}
+        
+</div>
+
+{%endblock%}

@@ -1,0 +1,353 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Receive Goods | Autovex
+{% endblock %}
+
+{% block page_title %}
+    Receive Goods
+{% endblock %}
+
+{% block content %}
+
+<div class="module-page procurement-page">
+
+    <div class="module-header">
+
+        <div>
+
+            <h1>
+                Receive Goods
+            </h1>
+
+            <p>
+                Record goods received against a purchase order.
+            </p>
+
+        </div>
+
+        <div class="module-header-actions">
+
+            <a
+                href="{{ url_for(
+                    'procurement',
+                    tab='procurement-received'
+                ) }}"
+                class="secondary-btn"
+            >
+                <i class="bx bx-arrow-back"></i>
+                Back to Goods Received
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div class="financial-list-panel">
+
+        <div class="financial-list-header">
+
+            <div>
+
+                <h3>
+                    Receipt Details
+                </h3>
+
+                <p>
+                    Select the LPO against which the goods were received.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <form
+            method="POST"
+            action="{{ url_for('new_goods_receipt') }}"
+            class="form-container"
+        >
+
+            <!-- LPO -->
+
+            <div class="form-group">
+
+                <label for="purchase_order_id">
+                    Purchase Order
+                    <span class="required">*</span>
+                </label>
+
+                <select
+                    id="purchase_order_id"
+                    name="purchase_order_id"
+                    required
+                    onchange="this.form.submit()"
+                >
+
+                    <option value="">
+                        Select LPO
+                    </option>
+
+                    {% for order in purchase_orders %}
+
+                        <option
+                            value="{{ order.id }}"
+                            {% if selected_order and selected_order.id == order.id %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ order.lpo_number }}
+                            —
+                            {{ order.supplier.supplier_name }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <!-- Date -->
+
+            <div class="form-group">
+
+                <label for="received_date">
+                    Received Date
+                    <span class="required">*</span>
+                </label>
+
+                <input
+                    type="date"
+                    id="received_date"
+                    name="received_date"
+                    value="{{ request.form.get(
+                        'received_date',
+                        ''
+                    ) }}"
+                    required
+                >
+
+            </div>
+
+
+            {% if selected_order %}
+
+            <!-- =================================================
+                 LPO INFORMATION
+                 ================================================= -->
+
+            <div class="form-info-box">
+
+                <i class="bx bx-cart"></i>
+
+                <div>
+
+                    <strong>
+                        {{ selected_order.lpo_number }}
+                    </strong>
+
+                    <p>
+                        Supplier:
+                        {{ selected_order.supplier.supplier_name }}
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 ITEMS
+                 ================================================= -->
+
+            <div class="financial-table-wrapper">
+
+                <table class="financial-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Item
+                            </th>
+
+                            <th>
+                                Ordered
+                            </th>
+
+                            <th>
+                                Previously Received
+                            </th>
+
+                            <th>
+                                Outstanding
+                            </th>
+
+                            <th>
+                                Receive Now
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for item in selected_order.items %}
+
+                        {% set previously_received = namespace(
+                            value=0
+                        ) %}
+
+                        {% for receipt in item.goods_receipt_items %}
+
+                            {% set previously_received.value =
+                                previously_received.value
+                                + receipt.quantity_received
+                            %}
+
+                        {% endfor %}
+
+                        {% set outstanding =
+                            item.quantity
+                            - previously_received.value
+                        %}
+
+                        <tr>
+
+                            <td>
+
+                                <strong>
+                                    {{ item.item_description }}
+                                </strong>
+
+                            </td>
+
+                            <td>
+                                {{ "{:,.2f}".format(
+                                    item.quantity
+                                ) }}
+                            </td>
+
+                            <td>
+                                {{ "{:,.2f}".format(
+                                    previously_received.value
+                                ) }}
+                            </td>
+
+                            <td>
+                                {{ "{:,.2f}".format(
+                                    outstanding
+                                ) }}
+                            </td>
+
+                            <td>
+
+                                {% if outstanding > 0 %}
+
+                                    <input
+                                        type="number"
+                                        name="quantity_{{ item.id }}"
+                                        min="0"
+                                        max="{{ outstanding }}"
+                                        step="0.01"
+                                        value="0"
+                                        style="width:120px;"
+                                    >
+
+                                {% else %}
+
+                                    <span class="payment-status paid">
+                                        Fully Received
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <!-- Notes -->
+
+            <div class="form-group">
+
+                <label for="notes">
+                    Notes
+                </label>
+
+                <textarea
+                    id="notes"
+                    name="notes"
+                    rows="4"
+                    placeholder="Optional receiving notes..."
+                >{{ request.form.get('notes', '') }}</textarea>
+
+            </div>
+
+
+            <!-- Actions -->
+
+            <div class="form-actions">
+
+                <a
+                    href="{{ url_for(
+                        'procurement',
+                        tab='procurement-received'
+                    ) }}"
+                    class="secondary-btn"
+                >
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="primary-btn"
+                >
+                    <i class="bx bx-package"></i>
+                    Record Goods Received
+                </button>
+
+            </div>
+
+            {% else %}
+
+            <div class="empty-table-state">
+
+                <i class="bx bx-cart"></i>
+
+                <div>
+
+                    <strong>
+                        Select an LPO
+                    </strong>
+
+                    <p>
+                        Select a purchase order above to see
+                        the items available for receiving.
+                    </p>
+
+                </div>
+
+            </div>
+
+            {% endif %}
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}
