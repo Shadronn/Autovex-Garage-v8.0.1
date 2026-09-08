@@ -1,10 +1,128 @@
-venv/
-.venv/
-env/
+# ============================================================
+# AUTOVEX SYSTEMS
+# ============================================================
+
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+env/
+.venv/
+myenv/
+ENV/
+env.bak/
+venv.bak/
+
+# Environment variables / secrets
 .env
+.env.*
+!.env.example
+
+# Flask
 instance/
+.flaskenv
+
+# Local databases
 *.db
 *.sqlite
+*.sqlite3
+
+# Database backups
+backups/
+database/backups/
+*.dump
+*.bak
+*_production_*.sql
+
+# Uploaded files
 uploads/
+upload/
+media/
+instance/uploads/
+static/uploads/
+
+# Vehicle/customer uploaded images
+vehicle_photos/
+vehicle_images/
+
+# Generated files
+generated/
+generated_pdfs/
+pdfs/
+*.pdf
+
+# Logs
+*.log
+logs/
+
+# Testing
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.cache/
+
+# Type checking / linting
+.mypy_cache/
+.pyre/
+.ruff_cache/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Python packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Temporary files
+*.tmp
+*.temp
+*.cache
+*.old
+
+# Docker local overrides
+docker-compose.override.yml
+
+# Local deployment files
+docker/.env
+
+# Certificates / private keys
+*.pem
+*.key
+*.crt
+
+# SSH keys
+id_rsa
+id_rsa.pub
+
+# Autovex local files
+.autovex/
+.autovex-local/
