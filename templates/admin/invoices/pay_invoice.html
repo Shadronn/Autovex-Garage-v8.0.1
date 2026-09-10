@@ -137,7 +137,23 @@
 
         </div>
 
+        <div class="form-group">
+            <label for="payment_date">
+                Payment Date
+            </label>
 
+            <input
+                type="date"
+                id="payment_date"
+                name="payment_date"
+                value="{{ request.form.get('payment_date', '') }}"
+                required
+            >
+
+            <small class="form-help">
+                Enter the payment date.
+            </small>
+        </div>
         <!-- PAYMENT REFERENCE -->
         <div class="form-group">
 

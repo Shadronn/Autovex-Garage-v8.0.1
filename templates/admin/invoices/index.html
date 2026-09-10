@@ -313,46 +313,42 @@
 
                         <!-- Status -->
 
-                        <td>
+                    <td>
 
-                            {% set total_paid = invoice.payments | map(attribute='amount') | sum %}
-                            {% set invoice_total = invoice.total_amount or 0 %}
-                            {% set balance = invoice_total - total_paid %}
+                        {% set total_paid = invoice.payments | map(attribute='amount') | sum %}
+                        {% set invoice_total = invoice.total_amount or 0 %}
+                        {% set balance = invoice_total - total_paid %}
 
-                            {% if total_paid >= invoice_total and invoice_total > 0 %}
+                        <!-- KES 10 settlement tolerance -->
+                        {% if balance > 0 and balance < 10 %}
+                            {% set balance = 0 %}
+                        {% endif %}
 
-                                <span class="table-status table-status-paid">
 
-                                    <span class="table-status-dot"></span>
+                        {% if total_paid <= 0 %}
 
-                                    Paid
+                            <span class="table-status table-status-unpaid">
+                                <span class="table-status-dot"></span>
+                                Unpaid
+                            </span>
 
-                                </span>
+                        {% elif balance == 0 %}
 
-                            {% elif total_paid > 0 and balance > 0 %}
+                            <span class="table-status table-status-paid">
+                                <span class="table-status-dot"></span>
+                                Fully Settled
+                            </span>
 
-                                <span class="table-status table-status-partial">
+                        {% else %}
 
-                                    <span class="table-status-dot"></span>
+                            <span class="table-status table-status-partial">
+                                <span class="table-status-dot"></span>
+                                Partially Paid
+                            </span>
 
-                                    Partially Paid
+                        {% endif %}
 
-                                </span>
-
-                            {% else %}
-
-                                <span class="table-status table-status-unpaid">
-
-                                    <span class="table-status-dot"></span>
-
-                                    Unpaid
-
-                                </span>
-
-                            {% endif %}
-
-                        </td>
-
+                    </td>
 
                         <!-- Date -->
 
@@ -373,35 +369,44 @@
 
                         <td>
 
-                            {% if invoice.status != "Paid" %}
+                            {% set total_paid = invoice.payments | map(attribute='amount') | sum %}
+                            {% set invoice_total = invoice.total_amount or 0 %}
+                            {% set balance = invoice_total - total_paid %}
 
-                            <a
-                                href="{{ url_for(
-                                    'pay_invoice',
-                                    id=invoice.id
-                                ) }}"
-                                class="table-action-primary"
-                            >
+                            {% if balance > 0 and balance < 10 %}
+                                {% set balance = 0 %}
+                            {% endif %}
 
-                                <i class='bx bx-check-circle'></i>
 
-                                Mark Paid
+                            {% if balance > 0 %}
 
-                            </a>
+                                <a
+                                    href="{{ url_for(
+                                        'pay_invoice',
+                                        id=invoice.id
+                                    ) }}"
+                                    class="table-action-primary"
+                                >
+
+                                    <i class='bx bx-check-circle'></i>
+
+                                    Mark Paid
+
+                                </a>
 
                             {% else %}
 
-                            <span
-                                class="table-status table-status-success"
-                            >
-
                                 <span
-                                    class="table-status-dot"
-                                ></span>
+                                    class="table-status table-status-success"
+                                >
 
-                                Paid
+                                    <span
+                                        class="table-status-dot"
+                                    ></span>
 
-                            </span>
+                                    Fully Settled
+
+                                </span>
 
                             {% endif %}
 

@@ -134,7 +134,7 @@
             </div>
 
             <div class="financial-value">
-                486
+                 {{ total_parts }}
             </div>
 
             <div class="financial-description">
@@ -161,7 +161,7 @@
             </div>
 
             <div class="financial-value">
-                KES 2,845,500
+                KES {{ "{:,.2f}".format(stock_value or 0) }}
             </div>
 
             <div class="financial-description">
@@ -188,7 +188,7 @@
             </div>
 
             <div class="financial-value">
-                18
+                {{ low_stock }}
             </div>
 
             <div class="financial-description">
@@ -215,7 +215,7 @@
             </div>
 
             <div class="financial-value">
-                6
+                {{ out_of_stock }}
             </div>
 
             <div class="financial-description">
@@ -295,69 +295,62 @@
 
                     <tbody>
 
-                        <tr>
+                        {% if stock_movements %}
 
-                            <td>
-                                Toyota Oil Filter
-                            </td>
+                            {% for movement in stock_movements %}
 
-                            <td>
-                                Stock In
-                            </td>
+                            <tr>
 
-                            <td>
-                                +25
-                            </td>
+                                <td>
+                                    {{ movement.created_at.strftime("%d %b %Y") if movement.created_at else "—" }}
+                                </td>
 
-                            <td>
-                                15 Aug 2026
-                            </td>
+                                <td>
+                                    {{ movement.inventory_item.part_name }}
+                                </td>
 
-                        </tr>
+                                <td>
+                                    {{ movement.reference or "—" }}
+                                </td>
 
+                                <td>
+                                    {{ movement.movement_type }}
+                                </td>
 
-                        <tr>
+                                <td>
 
-                            <td>
-                                Brake Pads
-                            </td>
+                                    {% if movement.quantity > 0 %}
+                                        +{{ "{:,.2f}".format(movement.quantity) }}
+                                    {% else %}
+                                        {{ "{:,.2f}".format(movement.quantity) }}
+                                    {% endif %}
 
-                            <td>
-                                Stock Out
-                            </td>
+                                </td>
 
-                            <td>
-                                -4
-                            </td>
+                                <td>
+                                    {{ "{:,.2f}".format(movement.balance_after or 0) }}
+                                </td>
 
-                            <td>
-                                15 Aug 2026
-                            </td>
+                            </tr>
 
-                        </tr>
+                            {% endfor %}
 
+                        {% else %}
 
-                        <tr>
+                            <tr>
 
-                            <td>
-                                Engine Oil 5W-30
-                            </td>
+                                <td
+                                    colspan="6"
+                                    style="text-align: center;"
+                                >
+                                    No stock movements recorded yet.
+                                </td>
 
-                            <td>
-                                Stock In
-                            </td>
+                            </tr>
 
-                            <td>
-                                +40
-                            </td>
+                        {% endif %}
 
-                            <td>
-                                14 Aug 2026
-                            </td>
-
-                        </tr>
-
-                    </tbody>
+                        </tbody>
 
                 </table>
 
@@ -398,7 +391,7 @@
                     </span>
 
                     <strong>
-                        462 Parts
+                        {{ in_stock }} Parts
                     </strong>
 
                 </div>
@@ -411,7 +404,7 @@
                     </span>
 
                     <strong>
-                        18 Parts
+                        {{ low_stock }} Parts
                     </strong>
 
                 </div>
@@ -424,7 +417,7 @@
                     </span>
 
                     <strong>
-                        6 Parts
+                         {{ out_of_stock }} Parts
                     </strong>
 
                 </div>
@@ -437,7 +430,7 @@
                     </span>
 
                     <strong>
-                        KES 2.85M
+                        KES {{ "{:,.2f}".format(stock_value or 0) }}
                     </strong>
 
                 </div>
@@ -531,147 +524,81 @@
 
                 <tbody>
 
-                    <tr>
+                    {% if inventory_items %}
 
-                        <td>
-                            OIL-001
-                        </td>
+                        {% for item in inventory_items %}
 
-                        <td>
-                            Toyota Oil Filter
-                        </td>
+                        <tr>
 
-                        <td>
-                            Filters
-                        </td>
+                            <td>
+                                {{ item.part_number }}
+                            </td>
 
-                        <td>
-                            25
-                        </td>
+                            <td>
+                                {{ item.part_name }}
+                            </td>
 
-                        <td>
-                            10
-                        </td>
+                            <td>
+                                {{ item.category or "—" }}
+                            </td>
 
-                        <td>
-                            KES 850
-                        </td>
+                            <td>
+                                {{ "{:,.2f}".format(item.quantity or 0) }}
+                                {{ item.unit }}
+                            </td>
 
-                        <td>
-                            <span class="payment-status paid">
-                                In Stock
-                            </span>
-                        </td>
+                            <td>
+                                {{ "{:,.2f}".format(item.reorder_level or 0) }}
+                            </td>
 
-                    </tr>
+                            <td>
+                                KES {{ "{:,.2f}".format(item.unit_cost or 0) }}
+                            </td>
 
+                            <td>
 
-                    <tr>
+                                {% if item.quantity <= 0 %}
 
-                        <td>
-                            BRK-014
-                        </td>
+                                    <span class="payment-status unpaid">
+                                        Out of Stock
+                                    </span>
 
-                        <td>
-                            Front Brake Pads
-                        </td>
+                                {% elif item.quantity <= item.reorder_level %}
 
-                        <td>
-                            Brakes
-                        </td>
+                                    <span class="payment-status partial">
+                                        Low Stock
+                                    </span>
 
-                        <td>
-                            4
-                        </td>
+                                {% else %}
 
-                        <td>
-                            8
-                        </td>
+                                    <span class="payment-status paid">
+                                        In Stock
+                                    </span>
 
-                        <td>
-                            KES 6,500
-                        </td>
+                                {% endif %}
 
-                        <td>
-                            <span class="payment-status partial">
-                                Low Stock
-                            </span>
-                        </td>
+                            </td>
 
-                    </tr>
+                        </tr>
 
+                        {% endfor %}
 
-                    <tr>
+                    {% else %}
 
-                        <td>
-                            OIL-030
-                        </td>
+                        <tr>
 
-                        <td>
-                            Engine Oil 5W-30
-                        </td>
+                            <td
+                                colspan="7"
+                                style="text-align: center;"
+                            >
+                                No inventory items have been added yet.
+                            </td>
 
-                        <td>
-                            Lubricants
-                        </td>
+                        </tr>
 
-                        <td>
-                            40
-                        </td>
+                    {% endif %}
 
-                        <td>
-                            15
-                        </td>
-
-                        <td>
-                            KES 2,400
-                        </td>
-
-                        <td>
-                            <span class="payment-status paid">
-                                In Stock
-                            </span>
-                        </td>
-
-                    </tr>
-
-
-                    <tr>
-
-                        <td>
-                            BAT-006
-                        </td>
-
-                        <td>
-                            70AH Battery
-                        </td>
-
-                        <td>
-                            Electrical
-                        </td>
-
-                        <td>
-                            0
-                        </td>
-
-                        <td>
-                            5
-                        </td>
-
-                        <td>
-                            KES 12,500
-                        </td>
-
-                        <td>
-                            <span class="payment-status unpaid">
-                                Out of Stock
-                            </span>
-                        </td>
-
-                    </tr>
-
-                </tbody>
-
+                    </tbody>
             </table>
 
         </div>
@@ -757,93 +684,62 @@
 
                 <tbody>
 
-                    <tr>
+                        {% if stock_movements %}
 
-                        <td>
-                            15 Aug 2026
-                        </td>
+                            {% for movement in stock_movements %}
 
-                        <td>
-                            Toyota Oil Filter
-                        </td>
+                            <tr>
 
-                        <td>
-                            GRN-00187
-                        </td>
+                                <td>
+                                    {{ movement.created_at.strftime("%d %b %Y") if movement.created_at else "—" }}
+                                </td>
 
-                        <td>
-                            Stock In
-                        </td>
+                                <td>
+                                    {{ movement.inventory_item.part_name }}
+                                </td>
 
-                        <td>
-                            +25
-                        </td>
+                                <td>
+                                    {{ movement.reference or "—" }}
+                                </td>
 
-                        <td>
-                            25
-                        </td>
+                                <td>
+                                    {{ movement.movement_type }}
+                                </td>
 
-                    </tr>
+                                <td>
 
+                                    {% if movement.quantity > 0 %}
+                                        +{{ "{:,.2f}".format(movement.quantity) }}
+                                    {% else %}
+                                        {{ "{:,.2f}".format(movement.quantity) }}
+                                    {% endif %}
 
-                    <tr>
+                                </td>
 
-                        <td>
-                            15 Aug 2026
-                        </td>
+                                <td>
+                                    {{ "{:,.2f}".format(movement.balance_after or 0) }}
+                                </td>
 
-                        <td>
-                            Front Brake Pads
-                        </td>
+                            </tr>
 
-                        <td>
-                            JOB-00231
-                        </td>
+                            {% endfor %}
 
-                        <td>
-                            Stock Out
-                        </td>
+                        {% else %}
 
-                        <td>
-                            -4
-                        </td>
+                            <tr>
 
-                        <td>
-                            4
-                        </td>
+                                <td
+                                    colspan="6"
+                                    style="text-align: center;"
+                                >
+                                    No stock movements recorded yet.
+                                </td>
 
-                    </tr>
+                            </tr>
 
+                        {% endif %}
 
-                    <tr>
-
-                        <td>
-                            14 Aug 2026
-                        </td>
-
-                        <td>
-                            Engine Oil 5W-30
-                        </td>
-
-                        <td>
-                            GRN-00186
-                        </td>
-
-                        <td>
-                            Stock In
-                        </td>
-
-                        <td>
-                            +40
-                        </td>
-
-                        <td>
-                            40
-                        </td>
-
-                    </tr>
-
-                </tbody>
+                        </tbody>
 
             </table>
 
@@ -934,112 +830,79 @@
 
                 <tbody>
 
-                    <tr>
+                    {% if low_stock_items %}
 
-                        <td>
-                            BRK-014
-                        </td>
+                        {% for item in low_stock_items %}
 
-                        <td>
-                            Front Brake Pads
-                        </td>
+                        <tr>
 
-                        <td>
-                            Brakes
-                        </td>
+                            <td>
+                                {{ item.part_number }}
+                            </td>
 
-                        <td>
-                            4
-                        </td>
+                            <td>
+                                {{ item.part_name }}
+                            </td>
 
-                        <td>
-                            8
-                        </td>
+                            <td>
+                                {{ item.category or "—" }}
+                            </td>
 
-                        <td>
-                            20
-                        </td>
+                            <td>
+                                {{ "{:,.2f}".format(item.quantity or 0) }}
+                            </td>
 
-                        <td>
-                            <span class="payment-status partial">
-                                Low Stock
-                            </span>
-                        </td>
+                            <td>
+                                {{ "{:,.2f}".format(item.reorder_level or 0) }}
+                            </td>
 
-                    </tr>
+                            <td>
+                                {{ "{:,.2f}".format(
+                                    max(
+                                        (item.reorder_level or 0) - (item.quantity or 0),
+                                        0
+                                    )
+                                ) }}
+                            </td>
 
+                            <td>
 
-                    <tr>
+                                {% if item.quantity <= 0 %}
 
-                        <td>
-                            BAT-006
-                        </td>
+                                    <span class="payment-status unpaid">
+                                        Out of Stock
+                                    </span>
 
-                        <td>
-                            70AH Battery
-                        </td>
+                                {% else %}
 
-                        <td>
-                            Electrical
-                        </td>
+                                    <span class="payment-status partial">
+                                        Low Stock
+                                    </span>
 
-                        <td>
-                            0
-                        </td>
+                                {% endif %}
 
-                        <td>
-                            5
-                        </td>
+                            </td>
 
-                        <td>
-                            10
-                        </td>
+                        </tr>
 
-                        <td>
-                            <span class="payment-status unpaid">
-                                Out of Stock
-                            </span>
-                        </td>
+                        {% endfor %}
 
-                    </tr>
+                    {% else %}
 
+                        <tr>
 
-                    <tr>
+                            <td
+                                colspan="7"
+                                style="text-align: center;"
+                            >
+                                No low-stock items at the moment.
+                            </td>
 
-                        <td>
-                            FIL-022
-                        </td>
+                        </tr>
 
-                        <td>
-                            Air Filter
-                        </td>
+                    {% endif %}
 
-                        <td>
-                            Filters
-                        </td>
-
-                        <td>
-                            6
-                        </td>
-
-                        <td>
-                            10
-                        </td>
-
-                        <td>
-                            15
-                        </td>
-
-                        <td>
-                            <span class="payment-status partial">
-                                Low Stock
-                            </span>
-                        </td>
-
-                    </tr>
-
-                </tbody>
-
+                    </tbody>
             </table>
 
         </div>

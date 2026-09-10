@@ -1110,6 +1110,12 @@ class PurchaseOrderItem(db.Model):
         nullable=False
     )
 
+    inventory_item_id = db.Column(
+        db.Integer,
+        db.ForeignKey("inventory_item.id"),
+        nullable=True
+    )
+
     item_description = db.Column(
         db.String(255),
         nullable=False
@@ -1144,6 +1150,10 @@ class PurchaseOrderItem(db.Model):
     goods_receipt_items = db.relationship(
         "GoodsReceiptItem",
         back_populates="purchase_order_item"
+    )
+    inventory_item = db.relationship(
+        "InventoryItem",
+        backref="purchase_order_items"
     )
 
 class GoodsReceipt(db.Model):
@@ -1251,6 +1261,7 @@ class GoodsReceiptItem(db.Model):
         back_populates="goods_receipt_items"
     )
 
+
 class ExpenseApproval(db.Model):
     __tablename__ = "expense_approval"
 
@@ -1294,6 +1305,168 @@ class ExpenseApproval(db.Model):
         "User",
         foreign_keys=[performed_by]
     )
+
+
+# =========================================================
+# INVENTORY MODELS
+# =========================================================
+
+class InventoryItem(db.Model):
+    __tablename__ = "inventory_item"
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    part_number = db.Column(
+        db.String(100),
+        unique=True,
+        nullable=False
+    )
+
+    part_name = db.Column(
+        db.String(200),
+        nullable=False
+    )
+
+    category = db.Column(
+        db.String(100)
+    )
+
+    unit = db.Column(
+        db.String(50),
+        nullable=False,
+        default="Piece"
+    )
+
+    quantity = db.Column(
+        db.Float,
+        nullable=False,
+        default=0.0
+    )
+
+    reorder_level = db.Column(
+        db.Float,
+        nullable=False,
+        default=0.0
+    )
+
+    unit_cost = db.Column(
+        db.Float,
+        nullable=False,
+        default=0.0
+    )
+
+    selling_price = db.Column(
+        db.Float,
+        nullable=False,
+        default=0.0
+    )
+
+    location = db.Column(
+        db.String(100)
+    )
+
+    supplier_id = db.Column(
+        db.Integer,
+        db.ForeignKey("supplier.id"),
+        nullable=True
+    )
+
+    status = db.Column(
+        db.String(30),
+        nullable=False,
+        default="Active"
+    )
+
+    notes = db.Column(
+        db.Text
+    )
+
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow,
+        nullable=False
+    )
+
+    updated_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow,
+        onupdate=datetime.utcnow
+    )
+
+    supplier = db.relationship(
+        "Supplier",
+        backref="inventory_items"
+    )
+
+    movements = db.relationship(
+    "StockMovement",
+    back_populates="inventory_item",
+    cascade="all, delete-orphan"
+)
+
+class StockMovement(db.Model):
+    __tablename__ = "stock_movement"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    inventory_item_id = db.Column(
+        db.Integer,
+        db.ForeignKey("inventory_item.id"),
+        nullable=False
+    )
+
+    movement_type = db.Column(
+        db.String(30),
+        nullable=False
+    )
+
+    quantity = db.Column(
+        db.Float,
+        nullable=False
+    )
+
+    balance_after = db.Column(
+        db.Float,
+        nullable=False
+    )
+
+    unit_cost = db.Column(
+        db.Float,
+        nullable=False,
+        default=0.0
+    )
+
+    reference = db.Column(
+        db.String(100)
+    )
+
+    notes = db.Column(db.Text)
+
+    created_by = db.Column(
+        db.Integer,
+        db.ForeignKey("user.id"),
+        nullable=True
+    )
+
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow,
+        nullable=False
+    )
+
+    inventory_item = db.relationship(
+        "InventoryItem",
+        back_populates="movements"
+    )
+
+    user = db.relationship(
+        "User",
+        foreign_keys=[created_by]
+    )
+
 
 class FinancialReport(db.Model):
     __tablename__ = "financial_report"
@@ -1479,10 +1652,16 @@ def generate_expense_number():
 
     return f"EXP-{date_part}-{next_id:05d}"
 
+SETTLEMENT_THRESHOLD = 5.00
+
+
 def calculate_invoice_payment_status(invoice):
     """
     Recalculate total paid, balance and invoice status
     from all Payment records.
+
+    Any outstanding balance below KES 10 is treated
+    as fully settled.
     """
 
     total_paid = sum(
@@ -1494,6 +1673,10 @@ def calculate_invoice_payment_status(invoice):
 
     balance = max(total_amount - total_paid, 0)
 
+    # Treat balances below KES 10 as fully settled
+    if 0 < balance < SETTLEMENT_THRESHOLD:
+        balance = 0
+
     invoice.amount = total_paid
     invoice.Balance = balance
 
@@ -1501,12 +1684,8 @@ def calculate_invoice_payment_status(invoice):
         invoice.status = "Unpaid"
         invoice.paid_at = None
 
-    elif total_paid < total_amount:
-        invoice.status = "Partially Paid"
-        invoice.paid_at = None
-
-    else:
-        invoice.status = "Paid"
+    elif balance == 0:
+        invoice.status = "Fully Settled"
 
         paid_dates = [
             payment.paid_at
@@ -1514,7 +1693,15 @@ def calculate_invoice_payment_status(invoice):
             if payment.paid_at
         ]
 
-        invoice.paid_at = max(paid_dates) if paid_dates else datetime.utcnow()
+        invoice.paid_at = (
+            max(paid_dates)
+            if paid_dates
+            else datetime.utcnow()
+        )
+
+    else:
+        invoice.status = "Partially Paid"
+        invoice.paid_at = None
 
     return invoice
 
@@ -5230,7 +5417,9 @@ def new_purchase_order():
 
         supplier_id = request.form.get("supplier_id")
 
-        order_date = request.form.get("order_date")
+        order_date = request.form.get(
+            "order_date"
+        )
 
         expected_date = request.form.get(
             "expected_date"
@@ -5245,7 +5434,6 @@ def new_purchase_order():
             "notes",
             ""
         ).strip()
-
 
         # =================================================
         # SUPPLIER VALIDATION
@@ -5265,10 +5453,11 @@ def new_purchase_order():
                 role=session.get("role")
             )
 
-
         try:
 
-            supplier_id = int(supplier_id)
+            supplier_id = int(
+                supplier_id
+            )
 
         except (TypeError, ValueError):
 
@@ -5284,11 +5473,9 @@ def new_purchase_order():
                 role=session.get("role")
             )
 
-
         supplier = Supplier.query.get(
             supplier_id
         )
-
 
         if not supplier:
 
@@ -5304,15 +5491,12 @@ def new_purchase_order():
                 role=session.get("role")
             )
 
-
         # =================================================
         # DATE PROCESSING
         # =================================================
 
         order_date_value = datetime.utcnow()
-
         expected_date_value = None
-
 
         if order_date:
 
@@ -5337,7 +5521,6 @@ def new_purchase_order():
                     role=session.get("role")
                 )
 
-
         if expected_date:
 
             try:
@@ -5361,9 +5544,8 @@ def new_purchase_order():
                     role=session.get("role")
                 )
 
-
         # =================================================
-        # GET ITEM ARRAYS
+        # GET LPO ITEMS
         # =================================================
 
         item_descriptions = request.form.getlist(
@@ -5377,7 +5559,6 @@ def new_purchase_order():
         unit_prices = request.form.getlist(
             "unit_price[]"
         )
-
 
         # =================================================
         # VALIDATE ITEMS
@@ -5397,7 +5578,6 @@ def new_purchase_order():
                 role=session.get("role")
             )
 
-
         if not (
             len(item_descriptions)
             == len(quantities)
@@ -5405,7 +5585,7 @@ def new_purchase_order():
         ):
 
             flash(
-                "There was a problem with the purchase items. Please try again.",
+                "Invalid purchase order items.",
                 "danger"
             )
 
@@ -5416,7 +5596,6 @@ def new_purchase_order():
                 role=session.get("role")
             )
 
-
         # =================================================
         # PREPARE ITEMS
         # =================================================
@@ -5425,37 +5604,20 @@ def new_purchase_order():
 
         grand_total = 0.0
 
-
-        for index in range(
-            len(item_descriptions)
+        for item_description, quantity_raw, unit_price_raw in zip(
+            item_descriptions,
+            quantities,
+            unit_prices
         ):
 
             item_description = (
-                item_descriptions[index]
-                or ""
+                item_description or ""
             ).strip()
-
-
-            quantity_raw = (
-                quantities[index]
-                or ""
-            ).strip()
-
-
-            unit_price_raw = (
-                unit_prices[index]
-                or ""
-            ).strip()
-
-
-            # ---------------------------------------------
-            # DESCRIPTION
-            # ---------------------------------------------
 
             if not item_description:
 
                 flash(
-                    f"Item {index + 1}: description is required.",
+                    "Item description cannot be empty.",
                     "danger"
                 )
 
@@ -5465,11 +5627,6 @@ def new_purchase_order():
                     user=session.get("user"),
                     role=session.get("role")
                 )
-
-
-            # ---------------------------------------------
-            # QUANTITY
-            # ---------------------------------------------
 
             try:
 
@@ -5480,7 +5637,7 @@ def new_purchase_order():
             except (TypeError, ValueError):
 
                 flash(
-                    f"Item {index + 1}: please enter a valid quantity.",
+                    "Please enter a valid quantity.",
                     "danger"
                 )
 
@@ -5490,12 +5647,11 @@ def new_purchase_order():
                     user=session.get("user"),
                     role=session.get("role")
                 )
-
 
             if quantity <= 0:
 
                 flash(
-                    f"Item {index + 1}: quantity must be greater than zero.",
+                    "Quantity must be greater than zero.",
                     "danger"
                 )
 
@@ -5505,11 +5661,6 @@ def new_purchase_order():
                     user=session.get("user"),
                     role=session.get("role")
                 )
-
-
-            # ---------------------------------------------
-            # UNIT PRICE
-            # ---------------------------------------------
 
             try:
 
@@ -5520,7 +5671,7 @@ def new_purchase_order():
             except (TypeError, ValueError):
 
                 flash(
-                    f"Item {index + 1}: please enter a valid unit price.",
+                    "Please enter a valid unit price.",
                     "danger"
                 )
 
@@ -5530,12 +5681,11 @@ def new_purchase_order():
                     user=session.get("user"),
                     role=session.get("role")
                 )
-
 
             if unit_price < 0:
 
                 flash(
-                    f"Item {index + 1}: unit price cannot be negative.",
+                    "Unit price cannot be negative.",
                     "danger"
                 )
 
@@ -5545,32 +5695,19 @@ def new_purchase_order():
                     user=session.get("user"),
                     role=session.get("role")
                 )
-
-
-            # ---------------------------------------------
-            # CALCULATE ITEM TOTAL
-            # ---------------------------------------------
 
             item_total = (
                 quantity * unit_price
             )
 
-
             grand_total += item_total
 
-
             prepared_items.append({
-
                 "description": item_description,
-
                 "quantity": quantity,
-
                 "unit_price": unit_price,
-
                 "total_price": item_total
-
             })
-
 
         # =================================================
         # GENERATE LPO NUMBER
@@ -5580,18 +5717,15 @@ def new_purchase_order():
             "%Y%m%d"
         )
 
-
         existing_count = PurchaseOrder.query.filter(
             PurchaseOrder.lpo_number.like(
                 f"LPO-{today}-%"
             )
         ).count()
 
-
         lpo_number = (
             f"LPO-{today}-{existing_count + 1:04d}"
         )
-
 
         # =================================================
         # CREATE PURCHASE ORDER
@@ -5614,14 +5748,11 @@ def new_purchase_order():
             status="Draft",
 
             notes=notes or None
-
         )
-
 
         db.session.add(
             purchase_order
         )
-
 
         # =================================================
         # CREATE PURCHASE ORDER ITEMS
@@ -5640,28 +5771,32 @@ def new_purchase_order():
                 unit_price=item["unit_price"],
 
                 total_price=item["total_price"]
-
             )
 
             db.session.add(
                 purchase_order_item
             )
 
-
         # =================================================
-        # SAVE EVERYTHING
+        # SAVE
         # =================================================
 
         try:
 
             db.session.commit()
 
-        except Exception:
+        except Exception as e:
 
             db.session.rollback()
 
+            print(
+                "LPO CREATION ERROR:",
+                repr(e)
+            )
+
             flash(
-                "Unable to create the LPO. Please try again.",
+                "Unable to create the LPO. "
+                "Please check the application console.",
                 "danger"
             )
 
@@ -5672,7 +5807,6 @@ def new_purchase_order():
                 role=session.get("role")
             )
 
-
         # =================================================
         # SUCCESS
         # =================================================
@@ -5682,7 +5816,6 @@ def new_purchase_order():
             "success"
         )
 
-
         return redirect(
             url_for(
                 "purchase_order_detail",
@@ -5690,10 +5823,9 @@ def new_purchase_order():
             )
         )
 
-
-    # =====================================================
+    # =================================================
     # GET
-    # =====================================================
+    # =================================================
 
     return render_template(
         "procurement/purchase_order_form.html",
@@ -6766,11 +6898,97 @@ def supplier_bill_payment(bill_id):
 @app.route("/inventory")
 @require_roles("admin", "accounts", "mechanic", "superadmin")
 def inventory():
-    return render_template(
-    "inventory.html",
-    user=session.get("user"),
-    role=session.get("role")
+
+    # ---------------------------------------------------------
+    # INVENTORY ITEMS
+    # ---------------------------------------------------------
+
+    inventory_items = (
+        InventoryItem.query
+        .order_by(InventoryItem.part_name.asc())
+        .all()
     )
+
+    # ---------------------------------------------------------
+    # INVENTORY SUMMARY
+    # ---------------------------------------------------------
+
+    total_parts = len(inventory_items)
+
+    stock_value = sum(
+        (item.quantity or 0) * (item.unit_cost or 0)
+        for item in inventory_items
+    )
+
+    low_stock = sum(
+        1
+        for item in inventory_items
+        if (item.quantity or 0) > 0
+        and (item.quantity or 0) <= (item.reorder_level or 0)
+    )
+
+    out_of_stock = sum(
+        1
+        for item in inventory_items
+        if (item.quantity or 0) <= 0
+    )
+
+    in_stock = sum(
+        1
+        for item in inventory_items
+        if (item.quantity or 0) > (item.reorder_level or 0)
+    )
+
+    # ---------------------------------------------------------
+    # RECENT STOCK MOVEMENTS
+    # ---------------------------------------------------------
+
+    recent_movements = (
+        StockMovement.query
+        .order_by(StockMovement.created_at.desc())
+        .limit(10)
+        .all()
+    )
+
+    # ---------------------------------------------------------
+    # ALL STOCK MOVEMENTS
+    # ---------------------------------------------------------
+
+    stock_movements = (
+        StockMovement.query
+        .order_by(StockMovement.created_at.desc())
+        .all()
+    )
+
+    # ---------------------------------------------------------
+    # LOW STOCK ITEMS
+    # ---------------------------------------------------------
+
+    low_stock_items = [
+        item
+        for item in inventory_items
+        if (item.quantity or 0) <= (item.reorder_level or 0)
+    ]
+
+    return render_template(
+        "inventory.html",
+
+        user=session.get("user"),
+        role=session.get("role"),
+
+        inventory_items=inventory_items,
+
+        total_parts=total_parts,
+        stock_value=stock_value,
+        low_stock=low_stock,
+        out_of_stock=out_of_stock,
+        in_stock=in_stock,
+
+        recent_movements=recent_movements,
+        stock_movements=stock_movements,
+        low_stock_items=low_stock_items
+    )
+
 
 @app.route("/procurement/supplier-bills")
 @require_roles("admin", "accounts", "superadmin")
@@ -8677,22 +8895,57 @@ def invoices():
     customer = request.args.get("customer")
     status = request.args.get("status")
 
-    query = db.session.query(Invoice, Jobs).join(Jobs, Invoice.job_id == Jobs.id)
+    # =========================================================
+    # RECALCULATE ALL INVOICE STATUSES
+    # =========================================================
 
-    # 🔍 SEARCH
+    all_invoices = Invoice.query.all()
+
+    changed = False
+
+    for invoice in all_invoices:
+        old_status = invoice.status
+
+        calculate_invoice_payment_status(invoice)
+
+        if invoice.status != old_status:
+            changed = True
+
+    if changed:
+        db.session.commit()
+
+    # =========================================================
+    # BUILD QUERY
+    # =========================================================
+
+    query = db.session.query(
+        Invoice,
+        Jobs
+    ).join(
+        Jobs,
+        Invoice.job_id == Jobs.id
+    )
+
+    # SEARCH
     if search:
         query = query.filter(
             (Jobs.vehicle.ilike(f"%{search}%")) |
             (Jobs.customer_name.ilike(f"%{search}%"))
         )
 
-    # 🎯 FILTERS
+    # CUSTOMER
     if customer:
-        query = query.filter(Jobs.customer_name == customer)
+        query = query.filter(
+            Jobs.customer_name == customer
+        )
 
+    # STATUS
     if status:
-        query = query.filter(Invoice.status == status)
+        query = query.filter(
+            Invoice.status == status
+        )
 
+    # PAGINATION
     invoices_paginated = query.order_by(
         Invoice.issue_date.desc()
     ).paginate(
@@ -8701,16 +8954,23 @@ def invoices():
         error_out=False
     )
 
-    customers = db.session.query(Jobs.customer_name).distinct().all()
-    customers = [c[0] for c in customers]
+    customers = db.session.query(
+        Jobs.customer_name
+    ).distinct().all()
+
+    customers = [
+        c[0]
+        for c in customers
+    ]
 
     return render_template(
         "admin/invoices/index.html",
-        invoices=invoices_paginated,   # ✅ pass full pagination object
+        invoices=invoices_paginated,
         customers=customers,
         role=session.get("role"),
         user=session.get("user")
     )
+
 @app.route("/invoices/export/csv")
 def export_invoices_csv():
     return "CSV export"
@@ -8906,17 +9166,38 @@ def pay_invoice(id):
 
             filename = unique_filename
 
+        payment_date = request.form.get("payment_date")
+
+        if not payment_date:
+            flash(
+                "Please enter the payment date.",
+                "danger"
+            )
+            return redirect(url_for("pay_invoice", id=id))
+
+        try:
+            payment_datetime = datetime.strptime(
+                payment_date,
+                "%Y-%m-%d"
+            )
+        except ValueError:
+            flash(
+                "Invalid payment date.",
+                "danger"
+            )
+            return redirect(url_for("pay_invoice", id=id))
         # ---------------------------------
         # CREATE PAYMENT
         # ---------------------------------
 
+        
         payment = Payment(
             invoice_id=invoice.id,
             amount=payment_amount,
             payment_method=method,
             payment_reference=reference,
             payment_proof=filename,
-            paid_at=datetime.utcnow(),
+            paid_at=payment_datetime,
             receipt_number=generate_receipt_number(invoice.id),
             notes=notes
         )
