@@ -29,9 +29,9 @@ def generate_satisfaction_note(job):
 
     styles = getSampleStyleSheet()
 
-    SKY = colors.HexColor("#00BFFF")
-    BORDER = colors.HexColor("#555555")
-    LIGHT_BLUE = colors.HexColor("#b2ebff")
+    SKY = colors.HexColor("#F4320B")
+    BORDER = colors.HexColor("#DCDBDA")
+    LIGHT_BLUE = colors.HexColor("#CACACACB")
     LIGHT_GREY = colors.HexColor("#f5f5f5")
 
     company_style = ParagraphStyle(
@@ -73,14 +73,14 @@ def generate_satisfaction_note(job):
 
     elements.append(
         Paragraph(
-            "AUTOVEX",
+            "Riverine Auto Centre Limited",
             company_style,
         )
     )
 
     elements.append(
         Paragraph(
-            "PROFESSIONAL AUTO REPAIR & VEHICLE SERVICES",
+            "Professional Automotive Services",
             ParagraphStyle(
                 "Tag",
                 parent=normal,
@@ -236,7 +236,7 @@ def generate_satisfaction_note(job):
 
     elements.append(
         Paragraph(
-            "Thank you for choosing AUTOVEX.",
+            "Thank you for choosing Riverine Auto Centre Limited.",
             ParagraphStyle(
                 "Footer",
                 parent=normal,
