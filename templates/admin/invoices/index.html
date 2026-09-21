@@ -133,6 +133,14 @@
                     >
                         Unpaid
                     </option>
+                    <option
+                        value="Partially Paid"
+                        {% if request.args.get('status') == "Partially Paid" %}
+                        selected
+                        {% endif %}
+                    >
+                        Partially Paid
+                    </option>
 
                 </select>
 
