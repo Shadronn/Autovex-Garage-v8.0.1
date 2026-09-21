@@ -35,8 +35,8 @@ def generate_inspection_pdf(inspection, job):
     # ==================================================
 
     DARK_GREEN = colors.HexColor("#006B3C")
-    DEEP_SKY_BLUE = colors.HexColor("#00BFFF")
-    LIGHT_SKY_BLUE = colors.HexColor("#b2ebff")
+    DEEP_SKY_BLUE = colors.HexColor("#F4320B")
+    LIGHT_SKY_BLUE = colors.HexColor("#555555")
     BORDER = colors.HexColor("#555555")
     LIGHT_GREY = colors.HexColor("#F4F4F4")
     RED = colors.HexColor("#FF0000")
@@ -245,14 +245,14 @@ def generate_inspection_pdf(inspection, job):
 
     elements.append(
         Paragraph(
-            "AUTOVEX",
+            "Riverine Auto Centre Limited",
             company_style
         )
     )
 
     elements.append(
         Paragraph(
-            "PROFESSIONAL AUTO REPAIR & VEHICLE SERVICES",
+            "Professional Automotive Services",
             tag_style
         )
     )
