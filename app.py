@@ -1556,32 +1556,32 @@ def init_db():
     if not Company.query.first():
 
         company = Company(
-            company_name="Hillance Enterprises",
+            company_name="Riverine Auto Center Limited",
             tagline="Professional Vehicle Service Centre",
 
-            address="P.O Box 1234-00100, Nairobi",
+            address="P.O Box 74831-00200, Nairobi",
 
             city="Nairobi",
 
-            phone="0723523109",
+            phone="0700706641",
 
-            alternate_phone="0783644648",
+            alternate_phone="0722746616",
 
-            email="info@hillance.com",
+            email="info@riverineauto.com",
 
-            website="www.hillance.com",
+            website="www.riverineauto.com",
 
-            kra_pin="P051234567A",
+            kra_pin="P052219534F",
 
-            vat_number="VAT123456",
+            vat_number="P052219534F",
 
             etims_branch="001",
 
-            bank_name="I&M Bank",
+            bank_name="NCBA Bank Limited",
 
-            account_name="Hillance Enterprises",
+            account_name="Riverine Autocenter",
 
-            account_number="00207958476150",
+            account_number="6366490015",
 
             currency="KES",
 
