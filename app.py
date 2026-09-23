@@ -11092,13 +11092,13 @@ def invoice_pdf(invoice_id):
         canvas.drawString(
             contact_x,
             footer_y - 4 * mm,
-            "0723523109 / 0783644648"
+            "0722746616"
         )
 
         canvas.drawString(
             contact_x,
             footer_y - 8 * mm,
-            "+254700706641"
+            "0700706641"
         )
 
         # --------------------------------------------------------
