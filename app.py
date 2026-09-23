@@ -11041,7 +11041,7 @@ def invoice_pdf(invoice_id):
         canvas.drawString(
             company_x,
             footer_y,
-            "Hillance Enterprises"
+            "Riverine Auto Center Limited"
         )
 
         canvas.setFont(
@@ -11058,13 +11058,13 @@ def invoice_pdf(invoice_id):
         canvas.drawString(
             company_x,
             footer_y - 8 * mm,
-            "P.O Box 1234-00100, Nairobi"
+            "P.O Box 74831-00200, Nairobi"
         )
 
         canvas.drawString(
             company_x,
             footer_y - 12 * mm,
-            "KRA PIN: P051234567A"
+            "KRA PIN: P052219534F"
         )
 
         # --------------------------------------------------------
@@ -11098,7 +11098,7 @@ def invoice_pdf(invoice_id):
         canvas.drawString(
             contact_x,
             footer_y - 8 * mm,
-            "info@hillance.com"
+            "+254700706641"
         )
 
         # --------------------------------------------------------
@@ -11126,13 +11126,13 @@ def invoice_pdf(invoice_id):
         canvas.drawString(
             payment_x,
             footer_y - 4 * mm,
-            "Bank: I&M Bank"
+            "Bank: NCBA Bank Limited"
         )
 
         canvas.drawString(
             payment_x,
             footer_y - 8 * mm,
-            "Account: 00207958476150"
+            "Account: 6366490015"
         )
 
         canvas.drawString(
