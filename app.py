@@ -7616,50 +7616,339 @@ def edit_job(job_id):
 
     job = Jobs.query.get_or_404(job_id)
 
+    # -------------------------------------------------
+    # GET EXISTING JOB CARD
+    # -------------------------------------------------
+
+    job_card = job.job_card
+
     if request.method == "POST":
 
         try:
-            # -----------------------------
-            # JOB DETAILS
-            # -----------------------------
 
-            job.description = (
-                request.form.get("description", "").strip()
+            # =================================================
+            # JOB INFORMATION
+            # =================================================
+
+            customer_id = request.form.get("customer_id")
+            vehicle_id = request.form.get("vehicle_id")
+
+            description = request.form.get(
+                "description",
+                ""
+            ).strip()
+
+            status = request.form.get(
+                "status",
+                job.status
             )
 
-            job.status = (
-                request.form.get("status") or job.status
+            mechanic_id = request.form.get(
+                "mechanic_id"
             )
 
-            # -----------------------------
-            # MECHANIC
-            # -----------------------------
+            deadline_str = request.form.get(
+                "deadline"
+            )
 
-            mechanic_id = request.form.get("mechanic_id")
+            # -------------------------------------------------
+            # CUSTOMER
+            # -------------------------------------------------
+
+            if not customer_id:
+                raise ValueError(
+                    "Please select a customer."
+                )
+
+            customer = Customer.query.get(
+                int(customer_id)
+            )
+
+            if not customer:
+                raise ValueError(
+                    "Selected customer was not found."
+                )
+
+            # -------------------------------------------------
+            # VEHICLE
+            # -------------------------------------------------
+
+            if not vehicle_id:
+                raise ValueError(
+                    "Please select a vehicle."
+                )
+
+            vehicle = Vehicle.query.get(
+                int(vehicle_id)
+            )
+
+            if not vehicle:
+                raise ValueError(
+                    "Selected vehicle was not found."
+                )
+
+            # =================================================
+            # UPDATE JOB
+            # =================================================
+
+            job.customer_id = customer.id
+            job.customer_name = customer.customer_name
+            job.telno = customer.telno
+
+            job.vehicle_id = vehicle.id
+            job.vehicle = vehicle.registration_no
+            job.vehicle_model = vehicle.model
+
+            job.description = description
+            job.status = status
 
             if mechanic_id:
                 job.assigned_to = int(mechanic_id)
             else:
                 job.assigned_to = None
 
-            # -----------------------------
+            # -------------------------------------------------
             # DEADLINE
-            # -----------------------------
+            # -------------------------------------------------
 
-            deadline = request.form.get("deadline")
+            if deadline_str:
 
-            if deadline:
                 job.deadline = datetime.strptime(
-                    deadline,
+                    deadline_str,
                     "%Y-%m-%dT%H:%M"
                 )
+
             else:
+
                 job.deadline = None
+
+            # =================================================
+            # UPDATE JOB CARD
+            # =================================================
+
+            if job_card:
+
+                work_description = request.form.get(
+                    "work_description",
+                    ""
+                ).strip()
+
+                technician_notes = request.form.get(
+                    "technician_notes",
+                    ""
+                ).strip()
+
+                job_card.work_description = (
+                    work_description
+                )
+
+                job_card.technician_notes = (
+                    technician_notes
+                )
+
+                # -------------------------------------------------
+                # JOB CARD STATUS
+                # -------------------------------------------------
+
+                job_card_status = request.form.get(
+                    "job_card_status",
+                    job_card.status
+                )
+
+                job_card.status = job_card_status
+
+                if job_card_status.lower() == "completed":
+
+                    if not job_card.completed_at:
+                        job_card.completed_at = datetime.utcnow()
+
+                else:
+
+                    job_card.completed_at = None
+
+                # =================================================
+                # REMOVE EXISTING PARTS
+                # =================================================
+
+                JobCardPart.query.filter_by(
+                    job_card_id=job_card.id
+                ).delete(
+                    synchronize_session=False
+                )
+
+                # =================================================
+                # ADD UPDATED PARTS
+                # =================================================
+
+                part_names = request.form.getlist(
+                    "part_name[]"
+                )
+
+                part_numbers = request.form.getlist(
+                    "part_number[]"
+                )
+
+                part_quantities = request.form.getlist(
+                    "part_quantity[]"
+                )
+
+                part_unit_prices = request.form.getlist(
+                    "part_unit_price[]"
+                )
+
+                part_unit_costs = request.form.getlist(
+                    "part_unit_cost[]"
+                )
+
+                for i, part_name in enumerate(
+                    part_names
+                ):
+
+                    part_name = (
+                        part_name or ""
+                    ).strip()
+
+                    if not part_name:
+                        continue
+
+                    quantity = float(
+                        part_quantities[i]
+                        if i < len(part_quantities)
+                        and part_quantities[i]
+                        else 0
+                    )
+
+                    unit_price = float(
+                        part_unit_prices[i]
+                        if i < len(part_unit_prices)
+                        and part_unit_prices[i]
+                        else 0
+                    )
+
+                    unit_cost = float(
+                        part_unit_costs[i]
+                        if i < len(part_unit_costs)
+                        and part_unit_costs[i]
+                        else 0
+                    )
+
+                    part_number = ""
+
+                    if i < len(part_numbers):
+                        part_number = (
+                            part_numbers[i] or ""
+                        ).strip()
+
+                    part = JobCardPart(
+                        job_card=job_card,
+                        part_name=part_name,
+                        part_number=part_number,
+                        quantity=quantity,
+                        unit_price=unit_price,
+                        total=quantity * unit_price
+                    )
+
+                    # Only set this if your model has unit_cost
+                    if hasattr(part, "unit_cost"):
+                        part.unit_cost = unit_cost
+
+                    db.session.add(part)
+
+                # =================================================
+                # REMOVE EXISTING LABOUR
+                # =================================================
+
+                JobCardLabour.query.filter_by(
+                    job_card_id=job_card.id
+                ).delete(
+                    synchronize_session=False
+                )
+
+                # =================================================
+                # ADD UPDATED LABOUR
+                # =================================================
+
+                labour_descriptions = request.form.getlist(
+                    "labour_description[]"
+                )
+
+                labour_hours = request.form.getlist(
+                    "labour_hours[]"
+                )
+
+                labour_rates = request.form.getlist(
+                    "labour_hourly_rate[]"
+                )
+
+                labour_costs = request.form.getlist(
+                    "labour_hourly_cost[]"
+                )
+
+                for i, labour_description in enumerate(
+                    labour_descriptions
+                ):
+
+                    labour_description = (
+                        labour_description or ""
+                    ).strip()
+
+                    if not labour_description:
+                        continue
+
+                    hours = float(
+                        labour_hours[i]
+                        if i < len(labour_hours)
+                        and labour_hours[i]
+                        else 0
+                    )
+
+                    hourly_rate = float(
+                        labour_rates[i]
+                        if i < len(labour_rates)
+                        and labour_rates[i]
+                        else 0
+                    )
+
+                    hourly_cost = float(
+                        labour_costs[i]
+                        if i < len(labour_costs)
+                        and labour_costs[i]
+                        else 0
+                    )
+
+                    selling_total = (
+                        hours * hourly_rate
+                    )
+
+                    cost_total = (
+                        hours * hourly_cost
+                    )
+
+                    labour = JobCardLabour(
+                        job_card=job_card,
+                        description=labour_description,
+                        hours=hours,
+                        hourly_rate=hourly_rate,
+                        total=selling_total
+                    )
+
+                    # Your newer model has these fields
+                    if hasattr(labour, "hourly_cost"):
+                        labour.hourly_cost = hourly_cost
+
+                    if hasattr(labour, "cost_total"):
+                        labour.cost_total = cost_total
+
+                    db.session.add(labour)
+
+            # =================================================
+            # SAVE EVERYTHING
+            # =================================================
 
             db.session.commit()
 
             flash(
-                "Job card updated successfully!",
+                "Job card updated successfully.",
                 "success"
             )
 
@@ -7670,12 +7959,17 @@ def edit_job(job_id):
                 )
             )
 
-        except (ValueError, TypeError):
+        except (ValueError, TypeError) as e:
 
             db.session.rollback()
 
+            print(
+                "EDIT JOB CARD VALIDATION ERROR:",
+                repr(e)
+            )
+
             flash(
-                "Please check the information entered.",
+                str(e),
                 "danger"
             )
 
@@ -7684,7 +7978,7 @@ def edit_job(job_id):
             db.session.rollback()
 
             print(
-                "EDIT JOB ERROR:",
+                "EDIT JOB CARD ERROR:",
                 repr(e)
             )
 
@@ -7693,15 +7987,33 @@ def edit_job(job_id):
                 "danger"
             )
 
+    # =================================================
+    # GET DATA FOR FORM
+    # =================================================
+
+    customers = Customer.query.order_by(
+        Customer.customer_name.asc()
+    ).all()
+
     mechanics = User.query.filter_by(
         role="mechanic"
     ).order_by(
         User.username.asc()
     ).all()
 
+    # Vehicles belonging to current customer
+    vehicles = Vehicle.query.filter_by(
+        owner=job.customer_id
+    ).order_by(
+        Vehicle.registration_no.asc()
+    ).all()
+
     return render_template(
         "jobs/edit_job.html",
         job=job,
+        job_card=job_card,
+        customers=customers,
+        vehicles=vehicles,
         mechanics=mechanics,
         role=session.get("role"),
         user=session.get("user")
