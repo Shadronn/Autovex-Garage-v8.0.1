@@ -7700,6 +7700,7 @@ def edit_job(job_id):
             job.vehicle_model = vehicle.model
 
             job.description = description
+            job.service_type = ( request.form.get("service_type", "").strip())
             job.status = status
 
             if mechanic_id:
