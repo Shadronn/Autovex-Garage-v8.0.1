@@ -7611,20 +7611,42 @@ def create_job_card(job_id):
 ####EDIT JOB ###
 
 @app.route("/jobs/<int:job_id>/edit", methods=["GET", "POST"])
-@login_required
 def edit_job(job_id):
+
+    # ---------------------------------------------------------
+    # AUTHENTICATION
+    # ---------------------------------------------------------
+
+    if "user" not in session:
+        return redirect(url_for("login"))
+
+    # ---------------------------------------------------------
+    # LOAD JOB
+    # ---------------------------------------------------------
 
     job = Jobs.query.get_or_404(job_id)
 
     # ---------------------------------------------------------
-    # LOAD RELATED RECORDS
+    # LOAD CUSTOMER
     # ---------------------------------------------------------
 
-    customer = Customer.query.get(job.customer_id)
+    customer = None
+
+    if job.customer_id:
+        customer = Customer.query.get(job.customer_id)
+
+    # ---------------------------------------------------------
+    # LOAD VEHICLE
+    # ---------------------------------------------------------
 
     vehicle = None
+
     if job.vehicle_id:
         vehicle = Vehicle.query.get(job.vehicle_id)
+
+    # ---------------------------------------------------------
+    # LOAD MECHANICS
+    # ---------------------------------------------------------
 
     mechanics = User.query.filter_by(
         role="mechanic"
@@ -7640,20 +7662,15 @@ def edit_job(job_id):
 
         try:
 
-            # -------------------------------------------------
-            # Basic job information
-            # -------------------------------------------------
-
+            # Job description
             job.description = (
                 request.form.get("description", "").strip()
             )
 
+            # Status
             job.status = request.form.get("status")
 
-            # -------------------------------------------------
             # Assigned mechanic
-            # -------------------------------------------------
-
             mechanic_id = request.form.get("mechanic_id")
 
             if mechanic_id:
@@ -7661,10 +7678,7 @@ def edit_job(job_id):
             else:
                 job.assigned_to = None
 
-            # -------------------------------------------------
             # Deadline
-            # -------------------------------------------------
-
             deadline = request.form.get("deadline")
 
             if deadline:
@@ -7675,10 +7689,7 @@ def edit_job(job_id):
             else:
                 job.deadline = None
 
-            # -------------------------------------------------
             # Save
-            # -------------------------------------------------
-
             db.session.commit()
 
             flash(
@@ -7694,6 +7705,7 @@ def edit_job(job_id):
             )
 
         except ValueError:
+
             db.session.rollback()
 
             flash(
@@ -7702,6 +7714,7 @@ def edit_job(job_id):
             )
 
         except Exception as e:
+
             db.session.rollback()
 
             app.logger.exception(
@@ -7710,12 +7723,12 @@ def edit_job(job_id):
             )
 
             flash(
-                f"Unable to update job: {str(e)}",
+                "Unable to update the job. Please try again.",
                 "danger"
             )
 
     # ---------------------------------------------------------
-    # DISPLAY EDIT PAGE
+    # RENDER
     # ---------------------------------------------------------
 
     return render_template(
@@ -7726,7 +7739,7 @@ def edit_job(job_id):
         mechanics=mechanics,
         role=session.get("role")
     )
-    
+
 @app.route("/jobs/<int:job_id>/delete", methods=["POST"])
 @require_roles("superadmin")
 def delete_job(job_id):
