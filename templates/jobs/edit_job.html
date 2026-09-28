@@ -1,77 +1,43 @@
 {% extends "base.html" %}
 
 {% block sidebar %}
-
 {% endblock %}
 
 {% block content %}
 
-<form method="POST" class="form-card">
+<form method="POST" class="form-card" id="editJobForm">
 
-    <h1>Edit Job</h1>
-    <h3>Update job information.</h3>
-    <vh></vh>
+    <h1>Edit Job Card</h1>
+    <h3>Update job, work, parts and labour information.</h3>
+
+    <!-- =====================================================
+         JOB INFORMATION
+         ===================================================== -->
+
+    <div class="section-divider">
+        <h2>Job Information</h2>
+    </div>
 
     <div class="form-grid">
 
         <!-- Customer -->
         <div class="form-group">
-            <label>Customer</label>
-            <input
-                type="text"
-                value="{{ job.customer_name }}"
-                readonly>
-        </div>
+            <label for="customer_id">Customer</label>
 
-        <!-- Telephone -->
-        <div class="form-group">
-            <label>Telephone</label>
-            <input
-                type="text"
-                value="{{ job.telno }}"
-                readonly>
-        </div>
+            <select
+                name="customer_id"
+                id="customer_id"
+                required>
 
-        <!-- Vehicle -->
-        <div class="form-group">
-            <label>Vehicle</label>
-            <input
-                type="text"
-                value="{{ job.vehicle }}"
-                readonly>
-        </div>
+                <option value="">Select Customer</option>
 
-        <!-- Vehicle Model -->
-        <div class="form-group">
-            <label>Vehicle Model</label>
-            <input
-                type="text"
-                value="{{ job.vehicle_model }}"
-                readonly>
-        </div>
-
-        <!-- Description -->
-        <div class="form-group full-width">
-            <label>Job Description</label>
-
-            <textarea
-                name="description"
-                required>{{ job.description }}</textarea>
-        </div>
-
-        <!-- Mechanic -->
-        <div class="form-group">
-            <label>Assigned Mechanic</label>
-
-            <select name="mechanic_id" required>
-
-                {% for mechanic in mechanics %}
+                {% for customer in customers %}
 
                 <option
-                    value="{{ mechanic.id }}"
-                    {% if mechanic.id == job.assigned_to %}selected{% endif %}>
+                    value="{{ customer.id }}"
+                    {% if customer.id == job.customer_id %}selected{% endif %}>
 
-                    {{ mechanic.username }}
+                    {{ customer.customer_name }}
 
                 </option>
 
@@ -80,58 +46,541 @@
             </select>
         </div>
 
+
+        <!-- Telephone -->
+        <div class="form-group">
+
+            <label>Telephone</label>
+
+            <input
+                type="text"
+                id="customer_phone"
+                value="{{ job.telno }}"
+                readonly>
+
+        </div>
+
+
+        <!-- Vehicle -->
+        <div class="form-group">
+
+            <label for="vehicle_id">Vehicle</label>
+
+            <select
+                name="vehicle_id"
+                id="vehicle_id"
+                required>
+
+                <option value="">Select Vehicle</option>
+
+                {% for vehicle in vehicles %}
+
+                <option
+                    value="{{ vehicle.id }}"
+                    {% if vehicle.id == job.vehicle_id %}selected{% endif %}>
+
+                    {{ vehicle.registration_no }}
+
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+
+        <!-- Vehicle Model -->
+        <div class="form-group">
+
+            <label>Vehicle Model</label>
+
+            <input
+                type="text"
+                id="vehicle_model"
+                value="{{ job.vehicle_model }}"
+                readonly>
+
+        </div>
+
+
+        <!-- Service Type -->
+        <div class="form-group">
+
+            <label for="service_type">
+                Service Type
+            </label>
+
+            <input
+                type="text"
+                name="service_type"
+                id="service_type"
+                value="{{ job.service_type or '' }}">
+
+        </div>
+
+
+        <!-- Mechanic -->
+        <div class="form-group">
+
+            <label for="mechanic_id">
+                Assigned Mechanic
+            </label>
+
+            <select
+                name="mechanic_id"
+                id="mechanic_id"
+                required>
+
+                <option value="">
+                    Select Mechanic
+                </option>
+
+                {% for mechanic in mechanics %}
+
+                <option
+                    value="{{ mechanic.id }}"
+                    {% if mechanic.id == job.assigned_to %}
+                    selected
+                    {% endif %}>
+
+                    {{ mechanic.username }}
+
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+
         <!-- Status -->
         <div class="form-group">
-            <label>Status</label>
 
-            <select name="status">
+            <label for="status">
+                Status
+            </label>
 
-                <option value="Open"
-                    {% if job.status=="Open" %}selected{% endif %}>
+            <select
+                name="status"
+                id="status">
+
+                <option
+                    value="Open"
+                    {% if job.status == "Open" %}
+                    selected
+                    {% endif %}>
                     Open
                 </option>
 
-                <option value="In Progress"
-                    {% if job.status=="In Progress" %}selected{% endif %}>
+                <option
+                    value="In Progress"
+                    {% if job.status == "In Progress" %}
+                    selected
+                    {% endif %}>
                     In Progress
                 </option>
 
-                <option value="Waiting Parts"
-                    {% if job.status=="Waiting Parts" %}selected{% endif %}>
+                <option
+                    value="Waiting Parts"
+                    {% if job.status == "Waiting Parts" %}
+                    selected
+                    {% endif %}>
                     Waiting for Parts
                 </option>
 
-                <option value="Completed"
-                    {% if job.status=="Completed" %}selected{% endif %}>
+                <option
+                    value="Completed"
+                    {% if job.status == "Completed" %}
+                    selected
+                    {% endif %}>
                     Completed
                 </option>
 
             </select>
+
         </div>
 
+
         <!-- Deadline -->
-        <div class="form-group full-width">
-            <label>Deadline</label>
+        <div class="form-group">
+
+            <label for="deadline">
+                Deadline
+            </label>
 
             <input
                 type="datetime-local"
                 name="deadline"
+                id="deadline"
                 value="{{ job.deadline.strftime('%Y-%m-%dT%H:%M') if job.deadline else '' }}">
+
+        </div>
+
+
+        <!-- Job Description -->
+        <div class="form-group full-width">
+
+            <label for="description">
+                Job Description
+            </label>
+
+            <textarea
+                name="description"
+                id="description"
+                rows="4"
+                required>{{ job.description }}</textarea>
+
         </div>
 
     </div>
 
+
+    <!-- =====================================================
+         JOB CARD
+         ===================================================== -->
+
+    {% if job_card %}
+
+    <div class="section-divider">
+        <h2>Job Card</h2>
+    </div>
+
+    <div class="form-grid">
+
+        <!-- Work Description -->
+        <div class="form-group full-width">
+
+            <label for="work_description">
+                Work Description
+            </label>
+
+            <textarea
+                name="work_description"
+                id="work_description"
+                rows="5">{{ job_card.work_description or '' }}</textarea>
+
+        </div>
+
+
+        <!-- Technician Notes -->
+        <div class="form-group full-width">
+
+            <label for="technician_notes">
+                Technician Notes
+            </label>
+
+            <textarea
+                name="technician_notes"
+                id="technician_notes"
+                rows="5">{{ job_card.technician_notes or '' }}</textarea>
+
+        </div>
+
+
+        <!-- Job Card Status -->
+        <div class="form-group">
+
+            <label for="job_card_status">
+                Job Card Status
+            </label>
+
+            <select
+                name="job_card_status"
+                id="job_card_status">
+
+                <option
+                    value="Open"
+                    {% if job_card.status == "Open" %}
+                    selected
+                    {% endif %}>
+                    Open
+                </option>
+
+                <option
+                    value="In Progress"
+                    {% if job_card.status == "In Progress" %}
+                    selected
+                    {% endif %}>
+                    In Progress
+                </option>
+
+                <option
+                    value="Completed"
+                    {% if job_card.status == "Completed" %}
+                    selected
+                    {% endif %}>
+                    Completed
+                </option>
+
+            </select>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         PARTS
+         ===================================================== -->
+
+    <div class="section-divider">
+        <h2>Parts</h2>
+    </div>
+
+    <div class="table-responsive">
+
+        <table class="data-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>Part Name</th>
+                    <th>Part No.</th>
+                    <th>Qty</th>
+                    <th>Selling Price</th>
+                    <th>Cost</th>
+                    <th>Total</th>
+                    <th></th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="parts-container">
+
+                {% for part in job_card.parts %}
+
+                <tr class="part-row">
+
+                    <td>
+                        <input
+                            type="text"
+                            name="part_name[]"
+                            value="{{ part.part_name }}">
+                    </td>
+
+                    <td>
+                        <input
+                            type="text"
+                            name="part_number[]"
+                            value="{{ part.part_number or '' }}">
+                    </td>
+
+                    <td>
+                        <input
+                            type="number"
+                            name="part_quantity[]"
+                            value="{{ part.quantity }}"
+                            min="0"
+                            step="0.01"
+                            class="part-quantity">
+                    </td>
+
+                    <td>
+                        <input
+                            type="number"
+                            name="part_unit_price[]"
+                            value="{{ part.unit_price }}"
+                            min="0"
+                            step="0.01"
+                            class="part-price">
+                    </td>
+
+                    <td>
+                        <input
+                            type="number"
+                            name="part_unit_cost[]"
+                            value="{{ part.unit_cost if part.unit_cost is defined else 0 }}"
+                            min="0"
+                            step="0.01"
+                            class="part-cost">
+                    </td>
+
+                    <td>
+                        <span class="part-total">
+                            {{ "%.2f"|format(part.total or 0) }}
+                        </span>
+                    </td>
+
+                    <td>
+
+                        <button
+                            type="button"
+                            class="remove-row"
+                            onclick="removeRow(this)">
+
+                            <i class='bx bx-trash'></i>
+
+                        </button>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <button
+        type="button"
+        class="secondary-btn"
+        onclick="addPartRow()">
+
+        <i class='bx bx-plus'></i>
+        Add Part
+
+    </button>
+
+
+    <!-- =====================================================
+         LABOUR
+         ===================================================== -->
+
+    <div class="section-divider">
+        <h2>Labour</h2>
+    </div>
+
+    <div class="table-responsive">
+
+        <table class="data-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>Description</th>
+                    <th>Hours</th>
+                    <th>Selling Rate</th>
+                    <th>Cost Rate</th>
+                    <th>Total</th>
+                    <th></th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="labour-container">
+
+                {% for labour in job_card.labour %}
+
+                <tr class="labour-row">
+
+                    <td>
+
+                        <input
+                            type="text"
+                            name="labour_description[]"
+                            value="{{ labour.description }}">
+
+                    </td>
+
+                    <td>
+
+                        <input
+                            type="number"
+                            name="labour_hours[]"
+                            value="{{ labour.hours }}"
+                            min="0"
+                            step="0.01"
+                            class="labour-hours">
+
+                    </td>
+
+                    <td>
+
+                        <input
+                            type="number"
+                            name="labour_hourly_rate[]"
+                            value="{{ labour.hourly_rate }}"
+                            min="0"
+                            step="0.01"
+                            class="labour-rate">
+
+                    </td>
+
+                    <td>
+
+                        <input
+                            type="number"
+                            name="labour_hourly_cost[]"
+                            value="{{ labour.hourly_cost if labour.hourly_cost is defined else 0 }}"
+                            min="0"
+                            step="0.01"
+                            class="labour-cost">
+
+                    </td>
+
+                    <td>
+
+                        <span class="labour-total">
+                            {{ "%.2f"|format(labour.total or 0) }}
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        <button
+                            type="button"
+                            class="remove-row"
+                            onclick="removeRow(this)">
+
+                            <i class='bx bx-trash'></i>
+
+                        </button>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <button
+        type="button"
+        class="secondary-btn"
+        onclick="addLabourRow()">
+
+        <i class='bx bx-plus'></i>
+        Add Labour
+
+    </button>
+
+    {% endif %}
+
+
+    <!-- =====================================================
+         ACTIONS
+         ===================================================== -->
+
     <div class="button-group">
 
-        <button type="submit" class="login-btn">
+        <button
+            type="submit"
+            class="login-btn">
+
             <i class='bx bx-save'></i>
             Save Changes
+
         </button>
+
 
         <button
             type="button"
             class="cancel-btn"
-            onclick="window.location.href='{{ url_for('job_detail', job_id=job.id) }}'">
+            onclick="window.location.href='{{ url_for("job_detail", job_id=job.id) }}'">
 
             Cancel
 
@@ -140,5 +589,288 @@
     </div>
 
 </form>
+
+
+<!-- =====================================================
+     JAVASCRIPT
+     ===================================================== -->
+
+<script>
+
+function removeRow(button) {
+
+    const row = button.closest("tr");
+
+    if (row) {
+        row.remove();
+    }
+
+}
+
+
+/* =========================================================
+   ADD PART
+   ========================================================= */
+
+function addPartRow() {
+
+    const container =
+        document.getElementById("parts-container");
+
+    const row =
+        document.createElement("tr");
+
+    row.className = "part-row";
+
+    row.innerHTML = `
+
+        <td>
+            <input
+                type="text"
+                name="part_name[]"
+                placeholder="Part name">
+        </td>
+
+        <td>
+            <input
+                type="text"
+                name="part_number[]"
+                placeholder="Part number">
+        </td>
+
+        <td>
+            <input
+                type="number"
+                name="part_quantity[]"
+                value="1"
+                min="0"
+                step="0.01"
+                class="part-quantity">
+        </td>
+
+        <td>
+            <input
+                type="number"
+                name="part_unit_price[]"
+                value="0"
+                min="0"
+                step="0.01"
+                class="part-price">
+        </td>
+
+        <td>
+            <input
+                type="number"
+                name="part_unit_cost[]"
+                value="0"
+                min="0"
+                step="0.01"
+                class="part-cost">
+        </td>
+
+        <td>
+            <span class="part-total">0.00</span>
+        </td>
+
+        <td>
+
+            <button
+                type="button"
+                class="remove-row"
+                onclick="removeRow(this)">
+
+                <i class='bx bx-trash'></i>
+
+            </button>
+
+        </td>
+    `;
+
+    container.appendChild(row);
+
+}
+
+
+/* =========================================================
+   ADD LABOUR
+   ========================================================= */
+
+function addLabourRow() {
+
+    const container =
+        document.getElementById("labour-container");
+
+    const row =
+        document.createElement("tr");
+
+    row.className = "labour-row";
+
+    row.innerHTML = `
+
+        <td>
+
+            <input
+                type="text"
+                name="labour_description[]"
+                placeholder="Labour description">
+
+        </td>
+
+        <td>
+
+            <input
+                type="number"
+                name="labour_hours[]"
+                value="1"
+                min="0"
+                step="0.01"
+                class="labour-hours">
+
+        </td>
+
+        <td>
+
+            <input
+                type="number"
+                name="labour_hourly_rate[]"
+                value="0"
+                min="0"
+                step="0.01"
+                class="labour-rate">
+
+        </td>
+
+        <td>
+
+            <input
+                type="number"
+                name="labour_hourly_cost[]"
+                value="0"
+                min="0"
+                step="0.01"
+                class="labour-cost">
+
+        </td>
+
+        <td>
+
+            <span class="labour-total">
+                0.00
+            </span>
+
+        </td>
+
+        <td>
+
+            <button
+                type="button"
+                class="remove-row"
+                onclick="removeRow(this)">
+
+                <i class='bx bx-trash'></i>
+
+            </button>
+
+        </td>
+    `;
+
+    container.appendChild(row);
+
+}
+
+
+/* =========================================================
+   CALCULATE PART TOTALS
+   ========================================================= */
+
+document.addEventListener(
+    "input",
+    function(event) {
+
+        if (
+            event.target.classList.contains(
+                "part-quantity"
+            ) ||
+            event.target.classList.contains(
+                "part-price"
+            )
+        ) {
+
+            const row =
+                event.target.closest(
+                    ".part-row"
+                );
+
+            const quantity =
+                parseFloat(
+                    row.querySelector(
+                        ".part-quantity"
+                    ).value
+                ) || 0;
+
+            const price =
+                parseFloat(
+                    row.querySelector(
+                        ".part-price"
+                    ).value
+                ) || 0;
+
+            const total =
+                quantity * price;
+
+            row.querySelector(
+                ".part-total"
+            ).textContent =
+                total.toFixed(2);
+
+        }
+
+
+        /* =================================================
+           CALCULATE LABOUR TOTALS
+           ================================================= */
+
+        if (
+            event.target.classList.contains(
+                "labour-hours"
+            ) ||
+            event.target.classList.contains(
+                "labour-rate"
+            )
+        ) {
+
+            const row =
+                event.target.closest(
+                    ".labour-row"
+                );
+
+            const hours =
+                parseFloat(
+                    row.querySelector(
+                        ".labour-hours"
+                    ).value
+                ) || 0;
+
+            const rate =
+                parseFloat(
+                    row.querySelector(
+                        ".labour-rate"
+                    ).value
+                ) || 0;
+
+            const total =
+                hours * rate;
+
+            row.querySelector(
+                ".labour-total"
+            ).textContent =
+                total.toFixed(2);
+
+        }
+
+    }
+);
+
+</script>
 
 {% endblock %}
