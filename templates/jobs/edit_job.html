@@ -14,14 +14,16 @@
     <div class="module-header">
 
         <div>
+
             <h1>
                 <i class='bx bx-edit'></i>
                 Edit Job Card
             </h1>
 
             <p>
-                Update job information, assignment and status.
+                Update job details, parts, labour and pricing.
             </p>
+
         </div>
 
         <div class="module-header-actions">
@@ -31,7 +33,9 @@
                 class="cancel-btn">
 
                 <i class='bx bx-arrow-back'></i>
+
                 Back to Job
+
             </a>
 
         </div>
@@ -39,16 +43,14 @@
     </div>
 
 
-    <!-- =====================================================
-         FORM
-         ===================================================== -->
-
     <form
         method="POST"
-        class="form-card">
+        class="form-card"
+        id="jobCardForm">
+
 
         <!-- =================================================
-             JOB REFERENCE
+             JOB INFORMATION
              ================================================= -->
 
         <div class="form-section">
@@ -56,17 +58,25 @@
             <div class="section-heading">
 
                 <div>
-                    <h2>Job Information</h2>
+
+                    <h2>
+                        Job Information
+                    </h2>
 
                     <p>
                         Job #{{ job.id }}
+                        {% if job_card.job_card_number %}
+                            · Job Card {{ job_card.job_card_number }}
+                        {% endif %}
                     </p>
+
                 </div>
 
             </div>
 
 
             <div class="form-grid">
+
 
                 <!-- Customer -->
 
@@ -80,10 +90,6 @@
                         type="text"
                         value="{{ customer.customer_name if customer else job.customer_name }}"
                         readonly>
-
-                    <small>
-                        This is the customer who is billed for the repair.
-                    </small>
 
                 </div>
 
@@ -109,7 +115,7 @@
                 <div class="form-group">
 
                     <label>
-                        Vehicle Registration
+                        Vehicle
                     </label>
 
                     <input
@@ -149,11 +155,6 @@
                         value="{{ vehicle.owner if vehicle and vehicle.owner else 'Not specified' }}"
                         readonly>
 
-                    <small>
-                        The vehicle owner may be different from the
-                        customer being billed.
-                    </small>
-
                 </div>
 
 
@@ -172,60 +173,16 @@
 
                 </div>
 
-            </div>
-
-        </div>
-
-
-        <!-- =================================================
-             JOB DETAILS
-             ================================================= -->
-
-        <div class="form-section">
-
-            <div class="section-heading">
-
-                <div>
-                    <h2>Job Details</h2>
-
-                    <p>
-                        Update the work required and job progress.
-                    </p>
-                </div>
-
-            </div>
-
-
-            <div class="form-grid">
-
-                <!-- Description -->
-
-                <div class="form-group full-width">
-
-                    <label for="description">
-                        Job Description
-                    </label>
-
-                    <textarea
-                        id="description"
-                        name="description"
-                        rows="5"
-                        required>{{ job.description or '' }}</textarea>
-
-                </div>
-
 
                 <!-- Mechanic -->
 
                 <div class="form-group">
 
-                    <label for="mechanic_id">
+                    <label>
                         Assigned Mechanic
                     </label>
 
-                    <select
-                        id="mechanic_id"
-                        name="mechanic_id">
+                    <select name="mechanic_id">
 
                         <option value="">
                             -- Unassigned --
@@ -233,15 +190,15 @@
 
                         {% for mechanic in mechanics %}
 
-                            <option
-                                value="{{ mechanic.id }}"
-                                {% if mechanic.id == job.assigned_to %}
-                                    selected
-                                {% endif %}>
+                        <option
+                            value="{{ mechanic.id }}"
+                            {% if mechanic.id == job.assigned_to %}
+                                selected
+                            {% endif %}>
 
-                                {{ mechanic.username }}
+                            {{ mechanic.username }}
 
-                            </option>
+                        </option>
 
                         {% endfor %}
 
@@ -250,16 +207,15 @@
                 </div>
 
 
-                <!-- Status -->
+                <!-- Job Status -->
 
                 <div class="form-group">
 
-                    <label for="status">
+                    <label>
                         Job Status
                     </label>
 
                     <select
-                        id="status"
                         name="status"
                         required>
 
@@ -304,15 +260,151 @@
 
                 <div class="form-group">
 
-                    <label for="deadline">
+                    <label>
                         Deadline
                     </label>
 
                     <input
-                        id="deadline"
                         type="datetime-local"
                         name="deadline"
                         value="{% if job.deadline %}{{ job.deadline.strftime('%Y-%m-%dT%H:%M') }}{% endif %}">
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             JOB DESCRIPTION
+             ================================================= -->
+
+        <div class="form-section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <h2>
+                        Job Description
+                    </h2>
+
+                </div>
+
+            </div>
+
+            <div class="form-group">
+
+                <textarea
+                    name="description"
+                    rows="4"
+                    required>{{ job.description or '' }}</textarea>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             JOB CARD DETAILS
+             ================================================= -->
+
+        <div class="form-section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <h2>
+                        Job Card Details
+                    </h2>
+
+                    <p>
+                        Work performed and technician notes.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-grid">
+
+                <div class="form-group full-width">
+
+                    <label>
+                        Work Description
+                    </label>
+
+                    <textarea
+                        name="work_description"
+                        rows="4"
+                        required>{{ job_card.work_description or '' }}</textarea>
+
+                </div>
+
+
+                <div class="form-group full-width">
+
+                    <label>
+                        Technician Notes
+                    </label>
+
+                    <textarea
+                        name="technician_notes"
+                        rows="4">{{ job_card.technician_notes or '' }}</textarea>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Job Card Status
+                    </label>
+
+                    <select name="job_card_status">
+
+                        <option
+                            value="Open"
+                            {% if job_card.status == "Open" %}
+                                selected
+                            {% endif %}>
+                            Open
+                        </option>
+
+                        <option
+                            value="In Progress"
+                            {% if job_card.status == "In Progress" %}
+                                selected
+                            {% endif %}>
+                            In Progress
+                        </option>
+
+                        <option
+                            value="Completed"
+                            {% if job_card.status == "Completed" %}
+                                selected
+                            {% endif %}>
+                            Completed
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group full-width">
+
+                    <label>
+                        Completion Notes
+                    </label>
+
+                    <textarea
+                        name="completion_notes"
+                        rows="4">{{ job_card.completion_notes or '' }}</textarea>
 
                 </div>
 
@@ -322,23 +414,438 @@
 
 
         <!-- =================================================
-             IMPORTANT NOTICE
+             PARTS
              ================================================= -->
 
-        <div class="info-box">
+        <div class="form-section">
 
-            <i class='bx bx-info-circle'></i>
+            <div class="section-heading">
 
-            <div>
+                <div>
 
-                <strong>Billing and vehicle ownership</strong>
+                    <h2>
+                        Parts
+                    </h2>
 
-                <p>
-                    The customer and vehicle owner are maintained
-                    separately. The customer is the party responsible
-                    for the repair invoice, while the vehicle owner
-                    may be the insured or another person.
-                </p>
+                    <p>
+                        Actual garage cost and customer selling price
+                        are maintained separately.
+                    </p>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="login-btn"
+                    onclick="addPartRow()">
+
+                    <i class='bx bx-plus'></i>
+
+                    Add Part
+
+                </button>
+
+            </div>
+
+
+            <div class="table-responsive">
+
+                <table class="data-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Part</th>
+
+                            <th>Part No.</th>
+
+                            <th>Qty</th>
+
+                            <th>Cost / Unit</th>
+
+                            <th>Selling / Unit</th>
+
+                            <th>Cost Total</th>
+
+                            <th>Selling Total</th>
+
+                            <th></th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="partsTableBody">
+
+                        {% for part in job_card.parts %}
+
+                        <tr class="part-row">
+
+                            <input
+                                type="hidden"
+                                name="part_id[]"
+                                value="{{ part.id }}">
+
+                            <td>
+
+                                <input
+                                    type="text"
+                                    name="part_name[]"
+                                    value="{{ part.part_name }}"
+                                    required
+                                    oninput="calculateTotals()">
+
+                            </td>
+
+                            <td>
+
+                                <input
+                                    type="text"
+                                    name="part_number[]"
+                                    value="{{ part.part_number or '' }}">
+
+                            </td>
+
+                            <td>
+
+                                <input
+                                    type="number"
+                                    name="part_quantity[]"
+                                    value="{{ part.quantity }}"
+                                    min="0"
+                                    step="0.01"
+                                    class="part-qty"
+                                    oninput="calculateTotals()">
+
+                            </td>
+
+                            <td>
+
+                                <input
+                                    type="number"
+                                    name="part_unit_cost[]"
+                                    value="{{ part.unit_cost }}"
+                                    min="0"
+                                    step="0.01"
+                                    class="part-cost"
+                                    oninput="calculateTotals()">
+
+                            </td>
+
+                            <td>
+
+                                <input
+                                    type="number"
+                                    name="part_unit_price[]"
+                                    value="{{ part.unit_price }}"
+                                    min="0"
+                                    step="0.01"
+                                    class="part-price"
+                                    oninput="calculateTotals()">
+
+                            </td>
+
+                            <td class="part-cost-total">
+                                KES 0.00
+                            </td>
+
+                            <td class="part-selling-total">
+                                KES 0.00
+                            </td>
+
+                            <td>
+
+                                <button
+                                    type="button"
+                                    class="danger-btn"
+                                    onclick="removeRow(this)">
+
+                                    <i class='bx bx-trash'></i>
+
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             LABOUR
+             ================================================= -->
+
+        <div class="form-section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <h2>
+                        Labour
+                    </h2>
+
+                    <p>
+                        Track actual labour cost separately from
+                        the amount charged to the customer.
+                    </p>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="login-btn"
+                    onclick="addLabourRow()">
+
+                    <i class='bx bx-plus'></i>
+
+                    Add Labour
+
+                </button>
+
+            </div>
+
+
+            <div class="table-responsive">
+
+                <table class="data-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Description</th>
+
+                            <th>Hours</th>
+
+                            <th>Cost / Hour</th>
+
+                            <th>Charge / Hour</th>
+
+                            <th>Cost Total</th>
+
+                            <th>Charge Total</th>
+
+                            <th></th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="labourTableBody">
+
+                        {% for labour in job_card.labour_items %}
+
+                        <tr class="labour-row">
+
+                            <input
+                                type="hidden"
+                                name="labour_id[]"
+                                value="{{ labour.id }}">
+
+                            <td>
+
+                                <input
+                                    type="text"
+                                    name="labour_description[]"
+                                    value="{{ labour.description }}"
+                                    required
+                                    oninput="calculateTotals()">
+
+                            </td>
+
+                            <td>
+
+                                <input
+                                    type="number"
+                                    name="labour_hours[]"
+                                    value="{{ labour.hours }}"
+                                    min="0"
+                                    step="0.25"
+                                    class="labour-hours"
+                                    oninput="calculateTotals()">
+
+                            </td>
+
+                            <td>
+
+                                <input
+                                    type="number"
+                                    name="labour_hourly_cost[]"
+                                    value="{{ labour.hourly_cost }}"
+                                    min="0"
+                                    step="0.01"
+                                    class="labour-cost"
+                                    oninput="calculateTotals()">
+
+                            </td>
+
+                            <td>
+
+                                <input
+                                    type="number"
+                                    name="labour_hourly_rate[]"
+                                    value="{{ labour.hourly_rate }}"
+                                    min="0"
+                                    step="0.01"
+                                    class="labour-rate"
+                                    oninput="calculateTotals()">
+
+                            </td>
+
+                            <td class="labour-cost-total">
+                                KES 0.00
+                            </td>
+
+                            <td class="labour-selling-total">
+                                KES 0.00
+                            </td>
+
+                            <td>
+
+                                <button
+                                    type="button"
+                                    class="danger-btn"
+                                    onclick="removeRow(this)">
+
+                                    <i class='bx bx-trash'></i>
+
+                                </button>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             FINANCIAL SUMMARY
+             ================================================= -->
+
+        <div class="form-section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <h2>
+                        Job Financial Summary
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="financial-summary-grid">
+
+                <div class="summary-card">
+
+                    <span>
+                        Parts Cost
+                    </span>
+
+                    <strong id="partsCostTotal">
+                        KES 0.00
+                    </strong>
+
+                </div>
+
+
+                <div class="summary-card">
+
+                    <span>
+                        Parts Selling
+                    </span>
+
+                    <strong id="partsSellingTotal">
+                        KES 0.00
+                    </strong>
+
+                </div>
+
+
+                <div class="summary-card">
+
+                    <span>
+                        Labour Cost
+                    </span>
+
+                    <strong id="labourCostTotal">
+                        KES 0.00
+                    </strong>
+
+                </div>
+
+
+                <div class="summary-card">
+
+                    <span>
+                        Labour Selling
+                    </span>
+
+                    <strong id="labourSellingTotal">
+                        KES 0.00
+                    </strong>
+
+                </div>
+
+
+                <div class="summary-card">
+
+                    <span>
+                        Total Direct Cost
+                    </span>
+
+                    <strong id="totalCost">
+                        KES 0.00
+                    </strong>
+
+                </div>
+
+
+                <div class="summary-card">
+
+                    <span>
+                        Customer Revenue
+                    </span>
+
+                    <strong id="totalRevenue">
+                        KES 0.00
+                    </strong>
+
+                </div>
+
+
+                <div class="summary-card highlight">
+
+                    <span>
+                        Gross Profit
+                    </span>
+
+                    <strong id="grossProfit">
+                        KES 0.00
+                    </strong>
+
+                </div>
 
             </div>
 
@@ -357,7 +864,7 @@
 
                 <i class='bx bx-save'></i>
 
-                Save Changes
+                Save Job Card
 
             </button>
 
@@ -377,5 +884,424 @@
     </form>
 
 </div>
+
+
+<!-- =========================================================
+     JAVASCRIPT
+     ========================================================= -->
+
+<script>
+
+function money(value) {
+
+    return "KES " + Number(value || 0).toLocaleString(
+        "en-KE",
+        {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }
+    );
+
+}
+
+
+function calculateTotals() {
+
+    let partsCost = 0;
+    let partsSelling = 0;
+
+    let labourCost = 0;
+    let labourSelling = 0;
+
+
+    /* =====================================================
+       PARTS
+       ===================================================== */
+
+    document.querySelectorAll(
+        "#partsTableBody .part-row"
+    ).forEach(row => {
+
+        const quantity = parseFloat(
+            row.querySelector(".part-qty")?.value
+        ) || 0;
+
+        const cost = parseFloat(
+            row.querySelector(".part-cost")?.value
+        ) || 0;
+
+        const price = parseFloat(
+            row.querySelector(".part-price")?.value
+        ) || 0;
+
+
+        const costTotal =
+            quantity * cost;
+
+        const sellingTotal =
+            quantity * price;
+
+
+        partsCost += costTotal;
+
+        partsSelling += sellingTotal;
+
+
+        const costCell =
+            row.querySelector(".part-cost-total");
+
+        const sellingCell =
+            row.querySelector(".part-selling-total");
+
+
+        if (costCell) {
+            costCell.textContent =
+                money(costTotal);
+        }
+
+        if (sellingCell) {
+            sellingCell.textContent =
+                money(sellingTotal);
+        }
+
+    });
+
+
+    /* =====================================================
+       LABOUR
+       ===================================================== */
+
+    document.querySelectorAll(
+        "#labourTableBody .labour-row"
+    ).forEach(row => {
+
+        const hours = parseFloat(
+            row.querySelector(".labour-hours")?.value
+        ) || 0;
+
+        const cost = parseFloat(
+            row.querySelector(".labour-cost")?.value
+        ) || 0;
+
+        const rate = parseFloat(
+            row.querySelector(".labour-rate")?.value
+        ) || 0;
+
+
+        const costTotal =
+            hours * cost;
+
+        const sellingTotal =
+            hours * rate;
+
+
+        labourCost += costTotal;
+
+        labourSelling += sellingTotal;
+
+
+        const costCell =
+            row.querySelector(".labour-cost-total");
+
+        const sellingCell =
+            row.querySelector(".labour-selling-total");
+
+
+        if (costCell) {
+            costCell.textContent =
+                money(costTotal);
+        }
+
+        if (sellingCell) {
+            sellingCell.textContent =
+                money(sellingTotal);
+        }
+
+    });
+
+
+    /* =====================================================
+       SUMMARY
+       ===================================================== */
+
+    const totalCost =
+        partsCost + labourCost;
+
+    const totalRevenue =
+        partsSelling + labourSelling;
+
+    const grossProfit =
+        totalRevenue - totalCost;
+
+
+    document.getElementById(
+        "partsCostTotal"
+    ).textContent = money(partsCost);
+
+    document.getElementById(
+        "partsSellingTotal"
+    ).textContent = money(partsSelling);
+
+    document.getElementById(
+        "labourCostTotal"
+    ).textContent = money(labourCost);
+
+    document.getElementById(
+        "labourSellingTotal"
+    ).textContent = money(labourSelling);
+
+    document.getElementById(
+        "totalCost"
+    ).textContent = money(totalCost);
+
+    document.getElementById(
+        "totalRevenue"
+    ).textContent = money(totalRevenue);
+
+    document.getElementById(
+        "grossProfit"
+    ).textContent = money(grossProfit);
+
+}
+
+
+function removeRow(button) {
+
+    const row =
+        button.closest("tr");
+
+    if (row) {
+        row.remove();
+    }
+
+    calculateTotals();
+
+}
+
+
+function addPartRow() {
+
+    const tbody =
+        document.getElementById(
+            "partsTableBody"
+        );
+
+
+    const row =
+        document.createElement("tr");
+
+    row.className = "part-row";
+
+
+    row.innerHTML = `
+
+        <input
+            type="hidden"
+            name="part_id[]"
+            value="">
+
+        <td>
+
+            <input
+                type="text"
+                name="part_name[]"
+                required
+                oninput="calculateTotals()">
+
+        </td>
+
+        <td>
+
+            <input
+                type="text"
+                name="part_number[]">
+
+        </td>
+
+        <td>
+
+            <input
+                type="number"
+                name="part_quantity[]"
+                value="1"
+                min="0"
+                step="0.01"
+                class="part-qty"
+                oninput="calculateTotals()">
+
+        </td>
+
+        <td>
+
+            <input
+                type="number"
+                name="part_unit_cost[]"
+                value="0"
+                min="0"
+                step="0.01"
+                class="part-cost"
+                oninput="calculateTotals()">
+
+        </td>
+
+        <td>
+
+            <input
+                type="number"
+                name="part_unit_price[]"
+                value="0"
+                min="0"
+                step="0.01"
+                class="part-price"
+                oninput="calculateTotals()">
+
+        </td>
+
+        <td class="part-cost-total">
+            KES 0.00
+        </td>
+
+        <td class="part-selling-total">
+            KES 0.00
+        </td>
+
+        <td>
+
+            <button
+                type="button"
+                class="danger-btn"
+                onclick="removeRow(this)">
+
+                <i class='bx bx-trash'></i>
+
+            </button>
+
+        </td>
+
+    `;
+
+
+    tbody.appendChild(row);
+
+    calculateTotals();
+
+}
+
+
+function addLabourRow() {
+
+    const tbody =
+        document.getElementById(
+            "labourTableBody"
+        );
+
+
+    const row =
+        document.createElement("tr");
+
+    row.className = "labour-row";
+
+
+    row.innerHTML = `
+
+        <input
+            type="hidden"
+            name="labour_id[]"
+            value="">
+
+        <td>
+
+            <input
+                type="text"
+                name="labour_description[]"
+                required
+                oninput="calculateTotals()">
+
+        </td>
+
+        <td>
+
+            <input
+                type="number"
+                name="labour_hours[]"
+                value="1"
+                min="0"
+                step="0.25"
+                class="labour-hours"
+                oninput="calculateTotals()">
+
+        </td>
+
+        <td>
+
+            <input
+                type="number"
+                name="labour_hourly_cost[]"
+                value="0"
+                min="0"
+                step="0.01"
+                class="labour-cost"
+                oninput="calculateTotals()">
+
+        </td>
+
+        <td>
+
+            <input
+                type="number"
+                name="labour_hourly_rate[]"
+                value="0"
+                min="0"
+                step="0.01"
+                class="labour-rate"
+                oninput="calculateTotals()">
+
+        </td>
+
+        <td class="labour-cost-total">
+            KES 0.00
+        </td>
+
+        <td class="labour-selling-total">
+            KES 0.00
+        </td>
+
+        <td>
+
+            <button
+                type="button"
+                class="danger-btn"
+                onclick="removeRow(this)">
+
+                <i class='bx bx-trash'></i>
+
+            </button>
+
+        </td>
+
+    `;
+
+
+    tbody.appendChild(row);
+
+    calculateTotals();
+
+}
+
+
+/* =========================================================
+   INITIAL CALCULATION
+   ========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        calculateTotals();
+
+    }
+);
+
+</script>
 
 {% endblock %}
