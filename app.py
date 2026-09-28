@@ -7611,37 +7611,102 @@ def create_job_card(job_id):
 ####EDIT JOB ###
 
 @app.route("/jobs/<int:job_id>/edit", methods=["GET", "POST"])
+@require_roles("admin", "superadmin")
 def edit_job(job_id):
-
-    if "user" not in session:
-        return redirect(url_for("login"))
 
     job = Jobs.query.get_or_404(job_id)
 
     if request.method == "POST":
 
-        job.description = request.form.get("description")
-        job.status = request.form.get("status")
-        job.assigned_to = request.form.get("mechanic_id")
+        try:
+            # -----------------------------
+            # JOB DETAILS
+            # -----------------------------
 
-        deadline = request.form.get("deadline")
-        if deadline:
-            job.deadline = datetime.strptime(deadline, "%Y-%m-%dT%H:%M")
+            job.description = (
+                request.form.get("description", "").strip()
+            )
 
-        db.session.commit()
+            job.status = (
+                request.form.get("status") or job.status
+            )
 
-        flash("Job updated successfully!", "success")
+            # -----------------------------
+            # MECHANIC
+            # -----------------------------
 
-        return redirect(url_for("job_detail", job_id=job.id))
+            mechanic_id = request.form.get("mechanic_id")
 
-    mechanics = User.query.filter_by(role="mechanic").all()
+            if mechanic_id:
+                job.assigned_to = int(mechanic_id)
+            else:
+                job.assigned_to = None
+
+            # -----------------------------
+            # DEADLINE
+            # -----------------------------
+
+            deadline = request.form.get("deadline")
+
+            if deadline:
+                job.deadline = datetime.strptime(
+                    deadline,
+                    "%Y-%m-%dT%H:%M"
+                )
+            else:
+                job.deadline = None
+
+            db.session.commit()
+
+            flash(
+                "Job card updated successfully!",
+                "success"
+            )
+
+            return redirect(
+                url_for(
+                    "job_detail",
+                    job_id=job.id
+                )
+            )
+
+        except (ValueError, TypeError):
+
+            db.session.rollback()
+
+            flash(
+                "Please check the information entered.",
+                "danger"
+            )
+
+        except Exception as e:
+
+            db.session.rollback()
+
+            print(
+                "EDIT JOB ERROR:",
+                repr(e)
+            )
+
+            flash(
+                "Unable to update the job card.",
+                "danger"
+            )
+
+    mechanics = User.query.filter_by(
+        role="mechanic"
+    ).order_by(
+        User.username.asc()
+    ).all()
 
     return render_template(
         "jobs/edit_job.html",
         job=job,
         mechanics=mechanics,
-        role=session.get("role")
+        role=session.get("role"),
+        user=session.get("user")
     )
+    
 @app.route("/jobs/<int:job_id>/delete", methods=["POST"])
 @require_roles("superadmin")
 def delete_job(job_id):
